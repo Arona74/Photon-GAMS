@@ -88,13 +88,16 @@ vec3 draw_nebula(vec3 ray_dir, vec3 background) {
     float night_factor = smoothstep(0.0, -0.1, sun_dir.y);
     float nebula_visibility = max(sunset_factor, night_factor);
     
-    if (nebula_visibility > 0.0) {
+    // Check if the ray direction is above the horizon
+    float above_horizon = smoothstep(-0.01, 0.05, ray_dir.y);
+    
+    if (nebula_visibility > 0.0 && above_horizon > 0.0) {
         // Use frameTimeCounter for continuous movement
         float time = frameTimeCounter;
         vec3 nebula = nebula_color(ray_dir, time);
         
         // Blend nebula with background
-        float blend_factor = smoothstep(0.0, 0.8, length(nebula)) * nebula_visibility;
+        float blend_factor = smoothstep(0.0, 0.8, length(nebula)) * nebula_visibility * above_horizon;
         return mix(background, nebula, blend_factor);
     }
 #endif

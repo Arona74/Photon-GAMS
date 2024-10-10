@@ -207,7 +207,7 @@ vec3 get_emitted_light(uint block_id) {
 		return light_color[block_id - 32u];
 	} else if (is_candle(block_id)) {
 		if(block_id > 327) { // Uncolored Candle
-			return light_color[19u] / 8.0 * get_candle_intensity(block_id - 328u);
+			return light_color[4u] / 8.0 * get_candle_intensity(block_id - 328u);
 		}
 		block_id -= 264u;
 		uint level = uint(floor(float(block_id) / 16.0));

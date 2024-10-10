@@ -273,6 +273,10 @@ option.COLORED_LIGHT_I                 = Colored Light Intensity
 option.COLOREDLIGHT_SATURATION         = Colored Light Saturation
 option.GLOWING_FLOWERS                 = §e🌷§r Glowing Flowers
 option.GLOWING_ORE                     = §e⛏§r Glowing Ore
+option.END_COLORED_LIGHTING            = End Violet Lighting Blocks
+comment.END_COLORED_LIGHTING           = Fire, lava and torch blocks id's is violet in the End.
+option.SCULK_I                         = Sculk Light Intensity
+option.COLORED_CANDLES                 = Colored Candles
 
 suffix.shadowMapResolution             = ²
 suffix.sunPathRotation                 = °
@@ -850,23 +854,29 @@ option.SSR_PREVIOUS_FRAME.comment      = Use previous frame data for reflections
 
 # Water settings
 
-option.WATER_CAUSTICS                  = Water Caustics
-option.WATER_CAUSTICS.comment          = Dancing light patterns beneath water
-option.WATER_CAUSTICS_INTENSITY        = Water Caustics Intensity
-option.WATER_CAUSTICS.comment          = Adjust the brightness of water caustics
-option.WATER_EDGE_HIGHLIGHT            = Water Edge Highlight
-option.WATER_EDGE_HIGHLIGHT.comment    = White highlights where water meets terrain. Helps to make water more easily visible in some cases
-option.WATER_EDGE_HIGHLIGHT_INTENSITY  = Water Edge Highlight Intensity
-option.SNELLS_WINDOW                   = Snell's Window
-option.SNELLS_WINDOW.comment           = Total internal reflection underwater
-option.SNELLS_WINDOW_INTENSITY         = Snell's Window Intensity
-option.WATER_TEXTURE                   = Water Texture
-option.WATER_TEXTURE.comment           = How to use the vanilla water texture.\n\nOff - no water texture.\nHighlights: water texture adds highlights to the water, like how it works in Bedrock RTX.\nVanilla: water texture is used like any other texture
-option.BIOME_WATER_COLOR               = Biome-Colored Water
-option.BIOME_WATER_COLOR.comment       = Water absorption takes the biome water colour into account
-option.WATER_REFRACTION                = Water Refraction
-option.WATER_REFRECTION.comment        = Refraction behind water. Very small performance impact
-option.WATER_REFRACTION_INTENSITY      = Water Refraction Intensity
+option.WATER_CAUSTICS                     = Water Caustics
+option.WATER_CAUSTICS.comment             = Dancing light patterns beneath water
+option.WATER_CAUSTICS_INTENSITY           = Water Caustics Intensity
+option.WATER_CAUSTICS_INTENSITY.comment   = Adjust the brightness of water caustics
+option.WATER_EDGE_HIGHLIGHT               = Water Edge Highlight
+option.WATER_EDGE_HIGHLIGHT.comment       = White highlights where water meets terrain. Helps to make water more easily visible in some cases
+option.WATER_EDGE_HIGHLIGHT_INTENSITY     = Water Edge Highlight Intensity
+option.SNELLS_WINDOW                      = Snell's Window
+option.SNELLS_WINDOW.comment              = Total internal reflection underwater
+option.SNELLS_WINDOW_INTENSITY            = Snell's Window Intensity
+option.WATER_TEXTURE                      = Water Texture
+option.WATER_TEXTURE.comment              = How to use the vanilla water texture.\n\nOff - no water texture.\nHighlights: water texture adds highlights to the water, like how it works in Bedrock RTX.\nVanilla: water texture is used like any other texture
+option.BIOME_WATER_COLOR                  = Biome-Colored Water
+option.BIOME_WATER_COLOR.comment          = Water absorption takes the biome water colour into account
+option.BIOME_WATER_COLOR_INTENSITY        = Biome-Colored Water Intensity
+option.WATER_TEXTURE_HIGHLIGHT_INTENSITY  = Water Highlights Intensity
+option.WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY = Water Highlights Underground Intensity
+comment.WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY = Not affected by Water Highlights Intensity.
+option.WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR = Biome-Colored Water Highlights
+option.WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY = Biome-Colored Water Highlights Intensity
+option.WATER_REFRACTION                   = Water Refraction
+option.WATER_REFRECTION.comment           = Refraction behind water. Very small performance impact
+option.WATER_REFRACTION_INTENSITY         = Water Refraction Intensity
 option.WATER_REFRACTION_INTENSITY.comment = Adjusts the intensity of refractions on water
 
 value.WATER_TEXTURE.WATER_TEXTURE_OFF                   = Off

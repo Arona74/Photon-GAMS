@@ -491,6 +491,12 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 							float l = 0.5 * (min_of(ap1) + max_of(ap1));
 							float redness = ap1.r * rcp(ap1.g + ap1.b);
 							material.emission = PARTICLES_BRIGHTNESS * (0.47 * material.albedo * step(0.378, redness * l) + 2.5 * albedo_sqrt * (0.2 + 0.8 * isolate_hue(hsl, 15.0, 15.0)) * step(0.871, hsl.y) * step(0.35, hsl.z));
+
+							#if defined WORLD_END && defined END_COLORED_LIGHTING
+							material.emission -= 0.2 * albedo_sqrt * linear_step(0.78, 0.85, hsl.z);
+							material.emission += 0.3 * sqr(sqr(vec3(0.70, 0.10, 1.0) * 2)) * linear_step(0.78, 0.85, hsl.z) * float(albedo_sqrt);
+							#endif
+
 							#endif
 							#ifdef HARDCODED_SPECULAR
 							float smoothness = 0.5 * linear_step(0.4, 0.8, hsl.z);
@@ -604,6 +610,10 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 							#ifdef HARDCODED_EMISSION
 							// Medium golden light
 							material.emission  = 0.85 * albedo_sqrt * linear_step(0.78, 0.85, hsl.z);
+
+							#if defined WORLD_END && defined END_COLORED_LIGHTING
+							material.emission  = 0.6 * sqr(vec3(0.70, 0.10, 1.0) * 3) * linear_step(0.78, 0.85, hsl.z);
+							#endif
 							light_levels.x *= 0.85;
 							#endif
 							#ifdef HARDCODED_SPECULAR
@@ -641,6 +651,12 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 							#ifdef HARDCODED_EMISSION
 							// Lava
 							material.emission = 4.0 * albedo_sqrt * (0.2 + 0.8 * isolate_hue(hsl, 30.0, 15.0)) * step(0.4, hsl.y);
+
+							#if defined WORLD_END && defined END_COLORED_LIGHTING
+							material.emission = -1.0 * albedo_sqrt * (0.2 + 0.8 * isolate_hue(hsl, 30.0, 15.0)) * step(0.4, hsl.y);
+							material.emission += 2.0 * float(material.albedo) * (0.2 + 0.8 * isolate_hue(hsl, 30.0, 15.0)) * step(0.4, hsl.y) * 0.6 * sqr(vec3(0.70, 0.10, 1.0) * 3);
+							#endif
+
 							#endif
 						}
 					}
@@ -652,6 +668,11 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 							#ifdef HARDCODED_EMISSION
 							// Medium orange emissives
 							material.emission = 0.60 * albedo_sqrt * (0.1 + 0.9 * cube(hsl.z));
+
+							#if defined WORLD_END && defined END_COLORED_LIGHTING
+							material.emission -= 1.5 * albedo_sqrt * (0.1 + 0.9 * cube(hsl.z));
+							material.emission += 0.12 *sqr(sqr(vec3(0.70, 0.10, 1.0) * 3)) * linear_step(0.1, 0.9, hsl.z) * float(albedo_sqrt);
+							#endif
 							#endif
 							#ifdef HARDCODED_SPECULAR
 							float smoothness = 0.45 * smoothstep(0.01, 0.7, hsl.z);
@@ -734,7 +755,8 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 						} else { // 47
 							//Pink glow
 							#ifdef HARDCODED_EMISSION
-							material.emission = vec3(0.75) * 1.5 * isolate_hue(hsl, 325.0, 36.7) + 2.5 * albedo_sqrt * pow4(hsl.z) * step(0.53, hsl.z);
+							//material.emission = vec3(0.75) * 1.5 * isolate_hue(hsl, 325.0, 36.7) + 2.5 * albedo_sqrt * pow4(hsl.z) * step(0.53, hsl.z);
+							material.emission = vec3(material.albedo);
 							#endif
 							#ifdef HARDCODED_SPECULAR
 							float smoothness = 0.5 * linear_step(0.03, 0.01, hsl.z);
