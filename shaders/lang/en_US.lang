@@ -484,6 +484,8 @@ suffix.CLOUDS_CUMULONIMBUS_DISTANCE              = m
 option.CLOUDS_CUMULONIMBUS_END_DISTANCE          = End Distance
 suffix.CLOUDS_CUMULONIMBUS_END_DISTANCE          = m
 
+option.CLOUDS_NOCTILUCENT              = Noctilucent Clouds
+
 option.BLOCKY_CLOUDS                   = Blocky Clouds
 option.BLOCKY_CLOUDS.comment           = Vanilla-styled volumetric clouds. Enabling this option disables all other cloud types
 option.BLOCKY_CLOUDS_LAYER_2           = Second Layer
