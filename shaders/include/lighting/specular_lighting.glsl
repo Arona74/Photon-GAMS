@@ -98,10 +98,10 @@ vec3 get_specular_highlight(
 	vec3 albedo_tint = mix(vec3(1.0), material.albedo, float(material.is_hardcoded_metal));
 
 	float NoH_squared = get_NoH_squared(NoL, NoV, LoV, light_radius);
-	float alpha_squared = material.roughness * material.roughness;
+	float alpha = material.roughness * material.roughness;
 
-	float d = distribution_ggx(NoH_squared, alpha_squared);
-	float v = v2_smith_ggx(max(NoL, 1e-2), max(NoV, 1e-2), alpha_squared);
+	float d = distribution_ggx(NoH_squared, alpha);
+	float v = v2_smith_ggx(max(NoL, 1e-2), max(NoV, 1e-2), alpha);
 
 	return min((NoL * d * v) * fresnel * albedo_tint, vec3(specular_max_value));
 }
@@ -110,7 +110,6 @@ vec3 get_specular_highlight(
 //   Specular Reflections
 // ------------------------
 
-#ifdef PROGRAM_COMPOSITE1
 vec3 sample_ggx_vndf(vec3 viewer_dir, vec2 alpha, vec2 hash) {
 /*
 	// from https://jcgt.org/published/0007/04/01/paper.pdf: "Sampling the GGX distribution of visible normals"
@@ -189,11 +188,7 @@ vec3 trace_specular_ray(
 	#ifdef DISTANT_HORIZONS
 		combined_depth_buffer,
 	#else
-		#ifdef SSR_PREVIOUS_FRAME
-		depthtex0,
-		#else
 		depthtex1,
-		#endif
 	#endif
 		combined_projection_matrix,
 		screen_pos,
@@ -220,23 +215,10 @@ vec3 trace_specular_ray(
 		float border_attenuation = (hit_pos.x * hit_pos.y - hit_pos.x) * (hit_pos.x * hit_pos.y - hit_pos.y);
 		      border_attenuation = dampen(linear_step(0.0, border_attenuation_factor, border_attenuation));
 
-#if defined SSR_PREVIOUS_FRAME && !defined DISTANT_HORIZONS
-	#ifdef VL
-		// Un-apply volumetric fog scattering using fog from the current frame
-		vec2 fog_uv = clamp(hit_pos.xy * VL_RENDER_SCALE, vec2(0.0), floor(view_res * VL_RENDER_SCALE - 1.0) * view_pixel_size);
-		vec3 fog_scattering = texture(colortex6, fog_uv).rgb;
-	#else
-		vec3 fog_scattering = vec3(0.0);
-	#endif
-
 		vec3 hit_pos_prev = reproject(hit_pos);
 		if (clamp01(hit_pos_prev) != hit_pos_prev) return sky_reflection;
 
 		vec3 reflection = textureLod(colortex5, hit_pos_prev.xy, mip_level).rgb;
-		     reflection = max0(reflection - fog_scattering);
-#else
-		vec3 reflection = textureLod(colortex0, hit_pos.xy * taau_render_scale, mip_level).rgb;
-#endif
 
 		return mix(sky_reflection, reflection, border_attenuation);
 	} else {
@@ -258,7 +240,7 @@ vec3 get_specular_reflections(
 ) {
 	vec3 albedo_tint = material.is_hardcoded_metal ? material.albedo : vec3(1.0);
 
-	float alpha_squared = sqr(material.roughness);
+	float alpha = sqr(material.roughness);
 
 	float dither = r1(frameCounter, texelFetch(noisetex, ivec2(gl_FragCoord.xy) & 511, 0).b);
 
@@ -278,7 +260,7 @@ vec3 get_specular_reflections(
 			hash.x = interleaved_gradient_noise(gl_FragCoord.xy,                    frameCounter * SSR_RAY_COUNT + i);
 			hash.y = interleaved_gradient_noise(gl_FragCoord.xy + vec2(97.0, 23.0), frameCounter * SSR_RAY_COUNT + i);
 
-			vec3 microfacet_normal = tbn_matrix * sample_ggx_vndf(-tangent_dir, vec2(alpha_squared), hash);
+			vec3 microfacet_normal = tbn_matrix * sample_ggx_vndf(-tangent_dir, vec2(alpha), hash);
 			vec3 ray_dir = reflect(world_dir, microfacet_normal);
 
 			float NoL = dot(normal, ray_dir);
@@ -298,8 +280,8 @@ vec3 get_specular_reflections(
 				fresnel = fresnel_dielectric(NoV, material.f0.x);
 			}
 
-			float v1 = v1_smith_ggx(NoV, alpha_squared);
-			float v2 = v2_smith_ggx(NoL, NoV, alpha_squared);
+			float v1 = v1_smith_ggx(NoV, alpha);
+			float v2 = v2_smith_ggx(NoL, NoV, alpha);
 
 			reflection += radiance * fresnel * (2.0 * NoL * v2 / v1);
 		}
@@ -334,8 +316,8 @@ vec3 get_specular_reflections(
 		fresnel = fresnel_dielectric(NoV, material.f0.x);
 	}
 
-	float v1 = v1_smith_ggx(NoV, alpha_squared);
-	float v2 = v2_smith_ggx(NoL, NoV, alpha_squared);
+	float v1 = v1_smith_ggx(NoV, alpha);
+	float v2 = v2_smith_ggx(NoL, NoV, alpha);
 
 	vec3 reflection  = trace_specular_ray(screen_pos, view_pos, ray_dir, dither, skylight, SSR_INTERSECTION_STEPS_SMOOTH, SSR_REFINEMENT_STEPS, 0);
 	     reflection *= albedo_tint * fresnel;
@@ -344,6 +326,5 @@ vec3 get_specular_reflections(
 
 	return reflection * material.ssr_multiplier;
 }
-#endif // PROGRAM_COMPOSITE1
 
 #endif // INCLUDE_LIGHTING_SPECULAR_LIGHTING

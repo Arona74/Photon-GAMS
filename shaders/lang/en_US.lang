@@ -23,6 +23,7 @@ screen.world_curvature                 = World Curvature Settings
 screen.colored_lights                  = Colored Lights Settings
 screen.rp_settings                     = Resource Pack Settings
 screen.reflections                     = Reflections
+screen.refraction                      = Refraction
 screen.light_sources                   = Light Sources
 screen.shadows                         = Shadows
 screen.color_grading                   = Color Grading
@@ -827,6 +828,12 @@ option.POM_SHADOW_SAMPLES              = POM Self-Shadow Samples
 option.POM_SHADOW_SAMPLES.comment      = Adjusts the quality of Parallax Shadows, at the expense of performance
 option.POM_SLOPE_NORMALS               = POM Slope Normals
 option.POM_DISTANCE                    = POM Distance
+option.REFRACTION                      = Refraction
+value.REFRACTION.REFRACTION_OFF        = Off
+value.REFRACTION.REFRACTION_ALL        = Everything
+value.REFRACTION.REFRACTION_WATER_ONLY = Water Only
+option.REFRACTION_INTENSITY            = Refraction Intensity
+option.REFRACTION_INTENSITY.comment    = Adjusts the intensity of refractions on water
 
 suffix.POM_DEPTH                       = m
 suffix.POM_DISTANCE                    = m
@@ -852,7 +859,6 @@ option.SSR_REFINEMENT_STEPS            = Refinement Steps
 option.SSR_REFINEMENT_STEPS.comment    = Adjusts the accuracy of all reflections, at the expense of performance
 option.SSR_ROUGHNESS_THRESHOLD         = Roughness Threshold
 option.SSR_ROUGHNESS_THRESHOLD.comment = Adjusts how smooth a surface must be for reflections to appear
-option.SSR_PREVIOUS_FRAME.comment      = Use previous frame data for reflections, so that translucents and reflections appear in reflections
 
 # Water settings
 
@@ -876,10 +882,6 @@ option.WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY = Water Highlights Undergro
 comment.WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY = Not affected by Water Highlights Intensity.
 option.WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR = Biome-Colored Water Highlights
 option.WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY = Biome-Colored Water Highlights Intensity
-option.WATER_REFRACTION                   = Water Refraction
-option.WATER_REFRECTION.comment           = Refraction behind water. Very small performance impact
-option.WATER_REFRACTION_INTENSITY         = Water Refraction Intensity
-option.WATER_REFRACTION_INTENSITY.comment = Adjusts the intensity of refractions on water
 
 value.WATER_TEXTURE.WATER_TEXTURE_OFF                   = Off
 value.WATER_TEXTURE.WATER_TEXTURE_HIGHLIGHT             = Highlights

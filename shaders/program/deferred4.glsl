@@ -147,8 +147,9 @@ void main() {
 #if defined fsh
 
 layout (location = 0) out vec3 scene_color;
+layout (location = 1) out vec4 colortex3_clear;
 
-/* RENDERTARGETS: 0 */
+/* RENDERTARGETS: 0,3 */
 
 in vec2 uv;
 
@@ -176,6 +177,7 @@ uniform sampler2D colortex1; // gbuffer 0
 uniform sampler2D colortex2; // gbuffer 1
 uniform sampler2D colortex3; // animated overlays/vanilla sky
 uniform sampler2D colortex4; // sky map
+uniform sampler2D colortex5; // previous frame color
 uniform sampler2D colortex6; // ambient occlusion
 uniform sampler2D colortex11; // clouds history
 uniform sampler2D colortex12; // clouds apparent distance
@@ -211,6 +213,8 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
+uniform mat4 gbufferPreviousModelView;
+uniform mat4 gbufferPreviousProjection;
 
 uniform mat4 shadowModelView;
 uniform mat4 shadowModelViewInverse;
@@ -218,6 +222,7 @@ uniform mat4 shadowProjection;
 uniform mat4 shadowProjectionInverse;
 
 uniform vec3 cameraPosition;
+uniform vec3 previousCameraPosition;
 
 uniform float eyeAltitude;
 uniform float near;
@@ -245,8 +250,6 @@ uniform vec2 view_res;
 uniform vec2 view_pixel_size;
 uniform vec2 taa_offset;
 
-uniform float world_age;
-
 uniform float biome_cave;
 uniform float biome_may_rain;
 uniform float biome_may_snow;
@@ -255,6 +258,9 @@ uniform float time_sunrise;
 uniform float time_noon;
 uniform float time_sunset;
 uniform float time_midnight;
+
+uniform float world_age;
+uniform float eye_skylight;
 
 /*
 const bool colortex11MipmapEnabled = true;
@@ -265,6 +271,7 @@ const bool colortex11MipmapEnabled = true;
 // ------------
 
 #define ATMOSPHERE_SCATTERING_LUT depthtex0
+#define TEMPORAL_REPROJECTION
 
 #include "/include/fog/simple_fog.glsl"
 #include "/include/lighting/diffuse_lighting.glsl"
@@ -273,6 +280,7 @@ const bool colortex11MipmapEnabled = true;
 #include "/include/misc/distant_horizons.glsl"
 #include "/include/misc/edge_highlight.glsl"
 #include "/include/misc/material.glsl"
+#include "/include/misc/purkinje_shift.glsl"
 #include "/include/misc/rain_puddles.glsl"
 #include "/include/sky/sky.glsl"
 #include "/include/utility/bicubic.glsl"
@@ -303,6 +311,8 @@ vec4 read_clouds_and_aurora(out float apparent_distance) {
 }
 
 void main() {
+	colortex3_clear = vec4(0.0);
+
 	ivec2 texel = ivec2(gl_FragCoord.xy);
 
 	// Sample textures
@@ -355,7 +365,7 @@ void main() {
 	);
 
 #ifdef BLOCKY_CLOUDS_LAYER_2
-	float visibility = pow4(clouds.a);
+	float visibility = pow4(blocky_clouds.a);
 	vec4 blocky_clouds_l2 = raymarch_blocky_clouds(
 		world_start_pos,
 		world_end_pos,
@@ -379,7 +389,8 @@ void main() {
 #else
 		scene_color = draw_sky(world_dir);
 #endif
-// Apply clouds and aurora
+
+		// Apply clouds and aurora
 		scene_color = scene_color * clouds_and_aurora.w + clouds_and_aurora.xyz;
 
 		// Apply blocky clouds
@@ -390,6 +401,9 @@ void main() {
 		// Apply common fog
 		vec4 fog = common_fog(far, true);
 		scene_color = mix(fog.rgb, scene_color.rgb, fog.a);
+
+		// Apply purkinje shift
+		scene_color = purkinje_shift(scene_color, vec2(0.0, 1.0));
 	} else { // Terrain
 		// Sample ambient occlusion a while before using it (latency hiding)
 
@@ -450,15 +464,17 @@ void main() {
 		// Rain puddles
 
 #if defined WORLD_OVERWORLD && defined RAIN_PUDDLES
-		if (wetness > eps && biome_may_rain > eps && wetness < 1.0 - eps) {
-			const float puddle_f0        = 0.02;
-			const float puddle_roughness = 0.002;
-
-			float puddle = get_puddle_noise(world_pos, flat_normal, light_levels) * float(!material.is_metal);
-
-			material.f0 = mix(material.f0, vec3(puddle_f0), puddle);
-			material.roughness = mix(material.roughness, puddle_roughness, dampen(puddle));
-			normal = normalize_safe(mix(normal, flat_normal, puddle));
+		if (wetness > eps && biome_may_rain > eps) {
+			bool puddle = get_rain_puddles(
+				world_pos,
+				flat_normal,
+				light_levels,
+				material.porosity,
+				normal,
+				material.f0,
+				material.roughness,
+				material.ssr_multiplier
+			);
 		}
 #endif
 
@@ -544,9 +560,29 @@ void main() {
 		// Specular highlight
 
 #if defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE
-	scene_color += get_specular_highlight(material, NoL, NoV, NoH, LoV, LoH) * light_color * shadows * cloud_shadows * ao;
+		scene_color += get_specular_highlight(material, NoL, NoV, NoH, LoV, LoH) * light_color * shadows * cloud_shadows * ao;
 #endif
 
+		// Specular reflections
+
+#if defined ENVIRONMENT_REFLECTIONS || defined SKY_REFLECTIONS
+		if (material.ssr_multiplier > eps) {
+			mat3 tbn = get_tbn_matrix(normal);
+
+			scene_color += get_specular_reflections(
+				material,
+				tbn,
+				vec3(uv, depth),
+				view_pos,
+				normal,
+				flat_normal,
+				world_dir,
+				world_dir * tbn,
+				light_levels.y,
+				false
+			);
+		}
+#endif
 		// Edge highlight
 
 #ifdef EDGE_HIGHLIGHT
@@ -585,6 +621,9 @@ void main() {
 #else
 		scene_color = scene_color * blocky_clouds.w + blocky_clouds.xyz;
 #endif
+
+		// Apply purkinje shift
+		scene_color = purkinje_shift(scene_color, light_levels);
 	}
 }
 
