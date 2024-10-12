@@ -98,7 +98,7 @@ vec3 get_specular_highlight(
 	vec3 albedo_tint = mix(vec3(1.0), material.albedo, float(material.is_hardcoded_metal));
 
 	float NoH_squared = get_NoH_squared(NoL, NoV, LoV, light_radius);
-	float alpha = material.roughness * material.roughness;
+	float alpha = material.roughness;
 
 	float d = distribution_ggx(NoH_squared, alpha);
 	float v = v2_smith_ggx(max(NoL, 1e-2), max(NoV, 1e-2), alpha);

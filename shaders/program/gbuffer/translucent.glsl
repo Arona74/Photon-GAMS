@@ -100,8 +100,9 @@ void main() {
 	material_mask = get_material_mask();
 	tbn           = get_tbn_matrix();
 
-	light_color   = texelFetch(colortex4, ivec2(191, 0), 0).rgb;
-	ambient_color = texelFetch(colortex4, ivec2(191, 1), 0).rgb;
+	int lighting_color_x = SKY_MAP_LIGHT_X;
+	light_color   = texelFetch(colortex4, ivec2(lighting_color_x, 0), 0).rgb;
+	ambient_color = texelFetch(colortex4, ivec2(lighting_color_x, 1), 0).rgb;
 
 	bool is_top_vertex = uv.y < mc_midTexCoord.y;
 
@@ -121,7 +122,7 @@ void main() {
 	}
 #endif
 
-	position_scene = transform(gl_ModelViewMatrix, gl_Vertex.xyz);                                 // To view space
+	position_scene = transform(gl_ModelViewMatrix, vert.xyz);                                 // To view space
 	position_scene = view_to_scene_space(position_scene);                                          // To scene space
 	position_scene = position_scene + cameraPosition;                                              // To world space
 	position_scene = animate_vertex(position_scene, is_top_vertex, light_levels.y, material_mask); // Apply vertex animations
