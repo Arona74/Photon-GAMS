@@ -181,7 +181,7 @@ vec3 btsn_tonemap_hue_preserving(vec3 c) {
     // apply tone curve
 
     // Approach 1: scale chroma based on derivative of chrome curve
-#if BOTTOSSON_APPR == BOTTOSSON_APPR_CHROMA_SAT || BOTTOSSON_APPROACH == BOTTOSSON_APPR_CHROMA_LUM
+#if BOTTOSSON_APPR == BOTTOSSON_APPR_CHROMA_SAT || BOTTOSSON_APPR == BOTTOSSON_APPR_CHROMA_LUM
     {
 #if BOTTOSSON_APPR == BOTTOSSON_APPR_CHROMA_SAT
         float I = (MP.x+(1.0-offset)*MP.y);

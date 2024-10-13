@@ -38,7 +38,7 @@ float get_water_displacement(vec3 world_pos, float skylight) {
 	const vec2  wave_dir       = vec2(cos(wave_angle), sin(wave_angle));
 
 	float wave = gerstner_wave(world_pos.xy * wave_frequency, wave_dir, frameTimeCounter * wave_speed, 0.0, wavelength);
-	      wave = (wave * 0.05 - 0.025) * (skylight * 0.9 + 0.1);
+		  wave = (wave * 0.05 - 0.025) * (skylight * 0.9 + 0.1);
 
 	return wave;
 }
@@ -52,7 +52,7 @@ vec3 get_wind_displacement(vec3 world_pos, float wind_speed, float wind_strength
 	float t = wind_speed * frameTimeCounter;
 
 	float gust_amount  = texture(noisetex, 0.05 * (world_pos.xz + wind_dir * t)).y;
-	      gust_amount *= gust_amount;
+		  gust_amount *= gust_amount;
 
 	vec3 gust = vec3(wind_dir * gust_amount, 0.1 * gust_amount).xzy;
 
@@ -104,16 +104,17 @@ vec3 animate_vertex(vec3 world_pos, bool is_top_vertex, float skylight, uint mat
 	}
 }
 
-#ifdef WORLD_END
+//Optifine #if fix, added boolean settings, removed 0.0 as SIZE sliders values to avoid comparing float
+#if defined (WORLD_END) && defined (END_CURVATURE)
 	#define CURVATURE_SIZE END_CURVATURE_SIZE
-#elif defined(WORLD_NETHER)
+#elif defined(WORLD_NETHER) && defined (NETHER_CURVATURE)
 	#define CURVATURE_SIZE NETHER_CURVATURE_SIZE
-#else
+#elif defined(WORLD_OVERWORLD) && defined (OVERWORLD_CURVATURE)
 	#define CURVATURE_SIZE OVERWORLD_CURVATURE_SIZE
 #endif
 
 vec3 world_curvature(vec3 scene_pos) {
-#if CURVATURE_SIZE != 0.0 && defined(WORLD_CURVATURE)
+	#if defined (WORLD_CURVATURE) && defined (CURVATURE_SIZE)
 	//scene_pos += cameraPosition;
 	#if CURVATURE_MODE == CURVATURE_MODE_SQUARED_DISTANCE
 

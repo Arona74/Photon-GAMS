@@ -363,117 +363,107 @@ Material get_water_material(
 	float layer_dist
 ) {
 	Material material = water_material;
-	
-	vec3 biome_water_color;
-	vec3 absorption_coeff;
 
 	// Water texture
 
-#if   WATER_TEXTURE == WATER_TEXTURE_OFF
-	vec4 base_color = vec4(0.0);
-#elif WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT || WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
-	vec4 base_color = texture(gtexture, uv, lod_bias);
-	float texture_highlight = (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) + 0.03 * base_color.r) * WATER_TEXTURE_HIGHLIGHT_INTENSITY;
-	#ifdef WORLD_OVERWORLD || WORLD_END
-		#if WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT
-			texture_highlight -= (texture_highlight) * smoothstep(0, 0.8, (0.90 - cube(light_levels.y)));
-			texture_highlight += (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) + 0.02 * base_color.r - 0.01 * base_color.r * smoothstep(0, 0.8, (0.90 - cube(light_levels.y)))) * smoothstep(0, 0.8, (0.95 - cube(light_levels.y))) * WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY;
-		#elif WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
-			texture_highlight *= smoothstep(0, 0.8, (0.95 - cube(light_levels.y))) * WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY * (1/WATER_TEXTURE_HIGHLIGHT_INTENSITY);
+	#if   WATER_TEXTURE == WATER_TEXTURE_OFF
+		vec4 base_color = vec4(0.0);
+	#elif WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT || WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
+		vec4 base_color = texture(gtexture, uv, lod_bias);
+		float texture_highlight = (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) + 0.03 * base_color.r) * WATER_TEXTURE_HIGHLIGHT_INTENSITY;
+		#if defined WORLD_OVERWORLD || defined WORLD_END
+			#if WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT
+				// Optifine ambiguous fix with float() type forced for smoothstep() arguments
+				texture_highlight -= (texture_highlight) * smoothstep(float(0), float(0.8), float(0.90 - cube(light_levels.y)));
+				// Optifine ambiguous fix with float() type forced for smoothstep() arguments
+				texture_highlight += (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) + 0.02 * base_color.r - 0.01 * base_color.r * smoothstep(float(0), float(0.8), float(0.90 - cube(light_levels.y)))) * smoothstep(float(0), (0.8), float(0.95 - cube(light_levels.y))) * WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY;
+			#elif WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
+				// Optifine ambiguous fix with float() type forced for smoothstep() arguments
+				texture_highlight *= smoothstep(float(0), float(0.8), float(0.95 - cube(light_levels.y))) * WATER_TEXTURE_HIGHLIGHT_UNDERGROUND_INTENSITY * (1 / WATER_TEXTURE_HIGHLIGHT_INTENSITY);
+			#endif
 		#endif
+
+		#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR
+			material.albedo  = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * (texture_highlight - 0.03 * base_color.r) * pow(normalize(srgb_eotf_inv(tint.rgb) * rec709_to_working_color), vec3 (sqr((WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY)) * sqr((1.3 + (1-pow(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY, 3.0)))))));
+			material.albedo += tint.rgb * clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight) * 2;
+		#else
+			material.albedo = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight);
+		#endif
+		material.roughness += 0.3 * texture_highlight;
+	#elif WATER_TEXTURE == WATER_TEXTURE_VANILLA
+		vec4 base_color = texture(gtexture, uv, lod_bias) * tint;
+		material.albedo = srgb_eotf_inv(base_color.rgb * base_color.a) * rec709_to_working_color;
 	#endif
 
-	#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR
-		material.albedo  = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * (texture_highlight - 0.03 * base_color.r) * pow(normalize(srgb_eotf_inv(tint.rgb) * rec709_to_working_color), vec3 (sqr((WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY)) * sqr((1.3 + (1-pow(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY, 3.0)))))));
-		material.albedo += tint.rgb * clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight) * 2;
-	#else
-		material.albedo     = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight);
-	#endif
-	material.roughness += 0.3 * texture_highlight;
-#elif WATER_TEXTURE == WATER_TEXTURE_VANILLA
-	vec4 base_color = texture(gtexture, uv, lod_bias) * tint;
-	material.albedo = srgb_eotf_inv(base_color.rgb * base_color.a) * rec709_to_working_color;
-#endif
-
-	#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR & WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
-		#if light_levels.y > 0.0
+	#if defined WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR && (WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND)
+		//Optifine #if fix using a variable to store light_levels.y value
+		float opti_light_levels = light_levels.y;
+		#if opti_light_levels > 0
 			texture_highlight = 0;
 		#endif
 	#endif
 
 	// Water absorption
-	#if BIOME_WATER_COLOR_INTENSITY == 0.5
-		biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * 0.5;
-	#elif BIOME_WATER_COLOR_INTENSITY == 1.0
-		biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color;
-	#elif BIOME_WATER_COLOR_INTENSITY == 1.5
-		biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * 1.5;
-	#elif BIOME_WATER_COLOR_INTENSITY == 2.0
-		biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * 2.0;
-	#elif BIOME_WATER_COLOR_INTENSITY == 2.5
-		biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * 2.5;
-	#elif BIOME_WATER_COLOR_INTENSITY == 3.0
-		biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * 3.0;
-	#endif
-	absorption_coeff = biome_water_coeff(biome_water_color);
 
-#if defined (PHYSICS_MOD_OCEAN) && defined (PHYSICS_OCEAN)
-	if(physics_iterationsNormal >= 1.0) {
-		// Initialize wave
-		wave = physics_wavePixel(physics_localPosition.xz, physics_localWaviness, physics_iterationsNormal, physics_gameTime);
-		vec3 foam_color = (1.0 - absorption_coeff);// (1.0 - vec3(WATER_ABSORPTION_R, WATER_ABSORPTION_G, WATER_ABSORPTION_B))
-		// foam_color = mix(foam_color, vec3(1.0), rainStrength);//mix(material.albedo, material.albedo + vec3(0.75), wave.foam);
-		// material.albedo = mix(material.albedo, foam_color, wave.foam);
-		material.albedo += mix(foam_color, vec3(1.0), max0(physics_foamOpacity - 1.0)) * wave.foam * physics_foamOpacity;
-		material.roughness += wave.foam;
-		// material.albedo += mix(foam_color, vec3(1.0), rainStrength) * wave.foam;
-		// material.albedo += vec3(sqrt(physics_localWaviness), sqr(physics_localWaviness), 0.0);
-		// material.albedo += vec3(cube(physics_localWaviness), 0.0, 0.0);
-	}
-#endif
+	vec3 biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color;
+	vec3 absorption_coeff = biome_water_coeff(biome_water_color);
+
+	#if defined (PHYSICS_MOD_OCEAN) && defined (PHYSICS_OCEAN)
+		if(physics_iterationsNormal >= 1.0) {
+			// Initialize wave
+			wave = physics_wavePixel(physics_localPosition.xz, physics_localWaviness, physics_iterationsNormal, physics_gameTime);
+			vec3 foam_color = (1.0 - absorption_coeff);// (1.0 - vec3(WATER_ABSORPTION_R, WATER_ABSORPTION_G, WATER_ABSORPTION_B))
+			// foam_color = mix(foam_color, vec3(1.0), rainStrength);//mix(material.albedo, material.albedo + vec3(0.75), wave.foam);
+			// material.albedo = mix(material.albedo, foam_color, wave.foam);
+			material.albedo += mix(foam_color, vec3(1.0), max0(physics_foamOpacity - 1.0)) * wave.foam * physics_foamOpacity;
+			material.roughness += wave.foam;
+			// material.albedo += mix(foam_color, vec3(1.0), rainStrength) * wave.foam;
+			// material.albedo += vec3(sqrt(physics_localWaviness), sqr(physics_localWaviness), 0.0);
+			// material.albedo += vec3(cube(physics_localWaviness), 0.0, 0.0);
+		}
+	#endif
 
 	// Water edge highlight
 
-#ifdef WATER_EDGE_HIGHLIGHT
-	float dist = layer_dist * max(abs(direction_world.y), eps);
+	#ifdef WATER_EDGE_HIGHLIGHT
+		float dist = layer_dist * max(abs(direction_world.y), eps);
 
-#if WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT || WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
-	float edge_highlight = cube(max0(1.0 - 2.0 * dist)) * (1.0 + 8.0 * texture_highlight);
-#else
-	float edge_highlight = cube(max0(1.0 - 2.0 * dist));
-#endif
-	edge_highlight *= WATER_EDGE_HIGHLIGHT_INTENSITY * max0(normal.y) * (1.0 - 0.5 * sqr(light_levels.y));
-	
-#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR
-	material.albedo += 0.1 * edge_highlight / mix(1.0, max(dot(ambient_color, luminance_weights_rec2020), 0.5), light_levels.y) * pow(normalize(srgb_eotf_inv(tint.rgb) * rec709_to_working_color), vec3(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY) * (1.3 + (1-pow(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY, 3.0))));
-	material.albedo += 0.1 * edge_highlight / mix(1.0, max(dot(ambient_color, luminance_weights_rec2020), 0.5), light_levels.y) * tint.rgb;
-#else
-	material.albedo += 0.1 * edge_highlight / mix(1.0, max(dot(ambient_color, luminance_weights_rec2020), 0.5), light_levels.y);
-#endif
-	material.albedo  = clamp01(material.albedo);
-#endif
+		#if WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT || WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
+			float edge_highlight = cube(max0(1.0 - 2.0 * dist)) * (1.0 + 8.0 * texture_highlight);
+		#else
+			float edge_highlight = cube(max0(1.0 - 2.0 * dist));
+		#endif
+			edge_highlight *= WATER_EDGE_HIGHLIGHT_INTENSITY * max0(normal.y) * (1.0 - 0.5 * sqr(light_levels.y));
+			
+		#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR
+			material.albedo += 0.1 * edge_highlight / mix(1.0, max(dot(ambient_color, luminance_weights_rec2020), 0.5), light_levels.y) * pow(normalize(srgb_eotf_inv(tint.rgb) * rec709_to_working_color), vec3(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY) * (1.3 + (1-pow(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY, 3.0))));
+			material.albedo += 0.1 * edge_highlight / mix(1.0, max(dot(ambient_color, luminance_weights_rec2020), 0.5), light_levels.y) * tint.rgb;
+		#else
+			material.albedo += 0.1 * edge_highlight / mix(1.0, max(dot(ambient_color, luminance_weights_rec2020), 0.5), light_levels.y);
+		#endif
+		
+		material.albedo  = clamp01(material.albedo);
+	#endif
 
 	return material;
 }
 
 vec3 get_water_wave_normal(vec3 direction_world) {
 	vec3 world_pos = position_scene + cameraPosition;
-
 	vec2 coord = -(world_pos * tbn).xy;
-
 	bool flowing_water = abs(tbn[2].y) < 0.99;
 	vec2 flow_dir = flowing_water ? normalize(tbn[2].xz) : vec2(0.0);
 
-#ifdef WATER_PARALLAX
-	vec3 direction_tangent = direction_world * tbn;
-	coord = get_water_parallax_coord(direction_tangent, coord, flow_dir, flowing_water);
-#endif
+	#ifdef WATER_PARALLAX
+		vec3 direction_tangent = direction_world * tbn;
+		coord = get_water_parallax_coord(direction_tangent, coord, flow_dir, flowing_water);
+	#endif
 
 	return get_water_normal(world_pos, tbn[2], coord, flow_dir, light_levels.y, flowing_water);
 }
 
 vec4 water_absorption_approx(vec4 color, float sss_depth, float layer_dist, float LoV, float NoV) {
-	vec3 biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color;
+	vec3 biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * BIOME_WATER_COLOR_INTENSITY;
 	vec3 absorption_coeff = biome_water_coeff(biome_water_color);
 	float dist = layer_dist * float(isEyeInWater != 1 || NoV >= 0.0);
 

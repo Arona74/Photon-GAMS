@@ -36,6 +36,7 @@ uniform int renderStage;
 
 #ifdef WORLD_CURVATURE
 uniform float rainStrength;
+uniform vec3 cameraPosition; // Optifine missing declaration fix, not needed for IRIS
 #include "/include/vertex/displacement.glsl"
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelView;
