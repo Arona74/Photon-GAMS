@@ -2,4 +2,4 @@
 #define WORLD_NETHER
 #define PROGRAM_GBUFFERS_SKYTEXTURED
 #define fsh
-#include "/program/gbuffer/skytextured.glsl"
+#include "/program/gbuffers_skytextured.fsh"

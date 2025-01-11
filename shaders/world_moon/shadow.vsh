@@ -3,4 +3,4 @@
 #define WORLD_MOON
 #define PROGRAM_SHADOW
 #define vsh
-#include "/program/shadow.glsl"
+#include "/program/shadow.vsh"

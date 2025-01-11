@@ -2,4 +2,4 @@
 #define WORLD_MOON
 #define PROGRAM_FINAL
 #define fsh
-#include "/program/post/final.glsl"
+#include "/program/final.fsh"

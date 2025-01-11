@@ -2,4 +2,4 @@
 #define WORLD_MOON
 #define PROGRAM_GBUFFERS_SPIDEREYES
 #define fsh
-#include "/program/gbuffer/translucent.glsl"
+#include "/program/gbuffers_all_translucent.fsh"
