@@ -116,35 +116,35 @@ CloudsResult draw_clouds(
 		switch (cloud_type) {
 #ifdef CLOUDS_CUMULUS_CONGESTUS
 		case 0:
-			if(clouds_cumulus_congestus_amount >= 1e-3) {
+			if(daily_weather_variation.clouds_cumulus_congestus_amount >= 1e-3) {
 				result = blend_layers(result, draw_cumulus_congestus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
 			}
 			break;
 #endif
 #ifdef CLOUDS_CUMULUS
 		case 1:
-			if(max(clouds_cumulus_coverage.x, clouds_cumulus_coverage.y) >= 1e-3) {
+			if(max(daily_weather_variation.clouds_cumulus_coverage.x, daily_weather_variation.clouds_cumulus_coverage.y) >= 1e-3) {
 				result = blend_layers(result, draw_cumulus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
 			}
 			break;
 #endif
 #ifdef CLOUDS_CUMULONIMBUS
 		case 2:
-			if(clouds_cumulonimbus_amount >= 1e-3) {
+			if(daily_weather_variation.clouds_cumulonimbus_amount >= 1e-3) {
 				result = blend_layers(result, draw_cumulonimbus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
 			}
 			break;
 #endif
 #ifdef CLOUDS_ALTOCUMULUS
 		case 3:
-			if(max(clouds_altocumulus_coverage.x, clouds_altocumulus_coverage.y) >= 1e-3) {
+			if(max(daily_weather_variation.clouds_altocumulus_coverage.x, daily_weather_variation.clouds_altocumulus_coverage.y) >= 1e-3) {
 				result = blend_layers(result, draw_altocumulus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
 			}
 			break;
 #endif
 #ifdef CLOUDS_CIRRUS
 		case 4:
-			if(max(clouds_cirrus_coverage.x, clouds_cirrus_coverage.y) >= 1e-3) {
+			if(max(daily_weather_variation.clouds_cirrus_coverage.x, daily_weather_variation.clouds_cirrus_coverage.y) >= 1e-3) {
 				result = blend_layers(result, draw_cirrus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
 			}
 			break;

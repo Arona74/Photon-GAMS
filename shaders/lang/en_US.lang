@@ -72,6 +72,7 @@ screen.clouds_cumulus_congestus        = Cumulus Congestus Clouds Settings
 screen.clouds_cumulonimbus             = Cumulonimbus Clouds Settings
 screen.clouds_cirrus                   = Cirrus/Cirrocumulus Clouds Settings
 screen.clouds_minecrafty               = Blocky Clouds Settings
+screen.clouds_noctilucent              = Noctilucent Clouds Settings
 screen.nebula                          = Nebula
 screen.nebula_color                    = Nebula Color
 screen.nebula_color.comment            = Adjust the colors of different nebula components:      Cloud 1-4 Color: Sets the color for each cloud layer        Space Color: Determines the background color of space      These settings affect the overall appearance and mood of the nebula
@@ -554,7 +555,10 @@ option.CLOUDS_CIRROCUMULUS_SIZE            = Cirrocumulus Size
 option.CLOUDS_CIRROCUMULUS_DETAIL_STRENGTH = Cirrocumulus Detail Strength
 option.CLOUDS_CIRROCUMULUS_CURL_STRENGTH   = Cirrocumulus Curl Strength
 
-option.CLOUDS_ROUGHNESS                    = Clouds Roughness
+option.CLOUDS_NOCTILUCENT_INTENSITY    = Intensity
+option.CLOUDS_NOCTILUCENT_RARITY       = Rarity
+
+option.CLOUDS_ROUGHNESS                = Clouds Roughness
 
 option.AURORA_TYPE                     = Aurora Style
 option.AURORA_COLOR                    = Aurora Color

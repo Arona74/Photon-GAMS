@@ -41,7 +41,7 @@ float clouds_cumulonimbus_altitude_shaping(float noise, float altitude_fraction,
 	float height = altitude_fraction <= boundary ? linear_step(0.0, boundary, altitude_fraction) : linear_step(boundary, 1.0, altitude_fraction);
 	//float shape = CloudShape(1.0, height, altitude_fraction <= boundary ? vec2(0.45, 1.00) : vec2(0.00, 0.50));
 
-	float density = 1.2 * linear_step(0.53, 1.0, noise) * linear_step(0.5, 0.75, clouds_cumulonimbus_amount);
+	float density = 1.2 * linear_step(0.53, 1.0, noise) * linear_step(0.5, 0.75, daily_weather_variation.clouds_cumulonimbus_amount);
 
 	//density -= 1.0 - CloudShape(1.0, height, shapeParams) /* * 0.5 */;
 
@@ -91,7 +91,7 @@ float clouds_cumulonimbus_density(vec3 pos) {
 	// 2D noise for base shape and coverage
 	vec4 noise = texture(noisetex, (0.000004 / CLOUDS_CUMULONIMBUS_SIZE) * pos.xz);
 
-	float density  = clouds_cumulonimbus_altitude_shaping((max1(clouds_cumulonimbus_amount + max0(sqrt(min(dist2, 2.0) / 1.8) - 0.65)) * noise.y - 0.1737 * noise.w), altitude_fraction, vec2(clouds_cumulonimbus_blend_distance, distance_fraction)/*vec2(length(pos.xz), clouds_cumulonimbus_end_distance * 0.25)*/); //.4 * noise.y + .07 * noise.z + .3 * noise.x + .23 * noise.w
+	float density  = clouds_cumulonimbus_altitude_shaping((max1(daily_weather_variation.clouds_cumulonimbus_amount + max0(sqrt(min(dist2, 2.0) / 1.8) - 0.65)) * noise.y - 0.1737 * noise.w), altitude_fraction, vec2(clouds_cumulonimbus_blend_distance, distance_fraction)/*vec2(length(pos.xz), clouds_cumulonimbus_end_distance * 0.25)*/); //.4 * noise.y + .07 * noise.z + .3 * noise.x + .23 * noise.w
 	density *= 4.0 * distance_fraction_start * (1.0 - distance_fraction);
 
 	if (density < eps) return 0.0;
