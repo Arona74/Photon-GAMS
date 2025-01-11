@@ -332,6 +332,7 @@ option.MOON_TYPE                       = Moon Type
 option.SUN_ANGULAR_RADIUS              = Sun Angular Radius
 option.MOON_ANGULAR_RADIUS             = Moon Angular Radius
 option.SUN_LUMINANCE                   = Sun Disk Luminance
+option.MOON_LUMINANCE                  = Moon Disk Luminance
 option.SKY_GROUND                      = Sky Ground
 option.SKY_GROUND.comment              = Visible planet surface below the horizon
 option.ATMOSPHERE_SATURATION_BOOST     = Atmosphere Saturation Boost

@@ -44,8 +44,6 @@ vec3 stable_star_field(vec2 coord, float star_threshold) {
 	     + unstable_star_field(i + vec2(1.0, 1.0), star_threshold) * f.x * f.y;
 }
 
-uniform sampler2D colortex14;
-
 vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
 
 	// Adjust star threshold so that brightest stars appear first
@@ -62,7 +60,24 @@ vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
 	return stable_star_field(coord, star_threshold);
 }
 
+//----------------------------------------------------------------------------//
+#if   defined WORLD_OVERWORLD
+
+#include "/include/lighting/colors/light_color.glsl"
+#include "/include/lighting/colors/weather_color.glsl"
+#include "/include/lighting/bsdf.glsl"
+#include "/include/sky/projection.glsl"
+#include "/include/utility/geometry.glsl"
+#include "/include/sky/shooting_stars.glsl"
+#include "/include/sky/nebula.glsl"
+//#include "/include/sky/moon.glsl"
+
 const float sun_luminance  = SUN_LUMINANCE * SUN_I; // luminance of sun disk
+const float moon_luminance = MOON_LUMINANCE * MOON_I; // luminance of moon disk
+
+/*vec3 draw_moon(vec3 ray_dir) {
+	float nu = dot(ray_dir, moon_dir);
+}*/
 
 vec3 draw_sun(vec3 ray_dir, vec3 sun_color) {
 	float nu = dot(ray_dir, sun_dir);
@@ -75,8 +90,9 @@ vec3 draw_sun(vec3 ray_dir, vec3 sun_color) {
 	return sun_luminance * sun_color * step(0.0, center_to_edge) * limb_darkening;
 }
 
-vec3 draw_sun(vec3 ray_dir) { return draw_sun(ray_dir, vec3(1.0)); }
+//vec3 draw_sun(vec3 ray_dir) { return draw_sun(ray_dir, vec3(1.0)); }
 
+#ifdef GALAXY
 vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	const vec3 galaxy_tint = vec3(GALAXY_TINT_R, GALAXY_TINT_G, GALAXY_TINT_B) * GALAXY_INTENSITY;
 
@@ -86,7 +102,7 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	float lat = fast_acos(-ray_dir.y);
 
 	vec3 galaxy = texture(
-		colortex14,
+		galaxy_sampler,
 		vec2(lon * rcp(tau) + 0.5, lat * rcp(pi))
 	).rgb;
 
@@ -105,24 +121,7 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	return max0(galaxy);
 }
 
-//----------------------------------------------------------------------------//
-#if   defined WORLD_OVERWORLD
-
-#include "/include/lighting/colors/light_color.glsl"
-#include "/include/lighting/colors/weather_color.glsl"
-#include "/include/lighting/bsdf.glsl"
-#include "/include/sky/projection.glsl"
-#include "/include/utility/geometry.glsl"
-#include "/include/sky/shooting_stars.glsl"
-#include "/include/sky/nebula.glsl"
-//#include "/include/sky/moon.glsl"
-
-const float moon_luminance = 4.0; // luminance of moon disk
-
-/*vec3 draw_moon(vec3 ray_dir) {
-	float nu = dot(ray_dir, moon_dir);
-}*/
-
+#endif
 vec4 get_clouds_and_aurora(vec3 ray_dir, vec3 clear_sky) {
 #if   defined PROGRAM_DEFERRED0
 	ivec2 texel   = ivec2(gl_FragCoord.xy);
@@ -163,6 +162,7 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 #endif
 
 	// Galaxy
+	
 #ifdef GALAXY
 	float galaxy_luminance;
 	sky += draw_galaxy(celestial_dir, galaxy_luminance);

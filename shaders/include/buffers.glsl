@@ -1,13 +1,14 @@
 /*
 (included by final.fsh)
+
 const int colortex0Format  = R11F_G11F_B10F; // full res    | scene color (d3 -> temporal), bloom tiles (c5 -> c14), final color (c14 -> final)
 const int colortex1Format  = RGBA16;         // full res    | gbuffer data 0 (solid -> c1)
 const int colortex2Format  = RGBA16;         // full res    | gbuffer data 1 (solid -> c1)
 const int colortex3Format  = RGBA8;          // full res    | animated overlays/vanilla sky (solid -> d3), refraction data (translucent -> c1), bloomy fog amount (c1 -> c14)
 const int colortex4Format  = R11F_G11F_B10F; // 192x108     | sky map (d0 -> c1)
 const int colortex5Format  = RGBA16F;        // full res    | scene history (always)
-const int colortex6Format  = RGB16F;         // quarter res | ambient occlusion history (always), fog scattering (c0 -> c1 +flip) 
-const int colortex7Format  = RGB8;           // quarter res | fog transmittance
+const int colortex6Format  = RGB16F;         // quarter res | ambient occlusion history (always), fog transmittance (c0 -> c1 +flip) 
+const int colortex7Format  = RGB16F;           // quarter res | fog scattering
 const int colortex8Format  = R16;            // 256x256     | cloud shadow map
 const int colortex9Format  = RGBA16F;        // clouds res  | low-res clouds  
 const int colortex10Format = R16F;           // clouds res  | low-res clouds apparent distance
