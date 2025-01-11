@@ -405,11 +405,10 @@ Material get_water_material(
 
 	// Water absorption
 
-	vec3 biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color;
-	vec3 absorption_coeff = biome_water_coeff(biome_water_color);
-
 	#if defined (PHYSICS_MOD_OCEAN) && defined (PHYSICS_OCEAN)
 		if(physics_iterationsNormal >= 1.0) {
+			vec3 biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color * BIOME_WATER_COLOR_INTENSITY;
+			vec3 absorption_coeff = biome_water_coeff(biome_water_color);
 			// Initialize wave
 			wave = physics_wavePixel(physics_localPosition.xz, physics_localWaviness, physics_iterationsNormal, physics_gameTime);
 			vec3 foam_color = (1.0 - absorption_coeff);// (1.0 - vec3(WATER_ABSORPTION_R, WATER_ABSORPTION_G, WATER_ABSORPTION_B))
