@@ -99,7 +99,7 @@ vec3 get_diffuse_lighting(
 	if (max_of(material.albedo) < eps) return vec3(0.0);
 #endif
 
-	vec3  lighting = vec3(0.0);
+	vec3 lighting = vec3(0.0);
 	float directional_lighting = (0.9 + 0.1 * normal.x) * (0.8 + 0.2 * abs(flat_normal.y)); // Random directional shading to make faces easier to distinguish
 
 #if defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE
@@ -107,7 +107,7 @@ vec3 get_diffuse_lighting(
 	// Sunlight/moonlight
 
 #ifdef SHADOW
-	vec3 diffuse = vec3(lift(max0(NoL), 0.33 * rcp(SHADING_STRENGTH)) * (1.0 - 0.5 * material.sss_amount)) * SHADING_STRENGTH;
+	vec3 diffuse = vec3(lift(max0(NoL), 0.25 * rcp(SHADING_STRENGTH)) * (1.0 - 0.5 * material.sss_amount)) * SHADING_STRENGTH;
 	vec3 bounced = 0.033 * (1.0 - shadows) * (1.0 - 0.1 * max0(normal.y)) * pow1d5(ao + eps) * pow4(light_levels.y) * BOUNCED_LIGHT_I;
 	#ifdef WORLD_SPACE
 	bounced *= clamp01(smoothstep(0.0, 0.1, light_dir.y));
@@ -146,8 +146,8 @@ vec3 get_diffuse_lighting(
 
 	#ifdef CLOUD_SHADOWS
 	lighting *= cloud_shadows;
-
-#endif
+	#endif
+	
 #endif
 
 	// Skylight
