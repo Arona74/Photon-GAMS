@@ -143,11 +143,6 @@ uniform float time_midnight;
 #include "/include/misc/oceans.glsl"
 #endif
 
-/*
-const bool colortex5MipmapEnabled = true;
-const bool colortex11MipmapEnabled = true;
-*/
-
 // https://iquilezles.org/www/articles/texture/texture.htm
 vec4 smooth_filter(sampler2D sampler, vec2 coord) {
 	vec2 res = vec2(textureSize(sampler, 0));
