@@ -209,7 +209,6 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 #endif
 
 	// Sky gradient
-
 	sky *= atmosphere_transmittance(ray_dir.y, planet_radius) * (1.0 - rainStrength);
 	sky += atmosphere;
 
@@ -218,7 +217,6 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 	sky = mix(sky, rain_sky, rainStrength * mix(1.0, 0.9, time_sunrise + time_sunset));
 
 	// Clouds
-
 	vec4 clouds = get_clouds_and_aurora(ray_dir, sky);
 	sky *= clouds.a;   // transmittance
 	sky += clouds.rgb; // scattering
@@ -227,6 +225,7 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 	#if defined SHOOTING_STARS && !defined PROGRAM_DEFERRED0
 	sky = DrawShootingStars(sky, ray_dir);
 	#endif
+	
 	// Nebula
 	sky = draw_nebula(ray_dir, sky);
 
@@ -240,7 +239,7 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 }
 
 vec3 draw_sky(vec3 ray_dir) {
-	vec3 atmosphere = atmosphere_scattering(ray_dir, sun_color, sun_dir, moon_color, moon_dir);
+	vec3 atmosphere = atmosphere_scattering(ray_dir, sun_color, sun_dir, moon_color, moon_dir, true);
 	return draw_sky(ray_dir, atmosphere);
 }
 
