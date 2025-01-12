@@ -5,7 +5,6 @@
 #include "/include/utility/dithering.glsl"
 #include "/include/utility/fast_math.glsl"
 #include "/include/utility/random.glsl"
-#include "/include/sky/atmosphere.glsl"
 
 // Stars based on https://www.shadertoy.com/view/Md2SR3
 
@@ -45,9 +44,8 @@ vec3 stable_star_field(vec2 coord, float star_threshold) {
 }
 
 vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
-
 	// Adjust star threshold so that brightest stars appear first
-#ifdef WORLD_OVERWORLD
+#if defined WORLD_OVERWORLD
 	float star_threshold = 1.0 - 0.008 * STARS_COVERAGE * smoothstep(-0.2, 0.05, -sun_dir.y) - 0.5 * cube(galaxy_luminance);
 #else
 	float star_threshold = 1.0 - 0.008 * STARS_COVERAGE;
@@ -66,20 +64,16 @@ vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
 #include "/include/lighting/colors/light_color.glsl"
 #include "/include/lighting/colors/weather_color.glsl"
 #include "/include/lighting/bsdf.glsl"
+#include "/include/sky/atmosphere.glsl"
 #include "/include/sky/projection.glsl"
 #include "/include/utility/geometry.glsl"
 #include "/include/sky/shooting_stars.glsl"
 #include "/include/sky/nebula.glsl"
-//#include "/include/sky/moon.glsl"
 
 const float sun_luminance  = SUN_LUMINANCE * SUN_I; // luminance of sun disk
 const float moon_luminance = MOON_LUMINANCE * MOON_I; // luminance of moon disk
 
-/*vec3 draw_moon(vec3 ray_dir) {
-	float nu = dot(ray_dir, moon_dir);
-}*/
-
-vec3 draw_sun(vec3 ray_dir, vec3 sun_color) {
+vec3 draw_sun(vec3 ray_dir) {
 	float nu = dot(ray_dir, sun_dir);
 
 	// Limb darkening model from http://www.physics.hmc.edu/faculty/esin/a101/limbdarkening.pdf
@@ -89,8 +83,6 @@ vec3 draw_sun(vec3 ray_dir, vec3 sun_color) {
 
 	return sun_luminance * sun_color * step(0.0, center_to_edge) * limb_darkening;
 }
-
-//vec3 draw_sun(vec3 ray_dir) { return draw_sun(ray_dir, vec3(1.0)); }
 
 #ifdef GALAXY
 vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
@@ -162,7 +154,6 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 #endif
 
 	// Galaxy
-	
 #ifdef GALAXY
 	float galaxy_luminance;
 	sky += draw_galaxy(celestial_dir, galaxy_luminance);
@@ -170,41 +161,20 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 	const float galaxy_luminance = 0.0;
 #endif
 
-
 	// Sun, moon and stars
 
 #if defined PROGRAM_DEFERRED4
-	vec4 vanilla_sky = texelFetch(colortex3, ivec2(gl_FragCoord.xy), 0);
-	vec3 vanilla_sky_color = from_srgb(vanilla_sky.rgb);
-	uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);
+	// Output of skytextured
+	sky += texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0).rgb;
 
 #ifdef STARS
+	// Stars
 	sky += draw_stars(celestial_dir, galaxy_luminance);
 #endif
 
-#ifdef VANILLA_SUN
-	if (vanilla_sky_id == 2) {
-		const vec3 brightness_scale = sunlight_color * sun_luminance;
-		sky += vanilla_sky_color * dot(vanilla_sky_color, luminance_weights_rec2020) * brightness_scale * sun_color;
-	}
-#else
-	sky += draw_sun(ray_dir, sun_color);
-#endif
-
-/*#if MOON_TYPE == MOON_FANCY
-	//sky += draw_sun(ray_dir); //TODO
-#else*/
-	if (vanilla_sky_id == 3 && max_of(vanilla_sky_color) > 0.1) {
-		const vec3 brightness_scale = sunlight_color * moon_luminance;
-		if(dot(vanilla_sky_color, vec3(1.0)) > 1e-3) sky *= 0.0; // Hide stars behind moon
-		sky += vanilla_sky_color * brightness_scale;
-	}
-//#endif
-
-#ifdef CUSTOM_SKY
-	if (vanilla_sky_id == 4) {
-		sky += vanilla_sky_color * CUSTOM_SKY_BRIGHTNESS;
-	}
+#ifndef VANILLA_SUN
+	// Sun
+	sky += draw_sun(ray_dir);
 #endif
 #endif
 
@@ -222,13 +192,12 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 	sky += clouds.rgb; // scattering
 
 	// Shooting stars
-	#if defined SHOOTING_STARS && !defined PROGRAM_DEFERRED0
+#if defined SHOOTING_STARS && !defined PROGRAM_DEFERRED0
 	sky = DrawShootingStars(sky, ray_dir);
-	#endif
+#endif
 	
 	// Nebula
 	sky = draw_nebula(ray_dir, sky);
-
 
 	// Fade lower part of sky into cave fog color when underground so that the sky isn't visible
 	// beyond the render distance
@@ -254,13 +223,12 @@ vec3 draw_sky(vec3 ray_dir) {
 #elif defined WORLD_END
 
 #include "/include/misc/end_lighting_fix.glsl"
-#include "/include/sky/shooting_stars.glsl"
-#include "/include/sky/nebula.glsl"
+#include "/include/sky/atmosphere.glsl"
 
 const float sun_solid_angle = cone_angle_to_solid_angle(sun_angular_radius);
 const vec3 end_sun_color = vec3(END_SOLAR_FLARE_COLOR_R, END_SOLAR_FLARE_COLOR_G, END_SOLAR_FLARE_COLOR_B);
 
-vec3 draw_end_sun(vec3 ray_dir) {
+vec3 draw_sun(vec3 ray_dir) {
 	float nu = dot(ray_dir, sun_dir);
 	float r = fast_acos(nu);
 
@@ -271,12 +239,16 @@ vec3 draw_end_sun(vec3 ray_dir) {
 	vec3 limb_darkening = pow(vec3(1.0 - sqr(1.0 - center_to_edge)), 0.5 * alpha);
 	vec3 sun_disk = vec3(r < sun_angular_radius);
 
-	#ifdef END_SOLAR_FLARE_ENABLED
     // Solar flare effect
+
+#ifdef END_SOLAR_FLARE_ENABLED
+
+	// Transform the coordinate space such that z is parallel to sun_dir
     vec3 tangent = sun_dir.y == 11.0 ? vec3(1.0, 0.0, 0.0) : normalize(cross(vec3(1.0, 0.0, 0.0), sun_dir));
     vec3 bitangent = normalize(cross(tangent, sun_dir));
     mat3 rot = mat3(tangent, bitangent, sun_dir);
 
+	// Vector from ray dir to sun dir
     vec2 q = ((ray_dir - sun_dir) * rot).xy;
 
     float theta = fract(linear_step(-pi, pi, atan(q.y, q.x)) + 0.015 * frameTimeCounter - 0.33 * r);
@@ -302,7 +274,7 @@ vec3 draw_sky(vec3 ray_dir) {
 #if defined PROGRAM_DEFERRED4
 	// Sun
 
-	sky += draw_end_sun(ray_dir);
+	sky += draw_sun(ray_dir);
 
 	// Stars
 
@@ -332,38 +304,17 @@ vec3 draw_sky(vec3 ray_dir) {
 	// Sun and stars
 
 #if defined PROGRAM_DEFERRED4
-	vec4 vanilla_sky = texelFetch(colortex3, ivec2(gl_FragCoord.xy), 0);
-	vec3 vanilla_sky_color = from_srgb(vanilla_sky.rgb);
-	uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);
+	// Output of skytextured
+	sky += texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0).rgb;
 
 #ifdef STARS
-		sky += draw_stars(ray_dir);
+	// Stars
+	sky += draw_stars(ray_dir);
 #endif
 
-#ifdef VANILLA_SUN
-	if (vanilla_sky_id == 2) {
-		const vec3 brightness_scale = sunlight_color * sun_luminance;
-		sky += vanilla_sky_color * sun_luminance;
-	}
-#else
-		sky += draw_sun(ray_dir);
-#endif
-
-/*#if MOON_TYPE == MOON_FANCY // TODO: Add Earth
-		//sky += draw_sun(ray_dir);
-#else
-	if (vanilla_sky_id == 3) {
-		const vec3 brightness_scale = sunlight_color * moon_luminance;
-		sky *= 0.0; // Hide stars behind moon
-		sky += vanilla_sky_color * brightness_scale;
-	}
-#endif*/
-
-#if defined CUSTOM_SKY || defined VANILLA_SUN
-	if (vanilla_sky_id == 4) {
-		sky = vanilla_sky_color * CUSTOM_SKY_BRIGHTNESS + sky * float(max_of(vanilla_sky_color) < 0.3);
-	}
-#endif
+#ifndef VANILLA_SUN
+	// Sun
+	sky += draw_sun(ray_dir);
 #endif
 
 	return sky;
