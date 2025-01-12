@@ -13,6 +13,7 @@
 
 
 out vec2 uv;
+out vec3 view_pos;
 
 flat out vec3 tint;
 
@@ -25,8 +26,9 @@ uniform vec2 taa_offset;
 void main() {
 	uv   = mat2(gl_TextureMatrix[0]) * gl_MultiTexCoord0.xy + gl_TextureMatrix[0][3].xy;
 	tint = gl_Color.rgb;
+	
+	view_pos = transform(gl_ModelViewMatrix, gl_Vertex.xyz);
 
-	vec3 view_pos = transform(gl_ModelViewMatrix, gl_Vertex.xyz);
 	vec4 clip_pos = project(gl_ProjectionMatrix, view_pos);
 
 #if   defined TAA && defined TAAU
