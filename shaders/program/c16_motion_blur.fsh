@@ -82,8 +82,3 @@ void main() {
 
 	scene_color = color_sum * rcp(weight_sum);
 }
-
-#endif
-//----------------------------------------------------------------------------//
-
-#ifndef MOTION_BLUR
