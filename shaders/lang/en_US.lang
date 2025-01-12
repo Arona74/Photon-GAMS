@@ -1268,6 +1268,7 @@ option.CUSTOM_SKY_BRIGHTNESS           = Custom Sky Brightness
 option.CUSTOM_SKY_BRIGHTNESS.comment   = Adjust custom sky brightness
 option.DAYLIGHT_CYCLE                  = Daylight Cycle Enabled
 option.DAYLIGHT_CYCLE.comment          = Disable when the gamerule doDaylightCycle is false to prevent cloud trailing when changing the time
+option.ENCHANTMENT_GLINT_BRIGHTNESS    = Enchantment Glint Brightness
 
 value.DEBUG_VIEW.DEBUG_VIEW_NONE       = OFF
 value.DEBUG_VIEW.DEBUG_VIEW_SAMPLER    = Sampler
