@@ -594,7 +594,7 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 						} else { // 35
 							#ifdef HARDCODED_EMISSION
 							// Strong golden light
-							material.emission  = 0.85 * albedo_sqrt * linear_step(0.4, 0.6, 0.2 * hsl.y + 0.55 * hsl.z);
+							material.emission  = 0.85 * albedo_sqrt * hsl.z * linear_step(0.4, 0.6, 0.2 * hsl.y + 0.55 * hsl.z);
 							light_levels.x *= 0.85;
 							#endif
 							#ifdef HARDCODED_SPECULAR
