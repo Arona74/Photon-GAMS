@@ -145,7 +145,7 @@ vec4 aurora(vec3 dir, float dither) {
 		float pattern = triNoise2d(coord * frequency, speed);
 		vec4 interColor = vec4(0.0, 0.0, 0.0, pattern);
 
-		interColor.rgb = pattern * mix(aurora_colors[0], aurora_colors[1], smoothstep(0.0, 1.0, amp_fraction)); //mix(aurora_colors[0], aurora_colors[1], smoothstep(0.0, 1.0, sqr(amp_fraction)));
+		interColor.rgb = pattern * mix(daily_weather_variation.aurora_colors[0], daily_weather_variation.aurora_colors[1], smoothstep(0.0, 1.0, amp_fraction)); //mix(aurora_colors[0], aurora_colors[1], smoothstep(0.0, 1.0, sqr(amp_fraction)));
 		//interColor.rgb = pattern * aurora_color(vec3(0), smoothstep(0.0, 1.0, amp_fraction));
 		//interColor.rgb = pattern * (sin(1.0 - vec3(2.15, -0.5, 1.2) + (amp_fraction * 49) * 0.043) * 0.5 + 0.5);
 		avgColor =  mix(avgColor, interColor, 0.5);
@@ -158,7 +158,7 @@ vec4 aurora(vec3 dir, float dither) {
 }
 
 vec3 draw_aurora(vec3 ray_dir, float dither) {
-	if (aurora_amount < 0.01) return vec3(0.0);
+	if (daily_weather_variation.aurora_amount < 0.01) return vec3(0.0);
 	//ray_dir *= dither;
 
 	vec3 color = vec3(0.0);
@@ -169,7 +169,7 @@ vec3 draw_aurora(vec3 ray_dir, float dither) {
 		color = color * (1.0 - aur.a) + aur.rgb;
 	}
 
-	return color * aurora_amount;
+	return color * daily_weather_variation.aurora_amount;
 
 }
 
