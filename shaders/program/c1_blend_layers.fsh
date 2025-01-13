@@ -272,7 +272,6 @@ void main() {
 				view_distance,
 				layer_dist
 			);
-#endif
 		}
 	}
 #endif
