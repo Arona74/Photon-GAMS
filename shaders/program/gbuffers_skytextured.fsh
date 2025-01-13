@@ -70,7 +70,7 @@ void main() {
 #endif
 	} else {
 	 	// Moon
-#ifdef VANILLA_MOON
+#if MOON_TYPE == MOON_VANILLA
 		// Cut out the moon itself (discard the halo around it) and flip moon texture along the
 		// diagonal
 		/*
