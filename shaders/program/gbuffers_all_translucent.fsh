@@ -203,7 +203,11 @@ Material get_water_material(
 		vec4 base_color = vec4(0.0);
 	#elif WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT || WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT_UNDERGROUND
 		vec4 base_color = texture(gtexture, uv, lod_bias);
-		float texture_highlight = (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) + 0.03 * base_color.r) * WATER_TEXTURE_HIGHLIGHT_INTENSITY;
+		#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR
+		float texture_highlight = (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) * WATER_TEXTURE_HIGHLIGHT_INTENSITY + 0.03 * base_color.r * WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY);
+		#else
+		float texture_highlight = (0.5 * sqr(linear_step(0.63, 1.0, base_color.r)) * WATER_TEXTURE_HIGHLIGHT_INTENSITY + 0.015 * base_color.r);
+		#endif
 		#if defined WORLD_OVERWORLD || defined WORLD_END
 			#if WATER_TEXTURE == WATER_TEXTURE_HIGHLIGHT
 				// Optifine ambiguous fix with float() type forced for smoothstep() arguments
@@ -217,8 +221,8 @@ Material get_water_material(
 		#endif
 
 		#ifdef WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR
-			material.albedo  = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * (texture_highlight - 0.03 * base_color.r) * pow(normalize(srgb_eotf_inv(tint.rgb) * rec709_to_working_color), vec3 (sqr((WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY)) * sqr((1.3 + (1-pow(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY, 3.0)))))));
-			material.albedo += tint.rgb * clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight) * 2;
+			material.albedo  = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * (texture_highlight - 0.03 * base_color.r)) * pow(normalize(srgb_eotf_inv(tint.rgb) * rec709_to_working_color), vec3 (sqr((WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY)) * sqr((1.3 + (1-pow(WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY, 3.0)))))) * 1.5;
+			material.albedo += tint.rgb * clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight * WATER_TEXTURE_HIGHLIGHT_BIOME_COLOR_INTENSITY);
 		#else
 			material.albedo = clamp01(0.5 * exp(-2.0 * water_absorption_coeff) * texture_highlight);
 		#endif

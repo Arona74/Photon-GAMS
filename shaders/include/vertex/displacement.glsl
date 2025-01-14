@@ -92,6 +92,32 @@ vec3 animate_vertex(vec3 world_pos, bool is_top_vertex, float skylight, uint mat
 
 	case 4:
 		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, is_top_vertex) + player_displacement);
+
+	//Glowing Flowers
+	case 192:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 65:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 66:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 69:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 70:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 71:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 72:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 73:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 74:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 75:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 76:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
+	case 77:
+		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement) * float(is_top_vertex);
 #endif
 
 #ifdef WAVING_LEAVES

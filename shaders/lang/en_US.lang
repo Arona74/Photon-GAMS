@@ -19,17 +19,18 @@ screen.misc                            = §e⌛§r Misc
 screen.box                             = Box
 screen.compatibility                   = Compatibility
 screen.world_curvature                 = World Curvature Settings
+screen.enchantment_glint_color         = §d🎆§r Enchantment Glint Color
 
-screen.colored_lights                  = Colored Lights Settings
+screen.colored_lights                  = 🌈§a💡§r Colored Lights Settings
 screen.rp_settings                     = Resource Pack Settings
 screen.reflections                     = Reflections
 screen.refraction                      = Refraction
-screen.light_sources                   = Light Sources
+screen.light_sources                   = §6💡§r Light Sources
 screen.shadows                         = Shadows
 screen.ao                              = Ambient Occlusion
-screen.color_grading                   = Color Grading
-screen.exposure                        = Exposure
-screen.tonemap_settings                = Tonemap Settings
+screen.color_grading                   = 🌈 Color Grading
+screen.exposure                        = §b📸§r Exposure
+screen.tonemap_settings                = §a🎞§r Tonemap Settings
 
 screen.dof_settings                    = DoF Settings
 
@@ -1269,6 +1270,9 @@ option.CUSTOM_SKY_BRIGHTNESS.comment   = Adjust custom sky brightness
 option.DAYLIGHT_CYCLE                  = Daylight Cycle Enabled
 option.DAYLIGHT_CYCLE.comment          = Disable when the gamerule doDaylightCycle is false to prevent cloud trailing when changing the time
 option.ENCHANTMENT_GLINT_BRIGHTNESS    = Enchantment Glint Brightness
+option.ENCHANTMENT_GLINT_R             = Enchantment Glint Red
+option.ENCHANTMENT_GLINT_G             = Enchantment Glint Green
+option.ENCHANTMENT_GLINT_B             = Enchantment Glint Blue
 
 value.DEBUG_VIEW.DEBUG_VIEW_NONE       = OFF
 value.DEBUG_VIEW.DEBUG_VIEW_SAMPLER    = Sampler

@@ -40,7 +40,7 @@ void main() {
 	if (clamp01(coord) != coord) discard;
 #endif
 
-	vec3 armor_glint = texture(gtexture, uv, lod_bias).rgb;
+	vec3 armor_glint = texture(gtexture, uv, lod_bias).rgb * vec3(ENCHANTMENT_GLINT_R, ENCHANTMENT_GLINT_G, ENCHANTMENT_GLINT_B);
 
 #if defined IS_IRIS
 	// New overlay handling
