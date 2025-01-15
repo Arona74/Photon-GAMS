@@ -10,7 +10,7 @@ profile.ultra                          = §dUltra
 
 screen.world                           = §a🌎§r World
 screen.lighting                        = §6☀§r Lighting
-screen.sky                             = §3☁§r Sky
+screen.sky                             = §3🌥§r Sky
 screen.fog                             = §7🌫§r Fog
 screen.materials                       = §e☼§r Materials & Reflections
 screen.water                           = §b🌊§r Water
@@ -51,22 +51,23 @@ screen.rgbdrt_settings                 = rgbDRT Settings
 screen.zcamdrt_settings                = ZCAM DRT Settings
 screen.jzdt_settings                   = JzDT Settings
 
-screen.aurora                          = Aurora
-screen.aurora_color                    = Aurora Color Settings
-screen.aurora_c0                       = Color 0
-screen.aurora_c1                       = Color 1
-screen.aurora_c2                       = Color 2
-screen.aurora_c3                       = Color 3
-screen.aurora_c4                       = Color 4
-screen.aurora_c5                       = Color 5
-screen.aurora_c6                       = Color 6
-screen.aurora_c7                       = Color 7
-screen.aurora_c8                       = Color 8
-screen.aurora_c9                       = Color 9
-screen.aurora_c10                      = Color 10
-screen.aurora_c11                      = Color 11
+# Aurora settings
+screen.aurora_color                    = §7🌈§r Aurora Color Settings
+screen.aurora_c0                       = §7🌈§r Aurora Color 0
+screen.aurora_c1                       = §7🌈§r Aurora Color 1
+screen.aurora_c2                       = §7🌈§r Aurora Color 2
+screen.aurora_c3                       = §7🌈§r Aurora Color 3
+screen.aurora_c4                       = §7🌈§r Aurora Color 4
+screen.aurora_c5                       = §7🌈§r Aurora Color 5
+screen.aurora_c6                       = §7🌈§r Aurora Color 6
+screen.aurora_c7                       = §7🌈§r Aurora Color 7
+screen.aurora_c8                       = §7🌈§r Aurora Color 8
+screen.aurora_c9                       = §7🌈§r Aurora Color 9
+screen.aurora_c10                      = §7🌈§r Aurora Color 10
+screen.aurora_c11                      = §7🌈§r Aurora Color 11
 
-screen.clouds                          = Clouds
+# Clouds settings
+screen.clouds                          = §7☁§r Clouds
 screen.clouds_cumulus                  = Cumulus Clouds Settings
 screen.clouds_altocumulus              = Altocumulus Clouds Settings
 screen.clouds_cumulus_congestus        = Cumulus Congestus Clouds Settings
@@ -74,26 +75,20 @@ screen.clouds_cumulonimbus             = Cumulonimbus Clouds Settings
 screen.clouds_cirrus                   = Cirrus/Cirrocumulus Clouds Settings
 screen.clouds_minecrafty               = Blocky Clouds Settings
 screen.clouds_noctilucent              = Noctilucent Clouds Settings
-screen.nebula                          = Nebula
-screen.nebula_color                    = Nebula Color
-screen.nebula_color.comment            = Adjust the colors of different nebula components:      Cloud 1-4 Color: Sets the color for each cloud layer        Space Color: Determines the background color of space      These settings affect the overall appearance and mood of the nebula
-screen.shooting_stars                  = Shooting Stars
-screen.end_solar_flare                 = End Solar Flare
-screen.solar_flare_color               = Solar Flare Color
 
 screen.fog_advanced                    = Advanced Fog Settings
 screen.fog_rlh                         = Rayleigh Coefficient
 screen.fog_mie                         = Mie Coefficient
-screen.sunlight_color                  = Sunlight Color
-screen.moonlight_color                 = Moonlight Color
-screen.blocklight_color                = Blocklight Color
-screen.rain_color                      = Rain Color
+screen.sunlight_color                  = §6☀§r Sunlight Color
+screen.moonlight_color                 = §7🌔§r Moonlight Color
+screen.blocklight_color                = §b🔥§r Blocklight Color
+screen.rain_color                      = §b⛆§r Rain Color
 screen.sunlight_morning                = Morning
 screen.sunlight_noon                   = Noon
 screen.sunlight_evening                = Evening
-screen.light_nether                    = Nether
-screen.light_end                       = End
-screen.night_vision_color              = Night Vision Color
+screen.light_nether                    = §c🔥§r Nether
+screen.light_end                       = §d🌟§r End
+screen.night_vision_color              = §a👓§r Night Vision Color
 screen.fog_rlh_normal                  = Normal Color
 screen.fog_rlh_rain                    = Rain Color
 screen.fog_rlh_arid                    = Arid/Desert Color
@@ -178,12 +173,12 @@ value.CURVATURE_MODE.CURVATURE_MODE_LOG_SPHERICAL    = Log Spherical
 
 # Lighting settings
 
-option.COLORED_LIGHTS                  = Colored Lights
+option.COLORED_LIGHTS                  = 🌈§a💡§r Colored Lights
 option.COLORED_LIGHTS.comment          = Variable-color block lighting using flood fill algorithm. Requires Iris 1.6 or above
 option.COLORED_LIGHTS_VANILLA_LIGHTMAP_CONTRIBUTION = Vanilla Lightmap Contribution
-option.HANDHELD_LIGHTING               = Handheld Lighting
+option.HANDHELD_LIGHTING               = 🔦 Handheld Lighting
 option.HANDHELD_LIGHTING.comment       = Handheld items cast light on the world. If coloured lighting is enabled the handheld lighting will be coloured like the lights themselves
-option.HANDHELD_LIGHTING_INTENSITY     = Handheld Lighting Intensity
+option.HANDHELD_LIGHTING_INTENSITY     = 🔦 Handheld Lighting Intensity
 option.HANDHELD_LIGHTING_INTENSITY.comment = Adjusts the brightness of handheld light sources
 option.AO_IN_SUNLIGHT                  = AO in Sunlight
 option.AO_IN_SUNLIGHT.comment          = Whether to apply shader ambient occlusion in direct sunlight/moonlight
@@ -252,15 +247,15 @@ option.SUN_MB                          = Blue
 option.SUN_ER                          = Red
 option.SUN_EG                          = Green
 option.SUN_EB                          = Blue
-option.SUN_I                           = Sunlight Intensity
+option.SUN_I                           = §6☀§r Sunlight Intensity
 option.SUN_BLUE_HOUR_BOOST             = Blue Hour Boost
 option.MOON_R                          = Red
 option.MOON_G                          = Green
 option.MOON_B                          = Blue
-option.MOON_I                          = Moonlight Intensity
-option.SKYLIGHT_I                      = Skylight Intensity
-option.BOUNCED_LIGHT_I                 = Bounced Sunlight Intensity
-option.CAVE_LIGHTING_I                 = Cave Brightness
+option.MOON_I                          = §7🌔§r Moonlight Intensity
+option.SKYLIGHT_I                      = 🌅 Skylight Intensity
+option.BOUNCED_LIGHT_I                 = 🌅 Bounced Sunlight Intensity
+option.CAVE_LIGHTING_I                 = 🦇 Cave Brightness
 option.LIGHTNING_FLASH                 = Lightning Flash
 option.NETHER_USE_BIOME_COLOR          = Use Biome Color
 option.NETHER_I                        = Ambient Intensity
@@ -276,18 +271,18 @@ option.END_AMBIENT_R                   = Red
 option.END_AMBIENT_G                   = Green
 option.END_AMBIENT_B                   = Blue
 option.END_AMBIENT_I                   = Ambient Intensity
-option.BLOCKLIGHT_R                    = Red
-option.BLOCKLIGHT_G                    = Green
-option.BLOCKLIGHT_B                    = Blue
-option.BLOCKLIGHT_I                    = Blocklight Intensity
+option.BLOCKLIGHT_R                    = §c🔥§r Red
+option.BLOCKLIGHT_G                    = §a🔥§r Green
+option.BLOCKLIGHT_B                    = §1🔥§r Blue
+option.BLOCKLIGHT_I                    = §b🔥§r Blocklight Intensity
 option.NIGHT_VISION_R                  = Red
 option.NIGHT_VISION_G                  = Green
 option.NIGHT_VISION_B                  = Blue
 option.NIGHT_VISION_I                  = Intensity
-option.NIGHT_RAIN_I                    = Night Rain Intensity
-option.RAIN_LIGHT_I                    = Rain Intensity
-option.SNOW_LIGHT_I                    = Snow Intensity
-option.SANDSTORM_LIGHT_I               = Sandstorm Intensity
+option.NIGHT_RAIN_I                    = §b⛆§r Night Rain Intensity
+option.RAIN_LIGHT_I                    = §b⛆§r Rain Intensity
+option.SNOW_LIGHT_I                    = ❄ Snow Intensity
+option.SANDSTORM_LIGHT_I               = §e⛆§r Sandstorm Intensity
 
 option.VOXEL_VOLUME_SIZE               = Voxel Volume Size
 option.VOXEL_VOLUME_SIZE.comment       = High performance impact, also affected by shadow distance
@@ -296,10 +291,10 @@ option.COLORED_LIGHT_I                 = Colored Light Intensity
 option.COLOREDLIGHT_SATURATION         = Colored Light Saturation
 option.GLOWING_FLOWERS                 = §e🌷§r Glowing Flowers
 option.GLOWING_ORE                     = §e⛏§r Glowing Ore
-option.END_COLORED_LIGHTING            = End Violet Lighting Blocks
-option.END_COLORED_LIGHTING.comment           = Fire, lava and torch blocks id's is violet in the End.
-option.SCULK_I                         = Sculk Light Intensity
-option.COLORED_CANDLES                 = Colored Candles
+option.END_COLORED_LIGHTING            = §d🌟§r End Violet Lighting Blocks
+option.END_COLORED_LIGHTING.comment    = Fire, lava and torch blocks id's is violet in the End.
+option.SCULK_I                         = §b✨§r Sculk Light Intensity
+option.COLORED_CANDLES                 = §c🕯§r§a🕯§r§b🕯§r Colored Candles
 
 value.shadowDistance.8.0               = 8 blocks
 value.shadowDistance.16.0              = 1 chunk
@@ -329,96 +324,112 @@ value.shadowDistance.2048.0            = 128 chunks
 value.shadowDistance.4096.0            = 256 chunks
 
 # Sky settings
-
-option.VANILLA_SUN                     = Vanilla Sun
-option.MOON_TYPE                       = Moon Type
-option.SUN_ANGULAR_RADIUS              = Sun Angular Radius
-option.MOON_ANGULAR_RADIUS             = Moon Angular Radius
-option.SUN_LUMINANCE                   = Sun Disk Luminance
-option.MOON_LUMINANCE                  = Moon Disk Luminance
+screen.sun_moon                        = §6☀§r Sun & §7🌔§r Moon
+screen.stars                           = §6✨§r Stars
+screen.shooting_stars                  = 🌠 Shooting Stars
+screen.galaxy                          = §b🌌§r Galaxy
+screen.nebula                          = ☁ Nebula
+screen.aurora                          = §7🌈§r Aurora
+screen.end_solar_flare                 = §d🌟§r End Solar Flare
 option.SKY_GROUND                      = Sky Ground
 option.SKY_GROUND.comment              = Visible planet surface below the horizon
 option.ATMOSPHERE_SATURATION_BOOST     = Atmosphere Saturation Boost
 option.ATMOSPHERE_SATURATION_BOOST.comment = Increases the saturation of the sky and sunlight color depending on the time of day
 option.ATMOSPHERE_SATURATION_BOOST_INTENSITY = Atmosphere Saturation Boost Intensity
 option.ATMOSPHERE_SATURATION_BOOST_INTENSITY.comment = Adjust the intensity of Atmosphere Saturation Boost
-option.STARS                           = Stars
-option.STARS.comment                   = Stars in the night sky. Low performance impact
-option.STARS_INTENSITY                 = Stars Intensity
-option.STARS_INTENSITY.comment         = Controls the brightness of stars in the night sky
-option.STARS_COVERAGE                  = Stars Coverage
-option.STARS_COVERAGE.comment          = Controls the number of stars in the night sky
 
+# Sun settings
+option.VANILLA_SUN                     = §6☀§r Vanilla Sun
+option.SUN_LUMINANCE                   = §6☀§r Sun Disk Luminance
+option.SUN_ANGULAR_RADIUS              = §6☀§r Sun Angular Radius
+
+# Moon settings
+option.MOON_TYPE                       = §7🌔§r Moon Type
 value.MOON_TYPE.MOON_VANILLA           = Vanilla Moon
 value.MOON_TYPE.MOON_PHOTON            = Photon Moon
 value.MOON_TYPE.MOON_FANCY             = Fancy Moon
+option.MOON_ANGULAR_RADIUS             = §7🌔§r Moon Angular Radius
+option.MOON_LUMINANCE                  = §7🌔§r Moon Disk Luminance
+
+# Stars settings
+option.STARS                           = §6✨§r STARS
+option.STARS.comment                   = Stars in the night sky. Low performance impact
+option.STARS_INTENSITY                 = §6✨§r Stars Intensity
+option.STARS_INTENSITY.comment         = Controls the brightness of stars in the night sky
+option.STARS_COVERAGE                  = §6✨§r Stars Coverage
+option.STARS_COVERAGE.comment          = Controls the number of stars in the night sky
 
 # Nebula
-option.NEBULA_ENABLED                  = Nebula
+option.NEBULA_ENABLED                  = ☁ NEBULA
 option.NEBULA_ENABLED.comment          = Enables the nebula effect
-option.NEBULA_SCALE                    = Nebula Scale
+screen.nebula_color                    = ☁ Nebula Color
+screen.nebula_color.comment            = Adjust the colors of different nebula components:      Cloud 1-4 Color: Sets the color for each cloud layer        Space Color: Determines the background color of space      These settings affect the overall appearance and mood of the nebula
+option.NEBULA_SCALE                    = ☁ Nebula Scale
 option.NEBULA_SCALE.comment            = Controls the scale of the nebula. Higher values make the nebula appear more zoomed in.
-option.NEBULA_DENSITY                  = Nebula Density
+option.NEBULA_DENSITY                  = ☁ Nebula Density
 option.NEBULA_DENSITY.comment          = Controls the density of the nebula. Higher values make the nebula more dense.
-option.NEBULA_BRIGHTNESS               = Nebula Brightness
+option.NEBULA_BRIGHTNESS               = ☁ Nebula Brightness
 option.NEBULA_BRIGHTNESS.comment       = Controls the brightness of the nebula. Higher values make the nebula more bright.
-option.NEBULA_MOVEMENT_SPEED           = Nebula Movement Speed
+option.NEBULA_MOVEMENT_SPEED           = ☁ Nebula Movement Speed
 option.NEBULA_MOVEMENT_SPEED.comment   = Controls the speed of the nebula movement. Higher values make the nebula move faster.
 
-
 # Nebula Colors
-option.NEBULA_COLOR1_R = Nebula Color 1 Red
-option.NEBULA_COLOR1_G = Nebula Color 1 Green
-option.NEBULA_COLOR1_B = Nebula Color 1 Blue
+option.NEBULA_COLOR1_R = §c☁§r Nebula Color 1 Red
+option.NEBULA_COLOR1_G = §a☁§r Nebula Color 1 Green
+option.NEBULA_COLOR1_B = §1☁§r Nebula Color 1 Blue
 
-option.NEBULA_COLOR2_R = Nebula Color 2 Red
-option.NEBULA_COLOR2_G = Nebula Color 2 Green
-option.NEBULA_COLOR2_B = Nebula Color 2 Blue
+option.NEBULA_COLOR2_R = §c☁§r Nebula Color 2 Red
+option.NEBULA_COLOR2_G = §a☁§r Nebula Color 2 Green
+option.NEBULA_COLOR2_B = §1☁§r Nebula Color 2 Blue
 
-option.NEBULA_COLOR3_R = Nebula Color 3 Red
-option.NEBULA_COLOR3_G = Nebula Color 3 Green
-option.NEBULA_COLOR3_B = Nebula Color 3 Blue
+option.NEBULA_COLOR3_R = §c☁§r Nebula Color 3 Red
+option.NEBULA_COLOR3_G = §a☁§r Nebula Color 3 Green
+option.NEBULA_COLOR3_B = §1☁§r Nebula Color 3 Blue
 
 # Galaxy
-option.GALAXY                          = Galaxy
+option.GALAXY                          = §b🌌§r GALAXY
 option.GALAXY.comment                  = Galaxy image in the night sky
-option.GALAXY_INTENSITY                = Galaxy Intensity
+option.GALAXY_TYPE                     = §b🌌§r Galaxy Type
+option.GALAXY_TYPE.comment             = [GAMS Galaxy] uses image & code from old GAMS version.\n[Photon Galaxy] uses image & code from regular Photon.\n
+value.GALAXY_TYPE.GALAXY_GAMS          = GAMS Galaxy
+value.GALAXY_TYPE.GALAXY_PHOTON        = Photon Galaxy
+option.GALAXY_INTENSITY                = §b🌌§r Galaxy Intensity
 option.GALAXY_INTENSITY.comment        = Controls the brightness of the galaxy in the night sky
-screen.galaxy_color                    = §b🌌§r Galaxy Color
-option.GALAXY_TINT_R                   = Galaxy Color Red
-option.GALAXY_TINT_G                   = Galaxy Color Green
-option.GALAXY_TINT_B                   = Galaxy Color Blue
+option.GALAXY_TINT_R                   = §c🌌§r Galaxy Color Red
+option.GALAXY_TINT_G                   = §a🌌§r Galaxy Color Green
+option.GALAXY_TINT_B                   = §1🌌§r Galaxy Color Blue
+
 
 # Shooting Stars
-option.SHOOTING_STARS                        = Shooting Stars
+option.SHOOTING_STARS                        = 🌠 SHOOTING STARS
 option.SHOOTING_STARS.comment                = Enables the shooting stars effect
-option.SHOOTING_STARS_ZOOM                   = Shooting Stars Zoom
+option.SHOOTING_STARS_ZOOM                   = 🌠 Shooting Stars Zoom
 option.SHOOTING_STARS_ZOOM.comment           = Controls the zoom level of the shooting stars effect
-option.SHOOTING_STARS_SPEED                  = Shooting Stars Speed
+option.SHOOTING_STARS_SPEED                  = 🌠 Shooting Stars Speed
 option.SHOOTING_STARS_SPEED.comment          = Adjusts the speed at which shooting stars move across the sky
-option.SHOOTING_STARS_DENSITY                = Shooting Stars Density
+option.SHOOTING_STARS_DENSITY                = 🌠 Shooting Stars Density
 option.SHOOTING_STARS_DENSITY.comment        = Determines how densely packed the shooting stars appear
-option.SHOOTING_STARS_COUNT                  = Shooting Stars Count
+option.SHOOTING_STARS_COUNT                  = 🌠 Shooting Stars Count
 option.SHOOTING_STARS_COUNT.comment          = Sets the number of shooting stars visible at any given time
-option.SHOOTING_STARS_LINE_THICKNESS         = Shooting Stars Line Thickness
+option.SHOOTING_STARS_LINE_THICKNESS         = 🌠 Shooting Stars Line Thickness
 option.SHOOTING_STARS_LINE_THICKNESS.comment = Adjusts the thickness of the shooting star trails
-option.SHOOTING_STARS_TRAIL_LENGTH           = Shooting Stars Trail Length
+option.SHOOTING_STARS_TRAIL_LENGTH           = 🌠 Shooting Stars Trail Length
 option.SHOOTING_STARS_TRAIL_LENGTH.comment   = Controls the length of the trails left behind by shooting stars
-option.SHOOTING_STARS_TRAIL_FADE             = Shooting Stars Trail Fade
+option.SHOOTING_STARS_TRAIL_FADE             = 🌠 Shooting Stars Trail Fade
 option.SHOOTING_STARS_TRAIL_FADE.comment     = Determines how quickly the trails of shooting stars fade away
 
 # Solar Flares
-option.END_SOLAR_FLARE_ENABLED               = End Solar Flare
+option.END_SOLAR_FLARE_ENABLED               = §d🌟§r END SOLAR FLARE
 option.END_SOLAR_FLARE_ENABLED.comment       = Enables the solar flare effect in the End dimension.
-option.END_SOLAR_FLARE_INTENSITY             = Solar Flare Intensity
+option.END_SOLAR_FLARE_INTENSITY             = §d🌟§r Solar Flare Intensity
 option.END_SOLAR_FLARE_INTENSITY.comment     = Controls the intensity of the solar flare effect in the End dimension. Higher values make the flares more pronounced.
-option.END_SOLAR_FLARE_SPEED                 = Solar Flare Speed
+option.END_SOLAR_FLARE_SPEED                 = §d🌟§r Solar Flare Speed
 option.END_SOLAR_FLARE_SPEED.comment         = Adjusts the speed of the solar flare animation in the End dimension. Higher values make the flares move faster.
-option.END_SOLAR_FLARE_FALLOFF               = Solar Flare Falloff
+option.END_SOLAR_FLARE_FALLOFF               = §d🌟§r Solar Flare Falloff
 option.END_SOLAR_FLARE_FALLOFF.comment       = Determines how quickly the solar flare effect fades as it extends from the sun in the End dimension. Higher values create a sharper falloff.
-option.END_SOLAR_FLARE_COLOR_R               = Red
-option.END_SOLAR_FLARE_COLOR_G               = Green
-option.END_SOLAR_FLARE_COLOR_B               = Blue
+option.END_SOLAR_FLARE_COLOR_R               = §c🌟§r End Solar Flare Color Red
+option.END_SOLAR_FLARE_COLOR_G               = §a🌟§r End Solar Flare Color Green
+option.END_SOLAR_FLARE_COLOR_B               = §1🌟§r End Solar Flare Color Blue
 
 # Clouds
 option.CLOUDS_CUMULUS                        = Cumulus Clouds
@@ -564,29 +575,26 @@ option.CLOUDS_NOCTILUCENT_RARITY       = Rarity
 
 option.CLOUDS_ROUGHNESS                = Clouds Roughness
 
-option.AURORA_TYPE                     = Aurora Style
-option.AURORA_COLOR                    = Aurora Color
-option.AURORA_NORMAL                   = Aurora in Any Biome
-option.AURORA_SNOW                     = Aurora in Snow Biome
-option.AURORA_BRIGHTNESS               = Aurora Brightness in Any Biome
-option.AURORA_BRIGHTNESS_SNOW          = Aurora Brightness in Snow Biome
-option.AURORA_FREQUENCY                = Aurora Frequency in Any Biome
-option.AURORA_FREQUENCY_SNOW           = Aurora Frequency in Snow Biome
-option.AURORA_SPEED                    = Aurora Speed in Any Biome
-option.AURORA_SPEED_SNOW               = Aurora Speed in Snow Biome
-option.AURORA_CLOUD_LIGHTING           = Cloud Light Contribution
-option.AURORA_GROUND_LIGHTING          = Ground Light Contribution
-
+option.AURORA_TYPE                     = §7🌈§r Aurora Style
 value.AURORA_TYPE.AURORA_PHOTON        = Classic Photon Aurora
 value.AURORA_TYPE.AURORA_NIMITZ        = Fancy Nimitz Aurora
-
+option.AURORA_COLOR                    = §7🌈§r Aurora Color
+option.AURORA_NORMAL                   = §7🌈§r AURORA in Any Biome §a🏞§r
 value.AURORA_NORMAL.AURORA_NEVER       = Never
 value.AURORA_NORMAL.AURORA_RARELY      = Rarely
 value.AURORA_NORMAL.AURORA_ALWAYS      = Always
-
+option.AURORA_SNOW                     = §7🌈§r AURORA in Snow Biome §b❄§r
 value.AURORA_SNOW.AURORA_NEVER         = Never
 value.AURORA_SNOW.AURORA_RARELY        = Rarely
 value.AURORA_SNOW.AURORA_ALWAYS        = Always
+option.AURORA_BRIGHTNESS               = §7🌈§r Aurora Brightness in Any Biome §a🏞§r
+option.AURORA_BRIGHTNESS_SNOW          = §7🌈§r Aurora Brightness in Snow Biome §b❄§r
+option.AURORA_FREQUENCY                = §7🌈§r Aurora Frequency in Any Biome §a🏞§r
+option.AURORA_FREQUENCY_SNOW           = §7🌈§r Aurora Frequency in Snow Biome §b❄§r
+option.AURORA_SPEED                    = §7🌈§r Aurora Speed in Any Biome §a🏞§r
+option.AURORA_SPEED_SNOW               = §7🌈§r Aurora Speed in Snow Biome §b❄§r
+option.AURORA_CLOUD_LIGHTING           = §7🌈§r Cloud Light Contribution
+option.AURORA_GROUND_LIGHTING          = §7🌈§r Ground Light Contribution
 
 value.AURORA_COLOR.-1                  = Random Color
 value.AURORA_COLOR.0                   = Color 0
@@ -603,125 +611,125 @@ value.AURORA_COLOR.10                  = Color 10
 value.AURORA_COLOR.11                  = Color 11
 
 
-option.AURORA_COLOR_0_TOP_R  = Top Red
-option.AURORA_COLOR_0_TOP_G  = Top Green
-option.AURORA_COLOR_0_TOP_B  = Top Blue
-option.AURORA_COLOR_0_TOP_I  = Top Intensity
-option.AURORA_COLOR_0_BTM_R  = Bottom Red
-option.AURORA_COLOR_0_BTM_G  = Bottom Green
-option.AURORA_COLOR_0_BTM_B  = Bottom Blue
-option.AURORA_COLOR_0_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_0_WEIGHT = Weight
+option.AURORA_COLOR_0_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_0_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_0_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_0_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_0_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_0_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_0_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_0_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_0_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_1_TOP_R  = Top Red
-option.AURORA_COLOR_1_TOP_G  = Top Green
-option.AURORA_COLOR_1_TOP_B  = Top Blue
-option.AURORA_COLOR_1_TOP_I  = Top Intensity
-option.AURORA_COLOR_1_BTM_R  = Bottom Red
-option.AURORA_COLOR_1_BTM_G  = Bottom Green
-option.AURORA_COLOR_1_BTM_B  = Bottom Blue
-option.AURORA_COLOR_1_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_1_WEIGHT = Weight
+option.AURORA_COLOR_1_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_1_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_1_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_1_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_1_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_1_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_1_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_1_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_1_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_2_TOP_R  = Top Red
-option.AURORA_COLOR_2_TOP_G  = Top Green
-option.AURORA_COLOR_2_TOP_B  = Top Blue
-option.AURORA_COLOR_2_TOP_I  = Top Intensity
-option.AURORA_COLOR_2_BTM_R  = Bottom Red
-option.AURORA_COLOR_2_BTM_G  = Bottom Green
-option.AURORA_COLOR_2_BTM_B  = Bottom Blue
-option.AURORA_COLOR_2_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_2_WEIGHT = Weight
+option.AURORA_COLOR_2_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_2_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_2_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_2_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_2_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_2_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_2_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_2_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_2_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_3_TOP_R  = Top Red
-option.AURORA_COLOR_3_TOP_G  = Top Green
-option.AURORA_COLOR_3_TOP_B  = Top Blue
-option.AURORA_COLOR_3_TOP_I  = Top Intensity
-option.AURORA_COLOR_3_BTM_R  = Bottom Red
-option.AURORA_COLOR_3_BTM_G  = Bottom Green
-option.AURORA_COLOR_3_BTM_B  = Bottom Blue
-option.AURORA_COLOR_3_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_3_WEIGHT = Weight
+option.AURORA_COLOR_3_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_3_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_3_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_3_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_3_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_3_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_3_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_3_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_3_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_4_TOP_R  = Top Red
-option.AURORA_COLOR_4_TOP_G  = Top Green
-option.AURORA_COLOR_4_TOP_B  = Top Blue
-option.AURORA_COLOR_4_TOP_I  = Top Intensity
-option.AURORA_COLOR_4_BTM_R  = Bottom Red
-option.AURORA_COLOR_4_BTM_G  = Bottom Green
-option.AURORA_COLOR_4_BTM_B  = Bottom Blue
-option.AURORA_COLOR_4_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_4_WEIGHT = Weight
+option.AURORA_COLOR_4_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_4_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_4_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_4_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_4_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_4_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_4_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_4_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_4_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_5_TOP_R  = Top Red
-option.AURORA_COLOR_5_TOP_G  = Top Green
-option.AURORA_COLOR_5_TOP_B  = Top Blue
-option.AURORA_COLOR_5_TOP_I  = Top Intensity
-option.AURORA_COLOR_5_BTM_R  = Bottom Red
-option.AURORA_COLOR_5_BTM_G  = Bottom Green
-option.AURORA_COLOR_5_BTM_B  = Bottom Blue
-option.AURORA_COLOR_5_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_5_WEIGHT = Weight
+option.AURORA_COLOR_5_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_5_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_5_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_5_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_5_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_5_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_5_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_5_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_5_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_6_TOP_R  = Top Red
-option.AURORA_COLOR_6_TOP_G  = Top Green
-option.AURORA_COLOR_6_TOP_B  = Top Blue
-option.AURORA_COLOR_6_TOP_I  = Top Intensity
-option.AURORA_COLOR_6_BTM_R  = Bottom Red
-option.AURORA_COLOR_6_BTM_G  = Bottom Green
-option.AURORA_COLOR_6_BTM_B  = Bottom Blue
-option.AURORA_COLOR_6_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_6_WEIGHT = Weight
+option.AURORA_COLOR_6_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_6_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_6_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_6_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_6_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_6_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_6_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_6_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_6_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_7_TOP_R  = Top Red
-option.AURORA_COLOR_7_TOP_G  = Top Green
-option.AURORA_COLOR_7_TOP_B  = Top Blue
-option.AURORA_COLOR_7_TOP_I  = Top Intensity
-option.AURORA_COLOR_7_BTM_R  = Bottom Red
-option.AURORA_COLOR_7_BTM_G  = Bottom Green
-option.AURORA_COLOR_7_BTM_B  = Bottom Blue
-option.AURORA_COLOR_7_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_7_WEIGHT = Weight
+option.AURORA_COLOR_7_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_7_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_7_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_7_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_7_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_7_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_7_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_7_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_7_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_8_TOP_R  = Top Red
-option.AURORA_COLOR_8_TOP_G  = Top Green
-option.AURORA_COLOR_8_TOP_B  = Top Blue
-option.AURORA_COLOR_8_TOP_I  = Top Intensity
-option.AURORA_COLOR_8_BTM_R  = Bottom Red
-option.AURORA_COLOR_8_BTM_G  = Bottom Green
-option.AURORA_COLOR_8_BTM_B  = Bottom Blue
-option.AURORA_COLOR_8_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_8_WEIGHT = Weight
+option.AURORA_COLOR_8_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_8_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_8_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_8_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_8_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_8_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_8_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_8_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_8_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_9_TOP_R  = Top Red
-option.AURORA_COLOR_9_TOP_G  = Top Green
-option.AURORA_COLOR_9_TOP_B  = Top Blue
-option.AURORA_COLOR_9_TOP_I  = Top Intensity
-option.AURORA_COLOR_9_BTM_R  = Bottom Red
-option.AURORA_COLOR_9_BTM_G  = Bottom Green
-option.AURORA_COLOR_9_BTM_B  = Bottom Blue
-option.AURORA_COLOR_9_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_9_WEIGHT = Weight
+option.AURORA_COLOR_9_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_9_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_9_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_9_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_9_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_9_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_9_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_9_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_9_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_10_TOP_R  = Top Red
-option.AURORA_COLOR_10_TOP_G  = Top Green
-option.AURORA_COLOR_10_TOP_B  = Top Blue
-option.AURORA_COLOR_10_TOP_I  = Top Intensity
-option.AURORA_COLOR_10_BTM_R  = Bottom Red
-option.AURORA_COLOR_10_BTM_G  = Bottom Green
-option.AURORA_COLOR_10_BTM_B  = Bottom Blue
-option.AURORA_COLOR_10_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_10_WEIGHT = Weight
+option.AURORA_COLOR_10_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_10_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_10_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_10_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_10_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_10_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_10_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_10_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_10_WEIGHT = §7🌈§r Weight
 
-option.AURORA_COLOR_11_TOP_R  = Top Red
-option.AURORA_COLOR_11_TOP_G  = Top Green
-option.AURORA_COLOR_11_TOP_B  = Top Blue
-option.AURORA_COLOR_11_TOP_I  = Top Intensity
-option.AURORA_COLOR_11_BTM_R  = Bottom Red
-option.AURORA_COLOR_11_BTM_G  = Bottom Green
-option.AURORA_COLOR_11_BTM_B  = Bottom Blue
-option.AURORA_COLOR_11_BTM_I  = Bottom Intensity
-option.AURORA_COLOR_11_WEIGHT = Weight
+option.AURORA_COLOR_11_TOP_R  = §c🌈§r Top Red
+option.AURORA_COLOR_11_TOP_G  = §a🌈§r Top Green
+option.AURORA_COLOR_11_TOP_B  = §1🌈§r Top Blue
+option.AURORA_COLOR_11_TOP_I  = §7🌈§r Top Intensity
+option.AURORA_COLOR_11_BTM_R  = §c🌈§r Bottom Red
+option.AURORA_COLOR_11_BTM_G  = §a🌈§r Bottom Green
+option.AURORA_COLOR_11_BTM_B  = §1🌈§r Bottom Blue
+option.AURORA_COLOR_11_BTM_I  = §7🌈§r Bottom Intensity
+option.AURORA_COLOR_11_WEIGHT = §7🌈§r Weight
 
 
 # Fog settings
