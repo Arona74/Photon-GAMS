@@ -86,8 +86,8 @@ vec3 draw_sun(vec3 ray_dir) {
 
 #if defined GALAXY
 
-#if GALAXY_TYPE == GALAXY_GAMS 
-	#if !defined PROGRAM_DEFERRED0
+#if defined GALAXY_GAMS
+	//#if !defined PROGRAM_DEFERRED0
 
 // Galaxy from old Photon-GAMS
 
@@ -111,16 +111,16 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	// Fade in/out at twilight
 	float night_factor = smoothstep(0.0, -0.1, sun_dir.y);
 
-	return galaxy * 10 * galaxy_tint * night_factor;
+	return galaxy * galaxy_tint * night_factor;
 }
 
-	#else
-		vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
-		return vec3(0.0);
-		}
-	#endif
+	//#else
+		//vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
+		//return vec3(0.0);
+		//}
+	//#endif
 
-#elif GALAXY_TYPE == GALAXY_PHOTON
+#else
 
 // GALAXY from Photon
 
@@ -133,25 +133,26 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	float lat = fast_acos(-ray_dir.y);
 
 	vec3 galaxy = texture(
-	galaxy_sampler,
-	vec2(lon * rcp(tau) + 0.5, lat * rcp(pi))
+		galaxy_sampler,
+		vec2(lon * rcp(tau) + 0.5, lat * rcp(pi))
 	).rgb;
 
 	galaxy = srgb_eotf_inv(galaxy) * rec709_to_working_color;
 
-	galaxy *= galaxy_intensity * galaxy_tint;
+	galaxy *= 2 * galaxy_intensity * galaxy_tint;
 
 	galaxy_luminance = dot(galaxy, luminance_weights_rec709);
 
 	galaxy = mix(
-	vec3(galaxy_luminance),
-	galaxy,
-	2.0
+		vec3(galaxy_luminance),
+		galaxy,
+		2.0
 	);
 
 	return max0(galaxy);
 }
 #endif
+
 #endif
 
 vec4 get_clouds_and_aurora(vec3 ray_dir, vec3 clear_sky) {

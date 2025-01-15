@@ -388,11 +388,9 @@ option.NEBULA_COLOR3_B = §1☁§r Nebula Color 3 Blue
 
 # Galaxy
 option.GALAXY                          = §b🌌§r GALAXY
-option.GALAXY.comment                  = Galaxy image in the night sky
-option.GALAXY_TYPE                     = §b🌌§r Galaxy Type
-option.GALAXY_TYPE.comment             = [GAMS Galaxy] uses image & code from old GAMS version.\n[Photon Galaxy] uses image & code from regular Photon.\n
-value.GALAXY_TYPE.GALAXY_GAMS          = GAMS Galaxy
-value.GALAXY_TYPE.GALAXY_PHOTON        = Photon Galaxy
+option.GALAXY.comment                  = §b🌌§r Galaxy image in the night sky
+option.GALAXY_GAMS                     = §b🌌§r GAMS Galaxy
+option.GALAXY_GAMS.comment             = [ON] uses image & code from old GAMS version.\n[OFF] uses image & code from regular Photon.\n
 option.GALAXY_INTENSITY                = §b🌌§r Galaxy Intensity
 option.GALAXY_INTENSITY.comment        = Controls the brightness of the galaxy in the night sky
 option.GALAXY_TINT_R                   = §c🌌§r Galaxy Color Red
