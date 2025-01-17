@@ -750,6 +750,12 @@ option.VL.comment                      = Adds light shafts and variable fog dens
 option.VL_RENDER_SCALE                 = VL Render Scale
 option.AIR_FOG_CLOUDY_NOISE            = Cloudy Fog
 option.AIR_FOG_CLOUDY_NOISE.comment    = Subtle cloudy shapes in the fog, best visible in the morning.\nRequires volumetric fog!
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPACING = Cloudy Fog Spacing
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPACING.comment = Controls the spacing between clouds\n\nLower values = more spread out clouds, Higher values = tighter packed clouds
+option.AIR_FOG_CLOUDY_NOISE_VERTICAL_SCALE = Cloudy Fog Vertical Scale
+option.AIR_FOG_CLOUDY_NOISE_VERTICAL_SCALE.comment = Controls the vertical height/thickness of clouds\n\nHigher values create taller clouds, lower values create flatter clouds
+option.AIR_FOG_CLOUDY_NOISE_DENSITY_MULTIPLIER = Cloudy Fog Density Multiplier
+option.AIR_FOG_CLOUDY_NOISE_DENSITY_MULTIPLIER.comment = Controls overall cloud density\n\nHigher values = denser/more opaque clouds
 option.AIR_FOG_COLORED_LIGHT_SHAFTS    = Colored Light Shafts
 option.AIR_FOG_COLORED_LIGHT_SHAFTS.comment = Light shafts passing through translucent objects are tinted by their color
 option.FOG_CLOUD_SHADOWS               = Cloud Shadow Light Shafts

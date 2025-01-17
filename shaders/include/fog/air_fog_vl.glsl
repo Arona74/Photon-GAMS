@@ -26,11 +26,39 @@ vec2 air_fog_density(vec3 world_pos) {
 	density *= linear_step(air_fog_volume_bottom, SEA_LEVEL, world_pos.y);
 
 #ifdef AIR_FOG_CLOUDY_NOISE
-	const vec3 wind = 0.0003 * vec3(1.0, 0.0, 0.7);
+
+	// Controls how fast the clouds move (higher = faster)
+	// x = horizontal movement, z = depth movement
+	const vec3 wind = 0.0003 * vec3(8.0, 0.0, 0.7);
+
+	// Controls the spacing between clouds
+	// Lower values = more spread out clouds, Higher values = tighter packed clouds
+	// Default: 0.001
+	const float cloud_spacing = 0.0001 * AIR_FOG_CLOUDY_NOISE_CLOUD_SPACING;
+
+	// Controls the vertical height/thickness of clouds
+	// Higher values create taller clouds, lower values create flatter clouds
+	// Default: 3.0
+	const float vertical_scale = AIR_FOG_CLOUDY_NOISE_VERTICAL_SCALE;
+
+	// Controls overall cloud density
+	// Higher values = denser/more opaque clouds
+	// Default: 1.0
+	const float density_multiplier = AIR_FOG_CLOUDY_NOISE_DENSITY_MULTIPLIER;
+
+	// Sample noise texture for cloud pattern
+	float noise = texture(noisetex, cloud_spacing * world_pos.xz + wind.xz * frameTimeCounter).w;
+
+	// Apply all modifiers to density
+	density.y *= vertical_scale * density_multiplier * sqr(0.5 - noise);
+	
+	//LEGACY AIR FOG CLOUDY NOISE
+	/*const vec3 wind = 0.0003 * vec3(1.0, 0.0, 0.7);
 
 	float noise = texture(noisetex, 0.001 * world_pos.xz + wind.xz * frameTimeCounter).w;
 
-	density.y *= 2.0 * sqr(noise);
+	density.y *= 2.0 * sqr(noise);*/
+	
 #endif
 
 	return density;
