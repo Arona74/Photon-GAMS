@@ -45,6 +45,12 @@ float get_moon_exposure() {
 	return base_scale * moon_phase_brightness;
 }
 
+float get_base_moon_exposure() {
+	const float base_scale = 0.66;
+
+	return base_scale * moon_phase_brightness;
+}
+
 vec3 get_moon_tint() {
 	const vec3 base_tint = from_srgb(vec3(MOON_R, MOON_G, MOON_B));
 

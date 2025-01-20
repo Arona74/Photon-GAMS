@@ -40,7 +40,7 @@ uniform float time_midnight;
 
 void main() {
 	sun_color = get_sun_exposure() * get_sun_tint();
-	moon_color = get_moon_exposure() * get_moon_tint();
+	moon_color = get_base_moon_exposure() * get_moon_tint();
 
 	uv   = mat2(gl_TextureMatrix[0]) * gl_MultiTexCoord0.xy + gl_TextureMatrix[0][3].xy;
 	tint = gl_Color.rgb;

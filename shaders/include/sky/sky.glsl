@@ -46,7 +46,7 @@ vec3 stable_star_field(vec2 coord, float star_threshold) {
 vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
 	// Adjust star threshold so that brightest stars appear first
 #if defined WORLD_OVERWORLD
-	float star_threshold = 1.0 - 0.008 * STARS_COVERAGE * smoothstep(-0.2, 0.05, -sun_dir.y) - 0.5 * cube(galaxy_luminance);
+	float star_threshold = 1.0 - 0.008 * STARS_COVERAGE * smoothstep(-0.2, 0.5, -sun_dir.y) - 0.5 * cube(galaxy_luminance);
 #else
 	float star_threshold = 1.0 - 0.008 * STARS_COVERAGE;
 #endif
@@ -71,7 +71,7 @@ vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
 #include "/include/sky/nebula.glsl"
 
 const float sun_luminance  = SUN_LUMINANCE * SUN_I; // luminance of sun disk
-const float moon_luminance = MOON_LUMINANCE * MOON_I; // luminance of moon disk
+const float moon_luminance = MOON_LUMINANCE; // luminance of moon disk
 
 vec3 draw_sun(vec3 ray_dir) {
 	float nu = dot(ray_dir, sun_dir);
@@ -87,7 +87,6 @@ vec3 draw_sun(vec3 ray_dir) {
 #if defined GALAXY
 
 #if defined GALAXY_GAMS
-	//#if !defined PROGRAM_DEFERRED0
 
 // Galaxy from old Photon-GAMS
 
@@ -95,11 +94,7 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	//const float galaxy_intensity = GALAXY_INTENSITY;
 	const vec3 galaxy_tint = vec3(GALAXY_TINT_R, GALAXY_TINT_G, GALAXY_TINT_B) * GALAXY_INTENSITY;
 	// Check if it's night time
-	if (sun_dir.y > -0.05) return vec3(0.0); // Return black if it's not night
-	mat3 rot = (sunAngle < 0.5)
-	? mat3(shadowModelViewInverse)
-	: mat3(-shadowModelViewInverse[0].xyz, shadowModelViewInverse[1].xyz, -shadowModelViewInverse[2].xyz);
-	ray_dir *= rot;
+	//if (sun_dir.y > -0.05) return vec3(0.0); // Return black if it's not night
 	// Convert ray direction to spherical coordinates
 	float phi = atan(ray_dir.y, ray_dir.x);
 	float theta = acos(ray_dir.z);
@@ -109,16 +104,10 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	vec3 galaxy = from_srgb(texture(colortex14, uv).rgb);
 
 	// Fade in/out at twilight
-	float night_factor = smoothstep(0.0, -0.1, sun_dir.y);
+	float night_factor = smoothstep(0.01, 0.5, -sun_dir.y);
 
 	return galaxy * galaxy_tint * night_factor;
 }
-
-	//#else
-		//vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
-		//return vec3(0.0);
-		//}
-	//#endif
 
 #else
 
@@ -210,12 +199,19 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 		: mat3(-shadowModelViewInverse[0].xyz, shadowModelViewInverse[1].xyz, -shadowModelViewInverse[2].xyz);
 
 	vec3 celestial_dir = ray_dir * rot;
+#else
+	vec3 celestial_dir = ray_dir;
 #endif
 
 	// Galaxy
 #ifdef GALAXY
 	float galaxy_luminance;
+	#ifdef GALAXY_ROTATION
 	sky += draw_galaxy(celestial_dir, galaxy_luminance);
+	#else
+	sky += draw_galaxy(ray_dir, galaxy_luminance);
+	#endif
+	
 #else
 	const float galaxy_luminance = 0.0;
 #endif
@@ -223,21 +219,55 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 	// Sun, moon and stars
 
 #if defined PROGRAM_DEFERRED4
-	/*vec4 vanilla_sky = texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0);
-	vec3 vanilla_sky_color = from_srgb(vanilla_sky.rgb);
-	uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);*/
 	// Output of skytextured
 	sky += texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0).rgb;
 
 #ifdef STARS
 	// Stars
+	#ifdef STARS_ROTATION
 	sky += draw_stars(celestial_dir, galaxy_luminance);
+	#else
+	sky += draw_stars(ray_dir, galaxy_luminance);
+	#endif
 #endif
 
 #ifndef VANILLA_SUN
 	// Sun
 	sky += draw_sun(ray_dir);
 #endif
+	
+	// DEBUG Try to fix dimmed moon ############################################
+#if MOON_TYPE == MOON_VANILLA
+	//vec4 vanilla_sky = texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0);
+	vec3 vanilla_sky_rgb = texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0).rgb;
+	vec3 vanilla_sky_color = from_srgb(vanilla_sky_rgb);
+	//uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);
+	
+	if (max_of(vanilla_sky_color) > 0.2) {
+		//const vec3 brightness_scale = sunlight_color * moon_luminance;
+		//if(dot(vanilla_sky_color, vec3(1.0)) > 1e-3) sky *= 0.0; // Hide stars behind moon
+		sky *= 0.0;
+	}
+	
+	sky += vanilla_sky_color * (sunlight_color * moon_luminance);
+	
+#elif MOON_TYPE == MOON_PHOTON
+	//vec4 vanilla_sky = texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0);
+	vec3 vanilla_sky_rgb = texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0).rgb;
+	vec3 vanilla_sky_color = from_srgb(vanilla_sky_rgb);
+	//uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);
+	
+	if (max_of(vanilla_sky_color) > 0.00001) {
+		//const vec3 brightness_scale = sunlight_color * moon_luminance;
+		//if(dot(vanilla_sky_color, vec3(1.0)) > 1e-3) sky *= 0.0; // Hide stars behind moon
+		//sky += vanilla_sky_color * brightness_scale;
+		sky *= 0.0;
+	}
+	
+	sky += vanilla_sky_color * (sunlight_color * moon_luminance);
+	
+#endif
+	// END OF DEBUG Try to fix dimmed moon ############################################
 
 #endif
 

@@ -37,7 +37,7 @@ uniform vec3 view_sun_dir;
 #include "/include/utility/color.glsl"
 
 const float vanilla_sun_luminance = SUN_LUMINANCE * SUN_I; 
-const float moon_luminance = MOON_LUMINANCE * MOON_I; 
+const float moon_luminance = MOON_LUMINANCE; 
 
 void main() {
 	vec2 new_uv = uv;
@@ -71,23 +71,23 @@ void main() {
 	} else {
 	 	// Moon
 #if MOON_TYPE == MOON_VANILLA
-		// Cut out the moon itself (discard the halo around it) and flip moon texture along the
-		// diagonal
-		/*
+		// Cut out the moon itself and flip moon texture along the diagonal
 		offset = fract(vec2(4.0, 2.0) * uv);
 		new_uv = new_uv + vec2(0.25, 0.5) * ((1.0 - offset.yx) - offset);
-		offset = offset * 2.0 - 1.0;
-		if (max_of(abs(offset)) > 0.25) discard;
-		*/
-
-		frag_color = texture(gtexture, new_uv).rgb * vec3(MOON_R, MOON_G, MOON_B);
+		offset = offset * 2.0 - 1.0;		
+		
+		frag_color += texture(gtexture, new_uv).rgb * vec3(MOON_R, MOON_G, MOON_B);
+		
 #elif MOON_TYPE == MOON_PHOTON
+		
 		// Shader moon
 		const float angle      = 0.7;
 		const mat2  rot        = mat2(cos(angle), sin(angle), -sin(angle), cos(angle));
 
 		const vec3  lit_color  = vec3(MOON_R, MOON_G <= 0.03 ? 0.0 : MOON_G - 0.03, MOON_B);
 		const vec3  glow_color = vec3(MOON_R <= 0.05 ? 0.0 : MOON_R - 0.05, MOON_G, MOON_B);
+		const vec3  dark_lit_color  = vec3(0.123,0.123,0.123);
+		const vec3  dark_glow_color = vec3(0.123,0.123,0.123);
 
 		offset = ((fract(vec2(4.0, 2.0) * uv) - 0.5) * rcp(0.15)) / MOON_ANGULAR_RADIUS;
 		offset = rot * offset;
@@ -98,39 +98,45 @@ void main() {
 		float a = sqrt(1.0 - offset.x * offset.x);
 
 		switch (moonPhase) {
-		case 0: // Full moon
+			case 0: // Full moon
 			break;
 
-		case 1: // Waning gibbous
+			case 1: // Waning gibbous
 			moon_shadow = 1.0 - linear_step(a * 0.6 - 0.12, a * 0.6 + 0.12, -offset.y); break;
 
-		case 2: // Last quarter
+			case 2: // Last quarter
 			moon_shadow = 1.0 - linear_step(a * 0.1 - 0.15, a * 0.1 + 0.15, -offset.y); break;
 
-		case 3: // Waning crescent
+			case 3: // Waning crescent
 			moon_shadow = linear_step(a * 0.5 - 0.12, a * 0.5 + 0.12, offset.y); break;
 
-		case 4: // New moon
+			case 4: // New moon
 			moon_shadow = 0.0; break;
 
-		case 5: // Waxing crescent
+			case 5: // Waxing crescent
 			moon_shadow = linear_step(a * 0.6 - 0.12, a * 0.5 + 0.12, -offset.y); break;
 
-		case 6: // First quarter
+			case 6: // First quarter
 			moon_shadow = linear_step(a * 0.1 - 0.15, a * 0.1 + 0.15, -offset.y); break;
 
-		case 7: // Waxing gibbous
+			case 7: // Waxing gibbous
 			moon_shadow = 1.0 - linear_step(a * 0.6 - 0.12, a * 0.6 + 0.12, offset.y); break;
 		}
 
 		frag_color = max(
-			moon * moon_shadow * lit_color,
-			(0.1 * glow_color) * pulse(dist, 0.95, 0.3) // Moon glow
+		moon * 1.0 * dark_lit_color,
+		(0.1) // Dark Moon glow
+		);
+
+		frag_color += max(
+		moon * moon_shadow * lit_color,
+		(0.1 * glow_color) * pulse(dist, 0.95, 0.3) // Moon glow
 		);
 
 		if (dist > 1.3) {
 			discard;
 		}
+
 #endif
 
 		frag_color  = srgb_eotf_inv(frag_color) * rec709_to_working_color;

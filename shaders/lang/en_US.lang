@@ -356,6 +356,8 @@ option.MOON_LUMINANCE                  = §7🌔§r Moon Disk Luminance
 # Stars settings
 option.STARS                           = §6✨§r STARS
 option.STARS.comment                   = Stars in the night sky. Low performance impact
+option.STARS_ROTATION                  = §6✨§r Stars Rotation
+option.STARS_ROTATION.comment          = Need SHADOW MAPPING to be ON, uses same rotation as Sun/Moon
 option.STARS_INTENSITY                 = §6✨§r Stars Intensity
 option.STARS_INTENSITY.comment         = Controls the brightness of stars in the night sky
 option.STARS_COVERAGE                  = §6✨§r Stars Coverage
@@ -393,6 +395,8 @@ option.GALAXY                          = §b🌌§r GALAXY
 option.GALAXY.comment                  = §b🌌§r Galaxy image in the night sky
 option.GALAXY_GAMS                     = §b🌌§r GAMS Galaxy
 option.GALAXY_GAMS.comment             = [ON] uses image & code from old GAMS version.\n[OFF] uses image & code from regular Photon.\n
+option.GALAXY_ROTATION                 = §b🌌§r Galaxy Rotation
+option.GALAXY_ROTATION.comment         = Need SHADOW MAPPING to be ON, uses same rotation as Sun/Moon
 option.GALAXY_INTENSITY                = §b🌌§r Galaxy Intensity
 option.GALAXY_INTENSITY.comment        = Controls the brightness of the galaxy in the night sky
 option.GALAXY_TINT_R                   = §c🌌§r Galaxy Color Red

@@ -15,7 +15,7 @@
 out vec2 uv;
 out vec2 light_levels;
 out vec3 position_view;
-out vec3 position_scene;
+out vec3 scene_pos;
 out vec4 tint;
 
 flat out vec3 light_color;
@@ -118,19 +118,19 @@ void main() {
 	}
 #endif
 
-	position_scene = transform(gl_ModelViewMatrix, vert.xyz);                                 // To view space
-	position_scene = view_to_scene_space(position_scene);                                          // To scene space
-	position_scene = position_scene + cameraPosition;                                              // To world space
-	position_scene = animate_vertex(position_scene, is_top_vertex, light_levels.y, material_mask); // Apply vertex animations
-	position_scene = position_scene - cameraPosition;                                              // Back to scene space
-	position_scene = world_curvature(position_scene);                                              // Apply world curvature
+	scene_pos = transform(gl_ModelViewMatrix, vert.xyz);                                 // To view space
+	scene_pos = view_to_scene_space(scene_pos);                                          // To scene space
+	scene_pos = scene_pos + cameraPosition;                                              // To world space
+	scene_pos = animate_vertex(scene_pos, is_top_vertex, light_levels.y, material_mask); // Apply vertex animations
+	scene_pos = scene_pos - cameraPosition;                                              // Back to scene space
+	scene_pos = world_curvature(scene_pos);                                              // Apply world curvature
 
 #if defined PROGRAM_GBUFFERS_WATER
 	tint.a = 1.0;
 
 	if (material_mask == 62) {
 		// Nether portal
-		position_tangent = (position_scene - gbufferModelViewInverse[3].xyz) * tbn;
+		position_tangent = (scene_pos - gbufferModelViewInverse[3].xyz) * tbn;
 
 		// (from fayer3)
 		vec2 uv_minus_mid = uv - mc_midTexCoord;
@@ -152,10 +152,10 @@ void main() {
 
 #if defined PROGRAM_GBUFFERS_WATER
 	// Fix issue where the normal of the bottom of the water surface is flipped
-	if (dot(position_scene, tbn[2]) > 0.0) tbn[2] = -tbn[2];
+	if (dot(scene_pos, tbn[2]) > 0.0) tbn[2] = -tbn[2];
 #endif
 
-	position_view = scene_to_view_space(position_scene);
+	position_view = scene_to_view_space(scene_pos);
 	vec4 position_clip = project(gl_ProjectionMatrix, position_view);
 
 #if   defined TAA && defined TAAU
