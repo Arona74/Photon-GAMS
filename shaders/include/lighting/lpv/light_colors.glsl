@@ -7,11 +7,11 @@ const vec3[64] light_color = vec3[64](
 	vec3(1.00, 1.00, 1.00) * vec3(1.00, 1.00, 1.00) *  6.0, // Medium white light
 	vec3(1.00, 1.00, 1.00) * vec3(1.0, 1.0, 1.0) * 1.0, // Weak white light
 	vec3(1.00, 0.65, 0.25) * vec3(1.00, 0.65, 0.25) * 12.0, // Strong golden light
-	vec3(1.0, 0.55, 0.10) * vec3(1.0, 0.55, 0.10) *  8.0, // Medium golden light
+	vec3(MEDIUM_GOLDEN_LIGHT_R, MEDIUM_GOLDEN_LIGHT_G, MEDIUM_GOLDEN_LIGHT_B) * vec3(MEDIUM_GOLDEN_LIGHT_R, MEDIUM_GOLDEN_LIGHT_G, MEDIUM_GOLDEN_LIGHT_B) * MEDIUM_GOLDEN_LIGHT_I, // Medium golden light
 	vec3(1.00, 0.57, 0.30) * vec3(1.00, 0.57, 0.30) *  2.2, // Weak golden light
 	vec3(1.00, 0.18, 0.10) * vec3(1.00, 0.18, 0.10) *  4.0, // Redstone components
-	vec3(1.0, 0.36, 0.16) * vec3(1.0, 0.36, 0.16) * 24.0, // Lava
-	vec3(1.00, 0.45, 0.10) * vec3(1.00, 0.45, 0.10) * 9.0, // Medium orange light
+	vec3(LAVA_LIGHT_R, LAVA_LIGHT_G, LAVA_LIGHT_B) * vec3(LAVA_LIGHT_R, LAVA_LIGHT_G, LAVA_LIGHT_B) * LAVA_LIGHT_I, // Lava
+	vec3(MEDIUM_ORANGE_LIGHT_R, MEDIUM_ORANGE_LIGHT_G, MEDIUM_ORANGE_LIGHT_B) * vec3(MEDIUM_ORANGE_LIGHT_R, MEDIUM_ORANGE_LIGHT_G, MEDIUM_ORANGE_LIGHT_B) * MEDIUM_ORANGE_LIGHT_I, // Medium orange light
 	vec3(1.00, 0.63, 0.15) * vec3(1.00, 0.63, 0.15) * 4.0, // Brewing stand
 	vec3(1.00, 0.57, 0.30) * vec3(1.00, 0.57, 0.30) * 12.0, // Medium golden light (Jack o' Lantern)
 	vec3(0.45, 0.73, 1.00) * vec3(0.45, 0.73, 1.00) *  6.0, // Soul lights
@@ -76,17 +76,17 @@ const vec3[64] light_color = vec3[64](
 	vec3(1.00, 1.00, 1.00) * vec3(1.00, 1.00, 1.00) *  6.0, // Medium white light
 	vec3(1.00, 1.00, 1.00) * vec3(1.0, 1.0, 1.0) * 1.0, // Weak white light
 	vec3(1.00, 0.65, 0.25) * vec3(1.00, 0.65, 0.25) * 12.0, // Strong golden light
-	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) *  8.0, // Medium golden light
+	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) *  MEDIUM_GOLDEN_LIGHT_I, // Medium golden light
 	vec3(1.00, 0.57, 0.30) * vec3(1.00, 0.57, 0.30) *  2.2, // Weak golden light
 	vec3(1.00, 0.18, 0.10) * vec3(1.00, 0.18, 0.10) *  4.0, // Redstone components
-	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) * 24.0, // Lava
-	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) * 9.0, // Medium orange light
+	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) * LAVA_LIGHT_I, // Lava
+	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) * MEDIUM_ORANGE_LIGHT_I, // Medium orange light
 	vec3(1.00, 0.63, 0.15) * vec3(1.00, 0.63, 0.15) * 4.0, // Brewing stand
 	vec3(1.00, 0.57, 0.30) * vec3(1.00, 0.57, 0.30) * 12.0, // Medium golden light (Jack o' Lantern)
 	vec3(0.45, 0.73, 1.00) * vec3(0.45, 0.73, 1.00) *  6.0, // Soul lights
 	vec3(0.45, 0.73, 1.00) * vec3(0.45, 0.73, 1.00) * 14.0, // Beacon
 	vec3(0.75, 1.00, 0.83) * vec3(0.75, 1.00, 0.83) * 1.5, // End portal frame
-	vec3(0.75, 1.00, 0.83) * vec3(0.75, 1.00, 0.83) * 1.0, // Sculk
+	vec3(0.75, 1.00, 0.83) * vec3(0.75, 1.00, 0.83) * SCULK_I, // Sculk
 	vec3(0.60, 0.10, 1.00) * vec3(0.60, 0.10, 1.00) * 5.0, // Pink glow
 	vec3(0.75, 1.00, 0.50) * vec3(0.75, 1.00, 0.50) * 1.0, // Sea pickle
 	vec3(1.00, 0.50, 0.25) * vec3(1.00, 0.50, 0.25) * 1.8, // Nether plants

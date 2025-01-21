@@ -284,6 +284,7 @@ option.RAIN_LIGHT_I                    = §b⛆§r Rain Intensity
 option.SNOW_LIGHT_I                    = ❄ Snow Intensity
 option.SANDSTORM_LIGHT_I               = §e⛆§r Sandstorm Intensity
 
+screen.colored_lights_sources          = Colored Light Sources
 option.VOXEL_VOLUME_SIZE               = Voxel Volume Size
 option.VOXEL_VOLUME_SIZE.comment       = High performance impact, also affected by shadow distance
 suffix.VOXEL_VOLUME_SIZE               = m
@@ -295,6 +296,19 @@ option.END_COLORED_LIGHTING            = §d🌟§r End Violet Lighting Blocks
 option.END_COLORED_LIGHTING.comment    = Fire, lava and torch blocks id's is violet in the End.
 option.SCULK_I                         = §b✨§r Sculk Light Intensity
 option.COLORED_CANDLES                 = §c🕯§r§a🕯§r§b🕯§r Colored Candles
+option.MEDIUM_GOLDEN_LIGHT_R           = Medium Golden Light Red
+option.MEDIUM_GOLDEN_LIGHT_G           = Medium Golden Light Green
+option.MEDIUM_GOLDEN_LIGHT_B           = Medium Golden Light Blue
+option.MEDIUM_GOLDEN_LIGHT_I           = Medium Golden Light Intensity
+option.LAVA_LIGHT_R                    = Lava Red
+option.LAVA_LIGHT_G                    = Lava Green
+option.LAVA_LIGHT_B                    = Lava Blue
+option.LAVA_LIGHT_I                    = Lava Light Intensity
+option.LAVA_EMISSION_I                 = Lava Emission Intensity
+option.MEDIUM_ORANGE_LIGHT_R           = Medium Orange Light Red
+option.MEDIUM_ORANGE_LIGHT_G           = Medium Orange Light Green
+option.MEDIUM_ORANGE_LIGHT_B           = Medium Orange Light Blue
+option.MEDIUM_ORANGE_LIGHT_I           = Medium Orange Light Intensity
 
 value.shadowDistance.8.0               = 8 blocks
 value.shadowDistance.16.0              = 1 chunk
