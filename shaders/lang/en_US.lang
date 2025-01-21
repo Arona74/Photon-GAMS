@@ -76,9 +76,9 @@ screen.clouds_cirrus                   = Cirrus/Cirrocumulus Clouds Settings
 screen.clouds_minecrafty               = Blocky Clouds Settings
 screen.clouds_noctilucent              = Noctilucent Clouds Settings
 
-screen.fog_advanced                    = Advanced Fog Settings
-screen.fog_rlh                         = Rayleigh Coefficient
-screen.fog_mie                         = Mie Coefficient
+screen.fog_advanced                    = §7🌫§r Advanced Fog Settings
+screen.fog_rlh                         = §7🌫§r Rayleigh Coefficient
+screen.fog_mie                         = §7🌫§r Mie Coefficient
 screen.sunlight_color                  = §6☀§r Sunlight Color
 screen.moonlight_color                 = §7🌔§r Moonlight Color
 screen.blocklight_color                = §b🔥§r Blocklight Color
@@ -89,15 +89,15 @@ screen.sunlight_evening                = Evening
 screen.light_nether                    = §c🔥§r Nether
 screen.light_end                       = §d🌟§r End
 screen.night_vision_color              = §a👓§r Night Vision Color
-screen.fog_rlh_normal                  = Normal Color
-screen.fog_rlh_rain                    = Rain Color
-screen.fog_rlh_arid                    = Arid/Desert Color
-screen.fog_rlh_snowy                   = Snowy Color
-screen.fog_rlh_taiga                   = Taiga Color
-screen.fog_rlh_jungle                  = Jungle Color
-screen.fog_rlh_swamp                   = Swamp Color
-screen.water_waves                     = Water Waves
-screen.water_fog_coeff                 = Water Fog Coefficients
+screen.fog_rlh_normal                  = §7🌫§r Normal Color
+screen.fog_rlh_rain                    = §7🌫§r Rain Color
+screen.fog_rlh_arid                    = §7🌫§r Arid/Desert Color
+screen.fog_rlh_snowy                   = §7🌫§r Snowy Color
+screen.fog_rlh_taiga                   = §7🌫§r Taiga Color
+screen.fog_rlh_jungle                  = §7🌫§r Jungle Color
+screen.fog_rlh_swamp                   = §7🌫§r Swamp Color
+screen.water_waves                     = §7🌫§r Water Waves
+screen.water_fog_coeff                 = §7🌫§r Water Fog Coefficients
 
 screen.weather                         = Daily Weather System
 screen.weather_d0                      = Day 0
@@ -738,98 +738,104 @@ option.AURORA_COLOR_11_WEIGHT = §7🌈§r Weight
 
 # Fog settings
 
-option.BORDER_FOG                      = Border Fog
+option.BORDER_FOG                      = §7🌫§r Border Fog
 option.BORDER_FOG.comment              = Thick fog hugging the edges of the render distance to hide the chunk borders
-option.CAVE_FOG                        = Cave Fog
+option.CAVE_FOG                        = §7🌫§r Cave Fog
 option.CAVE_FOG.comment                = Light, slightly glowing fog applied underground. This makes large caverns feel a lot more atmospheric, and helps you to see the shape of the cave
-option.BLOOMY_FOG                      = Bloomy Fog
+option.BLOOMY_FOG                      = §7🌫§r Bloomy Fog
 option.BLOOMY_FOG.comment              = Intense bloom in fog. This gives the appearance of light from bright objects scattering within the fog, and illuminates the area behind them. Almost no performance cost
-option.BLOOMY_FOG_INTENSITY            = Bloomy Fog Intensity
+option.BLOOMY_FOG_INTENSITY            = §7🌫§r Bloomy Fog Intensity
 option.BLOOMY_FOG_INTENSITY.comment    = Adjusts the intensity of "bloomy fog"
-option.NETHER_FOG_INTENSITY            = Nether Fog Intensity
-option.CAVE_FOG_INTENSITY              = Cave Fog Intensity
-option.END_FOG_INTENSITY               = End Fog Intensity
-option.VL                              = Volumetric Lighting
+option.NETHER_FOG_INTENSITY            = §7🌫§r Nether Fog Intensity
+option.CAVE_FOG_INTENSITY              = §7🌫§r Cave Fog Intensity
+option.END_FOG_INTENSITY               = §7🌫§r End Fog Intensity
+option.VL                              = §7🌫§r Volumetric Lighting
 option.VL.comment                      = Adds light shafts and variable fog density
-option.VL_RENDER_SCALE                 = VL Render Scale
-option.AIR_FOG_CLOUDY_NOISE            = Cloudy Fog
+option.VL_RENDER_SCALE                 = §7🌫§r VL Render Scale
+option.AIR_FOG_CLOUDY_NOISE            = §7🌫§r Cloudy Fog
 option.AIR_FOG_CLOUDY_NOISE.comment    = Subtle cloudy shapes in the fog, best visible in the morning.\nRequires volumetric fog!
-option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPACING = Cloudy Fog Spacing
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPEED = §7🌫§r Cloudy Fog Wind Speed
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPEED.comment = Controls how fast the clouds move (higher = faster)
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_X = §7🌫§r Cloudy Fog Wind Dir. X
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_X.comment = Controls wind direction & strength through X axis (horizontal movement)\n\n(higher = faster, negative = backward)
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_Z = §7🌫§r Cloudy Fog Wind Dir. Z
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_Z.comment = Controls wind direction & strength through Z axis (depth movement)\n\n(higher = faster, negative = backward)
+option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPACING = §7🌫§r Cloudy Fog Spacing
 option.AIR_FOG_CLOUDY_NOISE_CLOUD_SPACING.comment = Controls the spacing between clouds\n\nLower values = more spread out clouds, Higher values = tighter packed clouds
-option.AIR_FOG_CLOUDY_NOISE_VERTICAL_SCALE = Cloudy Fog Vertical Scale
+option.AIR_FOG_CLOUDY_NOISE_VERTICAL_SCALE = §7🌫§r Cloudy Fog Vertical Scale
 option.AIR_FOG_CLOUDY_NOISE_VERTICAL_SCALE.comment = Controls the vertical height/thickness of clouds\n\nHigher values create taller clouds, lower values create flatter clouds
-option.AIR_FOG_CLOUDY_NOISE_DENSITY_MULTIPLIER = Cloudy Fog Density Multiplier
+option.AIR_FOG_CLOUDY_NOISE_DENSITY_MULTIPLIER = §7🌫§r Cloudy Fog Density Multiplier
 option.AIR_FOG_CLOUDY_NOISE_DENSITY_MULTIPLIER.comment = Controls overall cloud density\n\nHigher values = denser/more opaque clouds
-option.AIR_FOG_COLORED_LIGHT_SHAFTS    = Colored Light Shafts
+option.AIR_FOG_COLORED_LIGHT_SHAFTS    = §7🌫§r Colored Light Shafts
 option.AIR_FOG_COLORED_LIGHT_SHAFTS.comment = Light shafts passing through translucent objects are tinted by their color
-option.FOG_CLOUD_SHADOWS               = Cloud Shadow Light Shafts
+option.FOG_CLOUD_SHADOWS               = §7🌫§r Cloud Shadow Light Shafts
 
-option.AIR_FOG_MIN_STEPS     = Air Fog Min Steps
-option.AIR_FOG_MAX_STEPS     = Air Fog Max Steps
-option.AIR_FOG_STEP_GROWTH   = Air Fog Step Growth
-option.AIR_FOG_VOLUME_TOP    = Air Fog Volume Top
-option.WATER_FOG_MIN_STEPS   = Water Fog Min Steps
-option.WATER_FOG_MAX_STEPS   = Water Fog Max Steps
-option.WATER_FOG_STEP_GROWTH = Water Fog Step Growth
-option.END_FOG_MIN_STEPS     = End Fog Min Steps
-option.END_FOG_MAX_STEPS     = End Fog Max Steps
-option.END_FOG_VOLUME_TOP    = End Fog Volume Top
-option.END_FOG_VOLUME_BOTTOM = End Fog Volume Bottom
-option.END_FOG_STEP_GROWTH   = End Fog Step Growth
-option.END_FOG_DENSITY_SCALE = End Fog Density
-option.FOG_MULTIPLE_SCATTERING_ITERATIONS = Multiple Scattering Iterations
+option.AIR_FOG_MIN_STEPS     = §7🌫§r Air Fog Min Steps
+option.AIR_FOG_MAX_STEPS     = §7🌫§r Air Fog Max Steps
+option.AIR_FOG_STEP_GROWTH   = §7🌫§r Air Fog Step Growth
+option.AIR_FOG_VOLUME_TOP    = §7🌫§r Air Fog Volume Top
+option.WATER_FOG_MIN_STEPS   = §7🌫§r Water Fog Min Steps
+option.WATER_FOG_MAX_STEPS   = §7🌫§r Water Fog Max Steps
+option.WATER_FOG_STEP_GROWTH = §7🌫§r Water Fog Step Growth
+option.END_FOG_MIN_STEPS     = §7🌫§r End Fog Min Steps
+option.END_FOG_MAX_STEPS     = §7🌫§r End Fog Max Steps
+option.END_FOG_VOLUME_TOP    = §7🌫§r End Fog Volume Top
+option.END_FOG_VOLUME_BOTTOM = §7🌫§r End Fog Volume Bottom
+option.END_FOG_STEP_GROWTH   = §7🌫§r End Fog Step Growth
+option.END_FOG_DENSITY_SCALE = §7🌫§r End Fog Density
+option.FOG_MULTIPLE_SCATTERING_ITERATIONS = §7🌫§r Multiple Scattering Iterations
 
-option.AIR_FOG_RAYLEIGH_FALLOFF_START     = Rayleigh Falloff Start
+option.AIR_FOG_RAYLEIGH_FALLOFF_START     = §7🌫§r Rayleigh Falloff Start
 option.AIR_FOG_RAYLEIGH_FALLOFF_START.comment = Altitude above sea level at which the rayleigh fog begins to decrease
-option.AIR_FOG_RAYLEIGH_FALLOFF_HALF_LIFE = Rayleigh Falloff Half-Life
+option.AIR_FOG_RAYLEIGH_FALLOFF_HALF_LIFE = §7🌫§r Rayleigh Falloff Half-Life
 option.AIR_FOG_RAYLEIGH_FALLOFF_HALF_LIFE.comment = Altitude above the Rayleigh Falloff Start where the rayleigh fog density is halved
-option.AIR_FOG_MIE_FALLOFF_START          = Mie Falloff Start
+option.AIR_FOG_MIE_FALLOFF_START          = §7🌫§r Mie Falloff Start
 option.AIR_FOG_MIE_FALLOFF_START.comment  = Altitude above sea level at which the mie fog begins to decrease
-option.AIR_FOG_MIE_FALLOFF_HALF_LIFE      = Mie Falloff Half-Life
+option.AIR_FOG_MIE_FALLOFF_HALF_LIFE      = §7🌫§r Mie Falloff Half-Life
 option.AIR_FOG_MIE_FALLOFF_HALF_LIFE.comment = Altitude above the Mie Falloff Start where the mie fog density is halved
 
-option.AIR_FOG_RAYLEIGH_DENSITY        = Normal Density
+option.AIR_FOG_RAYLEIGH_DENSITY        = §7🌫§r Normal Density
 option.AIR_FOG_RAYLEIGH_R              = §4Red
 option.AIR_FOG_RAYLEIGH_G              = §2Green
 option.AIR_FOG_RAYLEIGH_B              = §1Blue
 
-option.AIR_FOG_RAYLEIGH_DENSITY_RAIN   = Rain Density
+option.AIR_FOG_RAYLEIGH_DENSITY_RAIN   = §7🌫§r Rain Density
 option.AIR_FOG_RAYLEIGH_R_RAIN         = §4Red
 option.AIR_FOG_RAYLEIGH_G_RAIN         = §2Green
 option.AIR_FOG_RAYLEIGH_B_RAIN         = §1Blue
 
-option.AIR_FOG_RAYLEIGH_DENSITY_ARID   = Arid/Desert Density
+option.AIR_FOG_RAYLEIGH_DENSITY_ARID   = §7🌫§r Arid/Desert Density
 option.AIR_FOG_RAYLEIGH_R_ARID         = §4Red
 option.AIR_FOG_RAYLEIGH_G_ARID         = §2Green
 option.AIR_FOG_RAYLEIGH_B_ARID         = §1Blue
 
-option.AIR_FOG_RAYLEIGH_DENSITY_SNOWY  = Snowy Density
+option.AIR_FOG_RAYLEIGH_DENSITY_SNOWY  = §7🌫§r Snowy Density
 option.AIR_FOG_RAYLEIGH_R_SNOWY        = §4Red
 option.AIR_FOG_RAYLEIGH_G_SNOWY        = §2Green
 option.AIR_FOG_RAYLEIGH_B_SNOWY        = §1Blue
 
-option.AIR_FOG_RAYLEIGH_DENSITY_TAIGA  = Taiga Density
+option.AIR_FOG_RAYLEIGH_DENSITY_TAIGA  = §7🌫§r Taiga Density
 option.AIR_FOG_RAYLEIGH_R_TAIGA        = §4Red
 option.AIR_FOG_RAYLEIGH_G_TAIGA        = §2Green
 option.AIR_FOG_RAYLEIGH_B_TAIGA        = §1Blue
 
-option.AIR_FOG_RAYLEIGH_DENSITY_JUNGLE = Jungle Density
+option.AIR_FOG_RAYLEIGH_DENSITY_JUNGLE = §7🌫§r Jungle Density
 option.AIR_FOG_RAYLEIGH_R_JUNGLE       = §4Red
 option.AIR_FOG_RAYLEIGH_G_JUNGLE       = §2Green
 option.AIR_FOG_RAYLEIGH_B_JUNGLE       = §1Blue
 
-option.AIR_FOG_RAYLEIGH_DENSITY_SWAMP  = Swamp Density
+option.AIR_FOG_RAYLEIGH_DENSITY_SWAMP  = §7🌫§r Swamp Density
 option.AIR_FOG_RAYLEIGH_R_SWAMP        = §4Red
 option.AIR_FOG_RAYLEIGH_G_SWAMP        = §2Green
 option.AIR_FOG_RAYLEIGH_B_SWAMP        = §1Blue
 
-option.AIR_FOG_MIE_DENSITY_MORNING     = Morning Density
-option.AIR_FOG_MIE_DENSITY_NOON        = Noon Density
-option.AIR_FOG_MIE_DENSITY_EVENING     = Evening Density
-option.AIR_FOG_MIE_DENSITY_MIDNIGHT    = Midnight Density
-option.AIR_FOG_MIE_DENSITY_RAIN        = Rain Density
-option.AIR_FOG_MIE_DENSITY_SNOW        = Snow Density
-option.AIR_FOG_MIE_DENSITY_BLUE_HOUR   = Dawn/Dusk Density
+option.AIR_FOG_MIE_DENSITY_MORNING     = §7🌫§r Morning Density
+option.AIR_FOG_MIE_DENSITY_NOON        = §7🌫§r Noon Density
+option.AIR_FOG_MIE_DENSITY_EVENING     = §7🌫§r Evening Density
+option.AIR_FOG_MIE_DENSITY_MIDNIGHT    = §7🌫§r Midnight Density
+option.AIR_FOG_MIE_DENSITY_RAIN        = §7🌫§r Rain Density
+option.AIR_FOG_MIE_DENSITY_SNOW        = §7🌫§r Snow Density
+option.AIR_FOG_MIE_DENSITY_BLUE_HOUR   = §7🌫§r Dawn/Dusk Density
 
 # Materials settings
 

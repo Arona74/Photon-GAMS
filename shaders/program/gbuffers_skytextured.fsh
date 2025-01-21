@@ -97,7 +97,7 @@ void main() {
 		float moon_shadow = 1.0;
 		float a = sqrt(1.0 - offset.x * offset.x);
 
-		switch (moonPhase) {
+		switch (moonPhase) { 
 			case 0: // Full moon
 			break;
 

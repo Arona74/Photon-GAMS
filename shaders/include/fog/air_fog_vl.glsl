@@ -29,7 +29,7 @@ vec2 air_fog_density(vec3 world_pos) {
 
 	// Controls how fast the clouds move (higher = faster)
 	// x = horizontal movement, z = depth movement
-	const vec3 wind = 0.0003 * vec3(8.0, 0.0, 0.7);
+	const vec3 wind = 0.0001 * AIR_FOG_CLOUDY_NOISE_CLOUD_SPEED * vec3(AIR_FOG_CLOUDY_NOISE_CLOUD_X, 0.0, AIR_FOG_CLOUDY_NOISE_CLOUD_Z);
 
 	// Controls the spacing between clouds
 	// Lower values = more spread out clouds, Higher values = tighter packed clouds
