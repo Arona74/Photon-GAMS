@@ -652,12 +652,12 @@ Material material_from(vec3 albedo_srgb, uint material_mask, vec3 world_pos, vec
 						} else { // 39
 							#ifdef HARDCODED_EMISSION
 							// Lava
-							material.albedo = material.albedo * vec3(0.0) + float(material.albedo) * vec3(LAVA_LIGHT_R, LAVA_LIGHT_G, LAVA_LIGHT_B);
-							material.emission += LAVA_EMISSION_I * (12 * albedo_sqrt * smoothstep(1.0, 0.6 ,hsl.y) - 0.3 * albedo_sqrt * smoothstep(0.6, 1.0 ,hsl.y));
+							material.albedo = float(material.albedo) * vec3(LAVA_LIGHT_R, LAVA_LIGHT_G, LAVA_LIGHT_B);
+							material.emission = LAVA_EMISSION_I * (12 * albedo_sqrt * smoothstep(1.0, 0.6 ,hsl.y) * step(0.1, hsl.y) - 0.3 * albedo_sqrt * smoothstep(0.6, 1.0 ,hsl.y));
 
 							#if defined WORLD_END && defined END_COLORED_LIGHTING
-							material.albedo = material.albedo * vec3(0.0) + float(material.albedo) * vec3(0.70, 0.10, 1.00);
-							material.emission += LAVA_EMISSION_I * (12 * albedo_sqrt * smoothstep(1.0, 0.6 ,hsl.y) - 0.3 * albedo_sqrt * smoothstep(0.6, 1.0 ,hsl.y));
+							material.albedo = float(material.albedo) * vec3(0.70, 0.10, 1.00);
+							material.emission = LAVA_EMISSION_I * (12 * albedo_sqrt * smoothstep(1.0, 0.6 ,hsl.y) * step(0.1, hsl.y) - 0.3 * albedo_sqrt * smoothstep(0.6, 1.0 ,hsl.y));
 							#endif
 
 							#endif
