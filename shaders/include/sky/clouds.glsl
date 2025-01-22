@@ -7,8 +7,10 @@
 #include "clouds/cumulonimbus.glsl"
 #include "clouds/cirrus.glsl"
 #include "clouds/noctilucent.glsl"
+#include "clouds/towering_cumulus.glsl"
+#include "clouds/thunderhead.glsl"
 
-#if !defined CLOUDS_CUMULUS && !defined CLOUDS_CUMULUS_CONGESTUS && !defined CLOUDS_CUMULONIMBUS && !defined CLOUDS_ALTOCUMULUS && !defined CLOUDS_CIRRUS
+#if !defined CLOUDS_CUMULUS && !defined CLOUDS_CUMULUS_CONGESTUS && !defined CLOUDS_CUMULONIMBUS && !defined CLOUDS_ALTOCUMULUS && !defined CLOUDS_CIRRUS && !defined CLOUDS_TOWERING_CUMULUS && !defined CLOUDS_THUNDERHEAD
 CloudsResult draw_clouds(
 	vec3 air_viewer_pos,
 	vec3 ray_dir,
@@ -33,7 +35,13 @@ const uint defined_clouds =
 	8u |
 #endif
 #ifdef CLOUDS_CIRRUS
-	16u
+	16u |
+#endif
+#ifdef CLOUDS_TOWERING_CUMULUS
+	32u |
+#endif
+#ifdef CLOUDS_THUNDERHEAD
+	64u
 #else
 	0u
 #endif
@@ -44,7 +52,9 @@ const uint cloud_layers = max(
     ((defined_clouds >> 1u) & 1u) +
     ((defined_clouds >> 2u) & 1u) +
     ((defined_clouds >> 3u) & 1u) +
-    ((defined_clouds >> 4u) & 1u), 1u
+    ((defined_clouds >> 4u) & 1u) +
+    ((defined_clouds >> 5u) & 1u) +
+    ((defined_clouds >> 6u) & 1u), 1u
 );
 
 // Insertion sort from https://github.com/OpenGLInsights/OpenGLInsightsCode/blob/master/Chapter%2020%20Efficient%20Layered%20Fragment%20Buffer%20Techniques/sorting.glsl
@@ -84,7 +94,6 @@ CloudsResult draw_clouds(
 	float distance_to_terrain,
 	float dither
 ) {
-
 	CloudsResult result = clouds_not_hit;
 	if (defined_clouds == 0u) return result;
 	float r = length(air_viewer_pos);
@@ -105,7 +114,14 @@ CloudsResult draw_clouds(
 		cloud_types[ct_index++] = vec2(3., abs(clouds_altocumulus_radius - r));
 	#endif
 	#ifdef CLOUDS_CIRRUS
-		cloud_types[ct_index++] = vec2(4., abs(clouds_cirrus_radius - r));
+		// Force cirrus clouds to always be rendered first (behind other clouds) by setting a very large distance
+		cloud_types[ct_index++] = vec2(4., 1e6);
+	#endif
+	#ifdef CLOUDS_TOWERING_CUMULUS
+		cloud_types[ct_index++] = vec2(5., abs(clouds_towering_cumulus_radius - r));
+	#endif
+	#ifdef CLOUDS_THUNDERHEAD
+		cloud_types[ct_index++] = vec2(6., abs(clouds_thunderhead_radius - r));
 	#endif
 
 	cloud_types = sort_clouds(cloud_types);
@@ -126,6 +142,21 @@ CloudsResult draw_clouds(
 			if(max(daily_weather_variation.clouds_cumulus_coverage.x, daily_weather_variation.clouds_cumulus_coverage.y) >= 1e-3) {
 				result = blend_layers(result, draw_cumulus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
 			}
+			#ifdef CLOUDS_TOWERING_CUMULUS
+			if(max(daily_weather_variation.clouds_towering_cumulus_coverage.x, daily_weather_variation.clouds_towering_cumulus_coverage.y) >= 1e-3) {
+				result = blend_layers(result, draw_towering_cumulus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
+			}
+			#endif
+			#ifdef CLOUDS_THUNDERHEAD
+			if(max(daily_weather_variation.clouds_thunderhead_coverage.x, daily_weather_variation.clouds_thunderhead_coverage.y) >= 1e-3) {
+				result = blend_layers(result, draw_thunderhead_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
+			}
+			#endif
+			#ifdef CLOUDS_ALTOCUMULUS
+			if(max(daily_weather_variation.clouds_altocumulus_coverage.x, daily_weather_variation.clouds_altocumulus_coverage.y) >= 1e-3) {
+				result = blend_layers(result, draw_altocumulus_clouds(air_viewer_pos, ray_dir, clear_sky, distance_to_terrain, dither), i);
+			}
+			#endif
 			break;
 #endif
 #ifdef CLOUDS_CUMULONIMBUS

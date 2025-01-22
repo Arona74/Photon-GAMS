@@ -54,6 +54,8 @@ float get_cloud_shadows(sampler2D cloud_shadow_map, vec3 scene_pos) {
 #include "/include/sky/clouds/cumulus.glsl"
 #include "/include/sky/clouds/cumulus_congestus.glsl"
 #include "/include/sky/clouds/cirrus.glsl"
+#include "/include/sky/clouds/towering_cumulus.glsl"
+#include "/include/sky/clouds/thunderhead.glsl"
 
 float render_cloud_shadow_map(vec2 uv) {
 	// Transform position from scene-space to clouds-space
@@ -77,6 +79,38 @@ float render_cloud_shadow_map(vec2 uv) {
 	pos = ray_origin + light_dir * t;
 	density = clouds_cumulus_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
 	shadow *= exp(-0.50 * extinction_coeff * clouds_cumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
+#endif
+
+#ifdef CLOUDS_TOWERING_CUMULUS
+	dynamic_thickness = mix(
+		0.5,
+		1.0,
+		smoothstep(0.4, 0.6, daily_weather_variation.clouds_towering_cumulus_coverage.y)
+	);
+	detail_weights = mix(vec2(0.33, 0.40), vec2(0.25, 0.20), sqr(daily_weather_variation.clouds_stratus_amount)) * CLOUDS_TOWERING_CUMULUS_DETAIL_STRENGTH;
+	edge_sharpening = mix(vec2(3.0, 8.0), vec2(1.0, 2.0), daily_weather_variation.clouds_stratus_amount);
+
+	extinction_coeff = 0.25 * mix(0.05, 0.1, smoothstep(0.0, 0.3, abs(sun_dir.y))) * (1.0 - 0.33 * rainStrength) * CLOUDS_TOWERING_CUMULUS_DENSITY;
+	t = intersect_sphere(ray_origin, light_dir, clouds_towering_cumulus_radius + 0.25 * clouds_towering_cumulus_thickness).y;
+	pos = ray_origin + light_dir * t;
+	density = clouds_towering_cumulus_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
+	shadow *= exp(-0.50 * extinction_coeff * clouds_towering_cumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
+#endif
+
+#ifdef CLOUDS_THUNDERHEAD
+	dynamic_thickness = mix(
+		0.5,
+		1.0,
+		smoothstep(0.4, 0.6, daily_weather_variation.clouds_thunderhead_coverage.y)
+	);
+	detail_weights = mix(vec2(0.33, 0.40), vec2(0.25, 0.20), sqr(daily_weather_variation.clouds_stratus_amount)) * CLOUDS_THUNDERHEAD_DETAIL_STRENGTH * 0.03;
+	edge_sharpening = mix(vec2(3.0, 8.0), vec2(1.0, 2.0), daily_weather_variation.clouds_stratus_amount);
+
+	extinction_coeff = 0.25 * mix(0.05, 0.1, smoothstep(0.0, 0.3, abs(sun_dir.y))) * (1.0 - 0.33 * rainStrength) * CLOUDS_THUNDERHEAD_DENSITY;
+	t = intersect_sphere(ray_origin, light_dir, clouds_thunderhead_radius + 0.25 * clouds_thunderhead_thickness).y;
+	pos = ray_origin + light_dir * t;
+	density = clouds_thunderhead_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
+	shadow *= exp(-0.50 * extinction_coeff * clouds_thunderhead_thickness * rcp(abs(light_dir.y) + eps) * density);
 #endif
 
 #ifdef CLOUDS_ALTOCUMULUS

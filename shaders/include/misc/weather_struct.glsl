@@ -3,6 +3,8 @@
 
 struct DailyWeatherVariation {
 	vec2 clouds_cumulus_coverage;
+	vec2 clouds_towering_cumulus_coverage;
+	vec2 clouds_thunderhead_coverage;
 	vec2 clouds_altocumulus_coverage;
 	vec2 clouds_cirrus_coverage;
 
