@@ -360,6 +360,7 @@ option.ATMOSPHERE_SATURATION_BOOST_INTENSITY.comment = Adjust the intensity of A
 option.VANILLA_SUN                     = §6☀§r Vanilla Sun
 option.SUN_LUMINANCE                   = §6☀§r Sun Disk Luminance
 option.SUN_ANGULAR_RADIUS              = §6☀§r Sun Angular Radius
+option.SUN_DISK_INTENSITY              = §6☀§r Sun Disk Intensity
 
 # Moon settings
 option.MOON_TYPE                       = §7🌔§r Moon Type
@@ -368,6 +369,7 @@ value.MOON_TYPE.MOON_PHOTON            = Photon Moon
 value.MOON_TYPE.MOON_FANCY             = Fancy Moon
 option.MOON_ANGULAR_RADIUS             = §7🌔§r Moon Angular Radius
 option.MOON_LUMINANCE                  = §7🌔§r Moon Disk Luminance
+option.MOON_DISK_INTENSITY             = §7🌔§r Moon Disk Intensity
 
 # Stars settings
 option.STARS                           = §6✨§r STARS

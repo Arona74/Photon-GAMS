@@ -70,8 +70,8 @@ vec3 draw_stars(vec3 ray_dir, float galaxy_luminance) {
 #include "/include/sky/shooting_stars.glsl"
 #include "/include/sky/nebula.glsl"
 
-const float sun_luminance  = SUN_LUMINANCE * SUN_I; // luminance of sun disk
-const float moon_luminance = MOON_LUMINANCE; // luminance of moon disk
+const float sun_luminance  = SUN_LUMINANCE * SUN_DISK_INTENSITY; // luminance of sun disk
+const float moon_luminance = MOON_LUMINANCE * MOON_DISK_INTENSITY; // luminance of moon disk
 
 vec3 draw_sun(vec3 ray_dir) {
 	float nu = dot(ray_dir, sun_dir);
@@ -243,11 +243,11 @@ vec3 draw_sky(vec3 ray_dir, vec3 atmosphere) {
 	vec3 vanilla_sky_color = from_srgb(vanilla_sky_rgb);
 	//uint vanilla_sky_id = uint(255.0 * vanilla_sky.a);
 	
-	if (max_of(vanilla_sky_color) > 0.2) {
+	/*if (max_of(vanilla_sky_color) > 0.2) {
 		//const vec3 brightness_scale = sunlight_color * moon_luminance;
 		//if(dot(vanilla_sky_color, vec3(1.0)) > 1e-3) sky *= 0.0; // Hide stars behind moon
 		sky *= 0.0;
-	}
+	}*/
 	
 	sky += vanilla_sky_color * (sunlight_color * moon_luminance);
 	

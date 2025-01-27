@@ -36,8 +36,8 @@ uniform vec3 view_sun_dir;
 #include "/include/sky/atmosphere.glsl"
 #include "/include/utility/color.glsl"
 
-const float vanilla_sun_luminance = SUN_LUMINANCE * SUN_I; 
-const float moon_luminance = MOON_LUMINANCE; 
+const float vanilla_sun_luminance = SUN_LUMINANCE * SUN_DISK_INTENSITY; 
+const float moon_luminance = MOON_LUMINANCE * MOON_DISK_INTENSITY; 
 
 void main() {
 	vec2 new_uv = uv;
@@ -140,7 +140,7 @@ void main() {
 #endif
 
 		frag_color  = srgb_eotf_inv(frag_color) * rec709_to_working_color;
-		frag_color *= (sunlight_color * moon_luminance) * moon_color;
+		frag_color *= sunlight_color * moon_luminance;
 
 /* #if defined VANILLA_SUN && defined WORLD_SPACE
 	case MC_RENDER_STAGE_CUSTOM_SKY:
