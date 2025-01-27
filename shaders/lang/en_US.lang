@@ -1354,6 +1354,8 @@ option.ENCHANTMENT_GLINT_BRIGHTNESS    = Enchantment Glint Brightness
 option.ENCHANTMENT_GLINT_R             = Enchantment Glint Red
 option.ENCHANTMENT_GLINT_G             = Enchantment Glint Green
 option.ENCHANTMENT_GLINT_B             = Enchantment Glint Blue
+option.USE_SEPARATE_ENTITY_DRAWS       = Use "Separate Entity Draws"
+option.USE_SEPARATE_ENTITY_DRAWS.comment = "separateEntityDraws" is an Iris feature enabling shaderpacks which use deferred-forward hybrid shading, like Photon, to correctly render translucent entities and other objects. However, it can be the cause of some issues. Expect rendering issues such as translucent entities becoming opaque if you disable this!
 
 value.DEBUG_VIEW.DEBUG_VIEW_NONE       = OFF
 value.DEBUG_VIEW.DEBUG_VIEW_SAMPLER    = Sampler
