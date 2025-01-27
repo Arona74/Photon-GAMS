@@ -26,7 +26,7 @@ layout (location = 0) out vec4 fragment_color;
 in vec2 uv;
 in vec2 light_levels;
 in vec3 position_view;
-in vec3 scene_pos;
+in vec3 position_scene;
 in vec4 tint;
 
 flat in vec3 light_color;
@@ -370,8 +370,8 @@ void main() {
 	float depth0 = gl_FragCoord.z;
 	float depth1 = texelFetch(depthtex1, ivec2(gl_FragCoord.xy), 0).x;
 
-	vec3 world_pos = scene_pos + cameraPosition;
-	vec3 direction_world = normalize(scene_pos - gbufferModelViewInverse[3].xyz);
+	vec3 world_pos = position_scene + cameraPosition;
+	vec3 direction_world = normalize(position_scene - gbufferModelViewInverse[3].xyz);
 
 	vec3 view_back_pos = screen_to_view_space(vec3(coord, depth1), true);
 
@@ -385,7 +385,7 @@ void main() {
 
 	vec3 scene_back_pos = view_to_scene_space(view_back_pos);
 
-	float layer_dist = distance(scene_pos, scene_back_pos); // distance to solid layer along view ray
+	float layer_dist = distance(position_scene, scene_back_pos); // distance to solid layer along view ray
 
 	// Get material and normal
 
@@ -416,7 +416,7 @@ void main() {
 			// Use same TBN matrix calculation for vanilla water as for DH water (wasteful)
 			mat3 tbn = get_tbn_matrix(tbn[2]);
 		#endif
-		vec3 world_pos = scene_pos + cameraPosition;
+		vec3 world_pos = position_scene + cameraPosition;
 		vec2 coord = -(world_pos * tbn).xy;
 		bool flowing_water = abs(tbn[2].y) < 0.99;
 		vec2 flow_dir = flowing_water ? normalize(tbn[2].xz) : vec2(0.0);
@@ -476,7 +476,7 @@ void main() {
 		adjusted_light_levels *= mix(0.7, 1.0, material_ao);
 
 	#ifdef DIRECTIONAL_LIGHTMAPS
-		adjusted_light_levels *= get_directional_lightmaps(normal);
+		adjusted_light_levels *= get_directional_lightmaps(position_scene, normal);
 	#endif
 #endif
 
@@ -486,7 +486,7 @@ void main() {
 
 #ifdef NO_NORMAL
 		// No normal vector => make one from screen-space partial derivatives
-		normal = normalize(cross(dFdx(scene_pos), dFdy(scene_pos)));
+		normal = normalize(cross(dFdx(position_scene), dFdy(position_scene)));
 #endif
 
 		fragment_color.a = sqrt(fragment_color.a);
@@ -512,7 +512,7 @@ void main() {
 	float LoH = LoV * halfway_norm + halfway_norm;
 
 #if defined WORLD_OVERWORLD && defined CLOUD_SHADOWS
-	float cloud_shadows = get_cloud_shadows(colortex8, scene_pos);
+	float cloud_shadows = get_cloud_shadows(colortex8, position_scene);
 #else
 	#define cloud_shadows 1.0
 #endif
@@ -520,7 +520,7 @@ void main() {
 #if defined SHADOW && (defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE)
 	float sss_depth;
 	float shadow_distance_fade;
-	vec3 shadows = calculate_shadows(scene_pos, tbn[2], adjusted_light_levels.y, cloud_shadows, material.sss_amount, shadow_distance_fade, sss_depth);
+	vec3 shadows = calculate_shadows(position_scene, tbn[2], adjusted_light_levels.y, cloud_shadows, material.sss_amount, shadow_distance_fade, sss_depth);
 #else
 	#define sss_depth 0.0
 	#define shadow_distance_fade 0.0
@@ -531,7 +531,7 @@ void main() {
 
 	fragment_color.rgb = get_diffuse_lighting(
 		material,
-		scene_pos,
+		position_scene,
 		normal,
 		tbn[2],
 		shadows,
@@ -599,9 +599,9 @@ void main() {
 
 	// Fog
 
-	vec4 fog = common_fog(length(scene_pos), false);
+	vec4 fog = common_fog(length(position_scene), false);
 	fragment_color.rgb  = fragment_color.rgb * fog.a + fog.rgb;
-	fragment_color.a   *= border_fog(scene_pos, direction_world);
+	fragment_color.a   *= border_fog(position_scene, direction_world);
 
 	// Purkinje shift
 
