@@ -355,6 +355,7 @@ option.ATMOSPHERE_SATURATION_BOOST     = Atmosphere Saturation Boost
 option.ATMOSPHERE_SATURATION_BOOST.comment = Increases the saturation of the sky and sunlight color depending on the time of day
 option.ATMOSPHERE_SATURATION_BOOST_INTENSITY = Atmosphere Saturation Boost Intensity
 option.ATMOSPHERE_SATURATION_BOOST_INTENSITY.comment = Adjust the intensity of Atmosphere Saturation Boost
+option.CREPUSCULAR_RAYS                = Crepuscular Rays
 
 # Sun settings
 option.VANILLA_SUN                     = §6☀§r Vanilla Sun
