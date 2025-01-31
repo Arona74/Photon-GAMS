@@ -6,7 +6,7 @@
 #include "common.glsl"
 
 // Regular cumulus layer
-const float clouds_towering_cumulus_radius      = planet_radius + CLOUDS_TOWERING_CUMULUS_ALTITUDE;
+const float clouds_towering_cumulus_radius      = planet_radius + CLOUDS_TOWERING_CUMULUS_ALTITUDE * 1.5;
 const float clouds_towering_cumulus_thickness   = CLOUDS_TOWERING_CUMULUS_ALTITUDE * CLOUDS_TOWERING_CUMULUS_THICKNESS;
 const float clouds_towering_cumulus_top_radius  = clouds_towering_cumulus_radius + clouds_towering_cumulus_thickness * 7.0;
 
@@ -47,7 +47,7 @@ float clouds_towering_cumulus_density(vec3 pos, vec2 detail_weights, vec2 edge_s
 
 #ifndef PROGRAM_PREPARE
 	// Curl noise used to warp the 3D noise into swirling shapes
-	vec3 curl = (0.181 * CLOUDS_TOWERING_CUMULUS_CURL_STRENGTH) * texture(colortex7, 0.002 * pos).xyz * smoothstep(0.4, 1.0, 1.0 - altitude_fraction);
+	vec3 curl = (0.01 * CLOUDS_TOWERING_CUMULUS_CURL_STRENGTH) * texture(colortex7, 0.001 * pos).xyz * smoothstep(0.4, 1.0, 1.0 - altitude_fraction);
 	vec3 wind = vec3(wind_velocity * world_age, 0.0).xzy;
 
 	// 3D worley noise for detail
@@ -58,7 +58,7 @@ float clouds_towering_cumulus_density(vec3 pos, vec2 detail_weights, vec2 edge_s
 	const float worley_1 = 0.5;
 #endif
 
-	float detail_fade = 0.8 * smoothstep(0.85, 1.0, 1.0 - altitude_fraction)
+	float detail_fade = 0.02 * smoothstep(0.85, 1.0, 1.0 - altitude_fraction)
 	                  - 0.35 * smoothstep(0.05, 0.5, altitude_fraction) + 0.6;
 
 	density -= detail_weights.x * sqr(worley_0) * dampen(clamp01(1.0 - density));

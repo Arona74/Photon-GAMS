@@ -6,7 +6,7 @@
 #include "common.glsl"
 
 // Regular thunderhead layer
-const float clouds_thunderhead_radius      = planet_radius + CLOUDS_THUNDERHEAD_ALTITUDE * 0.6; // Lowered by multiplying by 0.6
+const float clouds_thunderhead_radius      = planet_radius + CLOUDS_THUNDERHEAD_ALTITUDE * 0.6;
 const float clouds_thunderhead_thickness   = CLOUDS_THUNDERHEAD_ALTITUDE * CLOUDS_THUNDERHEAD_THICKNESS;
 const float clouds_thunderhead_top_radius  = clouds_thunderhead_radius + clouds_thunderhead_thickness * 15.0;
 
@@ -14,11 +14,11 @@ const float clouds_thunderhead_top_radius  = clouds_thunderhead_radius + clouds_
 float clouds_thunderhead_altitude_shaping(float density, float altitude_fraction, float noise) {
 	// Calculate anvil shape parameters
 	float anvil_coverage = daily_weather_variation.clouds_thunderhead_coverage.y;
-	float anvil_height = altitude_fraction * anvil_coverage;
+	float anvil_height = altitude_fraction - anvil_coverage;
 	
 	// Create parabolic anvil shape
-	float anvil_shape = (9.53 - anvil_height) * (8.0 - anvil_height);
-	float anvil_strength = smoothstep(-3.0, 50.0, altitude_fraction) * 0.1;
+	float anvil_shape = (9.0 - anvil_height) * (8.5 - anvil_height);
+	float anvil_strength = smoothstep(-2.0, 50.0, altitude_fraction) * 0.1;
 	
 	// Apply anvil carving
 	density -= anvil_strength * anvil_shape;
@@ -54,21 +54,21 @@ float clouds_thunderhead_density(vec3 pos, vec2 detail_weights, vec2 edge_sharpe
 
 #ifndef PROGRAM_PREPARE
 	// Curl noise used to warp the 3D noise into swirling shapes
-	vec3 curl = (0.181 * CLOUDS_THUNDERHEAD_CURL_STRENGTH) * texture(colortex7, 0.002 * pos).xyz * smoothstep(0.4, 1.0, 1.0 - altitude_fraction);
+	vec3 curl = (0.01 * CLOUDS_THUNDERHEAD_CURL_STRENGTH) * texture(colortex7, 0.002 * pos).xyz * smoothstep(0.4, 1.0, 1.0 - altitude_fraction);
 	vec3 wind = vec3(wind_velocity * world_age, 0.0).xzy;
 
 	// 3D worley noise for detail
-	float worley_0 = texture(colortex6, (pos + 0.2 * wind) * 0.00015 + curl * 1.0).x;
-	float worley_1 = texture(colortex6, (pos + 0.4 * wind) * 0.0015 + curl * 3.0).x;
+	float worley_0 = texture(colortex6, (pos + 0.2 * wind) * 0.0002 + curl * 1.0).x;
+	float worley_1 = texture(colortex6, (pos + 0.4 * wind) * 0.0002 + curl * 3.0).x;
 #else
 	const float worley_0 = 0.5;
 	const float worley_1 = 0.5;
 #endif
 
-	float detail_fade = 0.8 * smoothstep(0.85, 1.0, 1.0 - altitude_fraction)
+	float detail_fade = 0.02 * smoothstep(0.85, 1.0, 1.0 - altitude_fraction)
 	                  - 0.35 * smoothstep(0.05, 0.5, altitude_fraction) + 0.6;
 
-	float bottom_detail_boost = 1.0 + (1.0 - smoothstep(0.0, 0.6, altitude_fraction)) * 10.0;
+	float bottom_detail_boost = 1.0 + (1.0 - smoothstep(0.0, 0.6, altitude_fraction)) * 100.0;
 	density -= detail_weights.x * sqr(worley_0) * dampen(clamp01(1.0 - density)) * bottom_detail_boost;
 	density -= detail_weights.y * sqr(worley_1) * dampen(clamp01(1.0 - density)) * detail_fade;
 
@@ -224,7 +224,7 @@ CloudsResult draw_thunderhead_clouds(
 	float scattering_coeff   = extinction_coeff * mix(1.00, 1.6, rainStrength);
 
 	float dynamic_thickness  = mix(0.5, 1.0, smoothstep(0.4, 0.6, daily_weather_variation.clouds_thunderhead_coverage.y));
-	vec2  detail_weights     = vec2(0.07, 0.1) * CLOUDS_THUNDERHEAD_DETAIL_STRENGTH;
+	vec2  detail_weights     = vec2(0.01, 0.05) * CLOUDS_THUNDERHEAD_DETAIL_STRENGTH;
 	vec2  edge_sharpening    = vec2(3.0, 8.0);
 
 	// --------------------

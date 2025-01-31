@@ -5,7 +5,7 @@
 
 #include "common.glsl"
 
-const float clouds_cumulus_radius      = planet_radius + CLOUDS_CUMULUS_ALTITUDE * 1.3;
+const float clouds_cumulus_radius      = planet_radius + CLOUDS_CUMULUS_ALTITUDE * 1.5;
 const float clouds_cumulus_thickness   = CLOUDS_CUMULUS_ALTITUDE * CLOUDS_CUMULUS_THICKNESS;
 const float clouds_cumulus_top_radius  = clouds_cumulus_radius + clouds_cumulus_thickness;
 

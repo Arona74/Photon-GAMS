@@ -108,11 +108,11 @@ float render_cloud_shadow_map(vec2 uv) {
 		1.0,
 		smoothstep(0.4, 0.6, daily_weather_variation.clouds_thunderhead_coverage.y)
 	);
-	detail_weights = mix(vec2(0.33, 0.40), vec2(0.25, 0.20), sqr(daily_weather_variation.clouds_stratus_amount)) * CLOUDS_THUNDERHEAD_DETAIL_STRENGTH * 0.03;
+	detail_weights = mix(vec2(0.01, 0.05), vec2(0.25, 0.20), sqr(daily_weather_variation.clouds_stratus_amount)) * CLOUDS_THUNDERHEAD_DETAIL_STRENGTH;
 	edge_sharpening = mix(vec2(3.0, 8.0), vec2(1.0, 2.0), daily_weather_variation.clouds_stratus_amount);
 
-	extinction_coeff = 0.25 * mix(0.05, 0.1, smoothstep(0.0, 0.3, abs(sun_dir.y))) * (1.0 - 0.33 * rainStrength) * CLOUDS_THUNDERHEAD_DENSITY;
-	t = intersect_sphere(ray_origin, light_dir, clouds_thunderhead_radius + 0.25 * clouds_thunderhead_thickness).y;
+	extinction_coeff = 0.55 * mix(0.9, 0.008, smoothstep(0.0, 0.3, abs(sun_dir.y))) * (1.0 - 0.33 * rainStrength) * CLOUDS_THUNDERHEAD_DENSITY;
+	t = intersect_sphere(ray_origin, light_dir, clouds_thunderhead_radius + 6.25 * clouds_thunderhead_thickness).y;
 	pos = ray_origin + light_dir * t;
 	distance_fade = exp2(distance_fade_strength * length(pos.xy));
 	density = clouds_thunderhead_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
