@@ -804,6 +804,7 @@ option.BLOOMY_FOG                      = §7🌫§r Bloomy Fog
 option.BLOOMY_FOG.comment              = Intense bloom in fog. This gives the appearance of light from bright objects scattering within the fog, and illuminates the area behind them. Almost no performance cost
 option.BLOOMY_FOG_INTENSITY            = §7🌫§r Bloomy Fog Intensity
 option.BLOOMY_FOG_INTENSITY.comment    = Adjusts the intensity of "bloomy fog"
+option.OVERWORLD_FOG_INTENSITY         = §7🌫§r Overworld Fog Intensity
 option.NETHER_FOG_INTENSITY            = §7🌫§r Nether Fog Intensity
 option.CAVE_FOG_INTENSITY              = §7🌫§r Cave Fog Intensity
 option.END_FOG_INTENSITY               = §7🌫§r End Fog Intensity

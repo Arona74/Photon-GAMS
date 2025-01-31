@@ -558,7 +558,7 @@ void main() {
 		NoV,
 		NoH,
 		LoV
-	) * fragment_color.a;
+	) * sqr(fragment_color.a);
 
 	// Specular highlight
 
