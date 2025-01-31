@@ -198,6 +198,3 @@ vec3 project_ortho(mat4 m, vec3 pos) {
 #define cartesian_to_log_polar(a) vec2(log(length(a)), atan(a.y, a.x))
 
 #define log_polar_to_cartesian(logp) (exp(logp.x) * vec2(cos(logp.y), sin(logp.y)))
-
-// DH support
-
