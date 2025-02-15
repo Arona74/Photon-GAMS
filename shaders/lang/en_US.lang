@@ -1423,6 +1423,7 @@ option.BOX_MODE.comment         = Selection Outline Box Mode\n\nNone: Default\nC
 value.BOX_MODE.BOX_MODE_NONE    = None
 value.BOX_MODE.BOX_MODE_COLOR   = Color
 value.BOX_MODE.BOX_MODE_RAINBOW = Rainbow
+option.BOX_MODE_RAINBOW_SPEED   = Rainbow Effect Speed Multiplier
 option.BOX_COLOR_R              = Red
 option.BOX_COLOR_G              = Green
 option.BOX_COLOR_B              = Blue

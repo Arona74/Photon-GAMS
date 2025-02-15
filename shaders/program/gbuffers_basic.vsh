@@ -168,7 +168,7 @@ void main() {
 		vec3  col      = vec3(BOX_COLOR_R, BOX_COLOR_G, BOX_COLOR_B);
 #else // BOX_MODE_RAINBOW
 		vec2  uv       = gl_FragCoord.xy * view_pixel_size;
-		vec3  col      = hsl_to_rgb(vec3(fract(uv.y + uv.x * uv.y + frameTimeCounter * 0.1), 1.0, 1.0));
+		vec3  col      = hsl_to_rgb(vec3(fract(uv.y + uv.x * uv.y + frameTimeCounter * BOX_MODE_RAINBOW_SPEED * 0.1), 1.0, 1.0));
 #endif
 		scene_color.rgb = srgb_eotf_inv(col * vec3(1.0 + BOX_EMISSION)) * rec709_to_working_color;
 	} else // careful editing scene_color below
