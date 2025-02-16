@@ -22,7 +22,8 @@ flat in vec3 ambient_color;
 flat in vec3 light_color;
 
 #if defined WORLD_OVERWORLD
-flat in mat2x3 air_fog_coeff[2];
+#include "/include/fog/overworld/coeff_struct.glsl"
+flat in AirFogCoefficients air_fog_coeff;
 #endif
 
 // ------------
@@ -114,7 +115,7 @@ uniform float time_midnight;
 #ifdef CLOUD_SHADOWS
 #include "/include/lighting/cloud_shadows.glsl"
 #endif
-#include "/include/fog/air_fog_vl.glsl"
+#include "/include/fog/overworld/raymarched.glsl"
 #endif
 
 #if defined WORLD_END //|| defined WORLD_NETHER
@@ -216,4 +217,3 @@ void main() {
 	}
 #endif
 }
-
