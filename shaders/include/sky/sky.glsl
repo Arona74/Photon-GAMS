@@ -101,7 +101,7 @@ vec3 draw_galaxy(vec3 ray_dir, out float galaxy_luminance) {
 	// Map spherical coordinates to UV coordinates
 	vec2 uv = vec2(phi / (2.0 * pi) + 0.5, theta / pi);
 
-	vec3 galaxy = from_srgb(texture(colortex14, uv).rgb);
+	vec3 galaxy = from_srgb(texture(colortex13, uv).rgb);
 
 	// Fade in/out at twilight
 	float night_factor = smoothstep(0.01, 0.5, -sun_dir.y);

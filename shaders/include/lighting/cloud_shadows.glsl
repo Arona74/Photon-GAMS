@@ -58,7 +58,7 @@ float get_cloud_shadows(sampler2D cloud_shadow_map, vec3 scene_pos) {
 #include "/include/sky/clouds/towering_cumulus.glsl"
 #include "/include/sky/clouds/thunderhead.glsl"
 
-float render_cloud_shadow_map(vec2 uv) {
+vec2 render_cloud_shadow_map(vec2 uv) {
 	// Transform position from scene-space to clouds-space
 	vec3 ray_origin = unproject_cloud_shadow_map(uv);
 	     ray_origin = vec3(ray_origin.xz, ray_origin.y + eyeAltitude - SEA_LEVEL).xzy * CLOUDS_SCALE + vec3(0.0, planet_radius, 0.0);
@@ -82,7 +82,8 @@ float render_cloud_shadow_map(vec2 uv) {
 	pos = ray_origin + light_dir * t;
 	distance_fade = exp2(distance_fade_strength * length(pos.xy));
 	density = clouds_cumulus_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
-	shadow *= exp(-0.50 * distance_fade * extinction_coeff * clouds_cumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
+	shadow *= exp(-1.00 * distance_fade * extinction_coeff * clouds_cumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
+	float shadow_cumulus_only = shadow;
 #endif
 
 #ifdef CLOUDS_TOWERING_CUMULUS
@@ -99,7 +100,7 @@ float render_cloud_shadow_map(vec2 uv) {
 	pos = ray_origin + light_dir * t;
 	distance_fade = exp2(distance_fade_strength * length(pos.xy));
 	density = clouds_towering_cumulus_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
-	shadow *= exp(-0.50 * distance_fade * extinction_coeff * clouds_towering_cumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
+	shadow *= exp(-1.00 * distance_fade * extinction_coeff * clouds_towering_cumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
 #endif
 
 #ifdef CLOUDS_THUNDERHEAD
@@ -116,7 +117,7 @@ float render_cloud_shadow_map(vec2 uv) {
 	pos = ray_origin + light_dir * t;
 	distance_fade = exp2(distance_fade_strength * length(pos.xy));
 	density = clouds_thunderhead_density(pos, detail_weights, edge_sharpening, dynamic_thickness);
-	shadow *= exp(-0.50 * distance_fade * extinction_coeff * clouds_thunderhead_thickness * rcp(abs(light_dir.y) + eps) * density);
+	shadow *= exp(-1.00 * distance_fade * extinction_coeff * clouds_thunderhead_thickness * rcp(abs(light_dir.y) + eps) * density);
 #endif
 
 #ifdef CLOUDS_ALTOCUMULUS
@@ -125,7 +126,7 @@ float render_cloud_shadow_map(vec2 uv) {
 	pos = ray_origin + light_dir * t;
 	distance_fade = exp2(distance_fade_strength * length(pos.xy));
 	density = clouds_altocumulus_density(pos);
-	shadow *= exp(-0.50 * distance_fade * extinction_coeff * clouds_altocumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
+	shadow *= exp(-1.00 * distance_fade * extinction_coeff * clouds_altocumulus_thickness * rcp(abs(light_dir.y) + eps) * density);
 #endif
 
 #ifdef CLOUDS_CIRRUS
@@ -133,10 +134,10 @@ float render_cloud_shadow_map(vec2 uv) {
 	pos = ray_origin + light_dir * t;
 	distance_fade = exp2(distance_fade_strength * length(pos.xy));
 	density = clouds_cirrus_density(pos.xz, 0.5);
-	shadow *= exp(-0.25 * distance_fade * clouds_cirrus_extinction_coeff * clouds_cirrus_thickness * rcp(abs(light_dir.y) + eps) * density) * 0.5 + 0.5;
+	shadow *= exp(-1.00 * distance_fade * clouds_cirrus_extinction_coeff * clouds_cirrus_thickness * rcp(abs(light_dir.y) + eps) * density) * 0.5 + 0.5;
 #endif
 
-	return shadow;
+	return vec2(shadow, shadow_cumulus_only);
 }
 #endif
 

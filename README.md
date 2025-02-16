@@ -23,4 +23,5 @@
 
 ## Community
 
-For questions, suggestions and news regarding this shader pack, head to [Photon discord server thread](https://discord.com/channels/1007736612488220724/1288402151097499698)
+- For questions, suggestions and news regarding this shader pack, head to [Photon discord server thread](https://discord.com/channels/1007736612488220724/1288402151097499698)
+- You can also [give money to sixthsurge which is the original photon developer](https://ko-fi.com/sixthsurge) if you want to 

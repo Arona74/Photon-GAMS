@@ -61,6 +61,7 @@ uniform float desert_sandstorm;
 
 #if defined WORLD_OVERWORLD
 #include "/include/fog/overworld/coeff.glsl"
+#include "/include/sky/projection.glsl"
 #endif
 
 void main() {
@@ -77,4 +78,3 @@ void main() {
 	vec2 vertex_pos = gl_Vertex.xy;
 	gl_Position = vec4(vertex_pos * 2.0 - 1.0, 0.0, 1.0);
 }
-
