@@ -67,7 +67,7 @@ vec4 draw_crepuscular_rays(
 	scattering *= horizon_fade;
 	transmittance = mix(vec3(1.0), transmittance, horizon_fade);
 
-	return vec4(scattering, dampendot(transmittance, vec3(rcp(3.0))));
+	return vec4(scattering, dampen(dot(transmittance, vec3(rcp(3.0)))));
 }
 
 #endif // INCLUDE_SKY_CREPUSCULAR_RAYS
