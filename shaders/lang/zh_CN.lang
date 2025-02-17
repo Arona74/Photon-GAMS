@@ -128,9 +128,9 @@ option.INFO.comment                    = 原始着色器由 §bSixthSurge§r 制
 # World settings
 
 option.WAVING_PLANTS                   = 植物摇晃
-option.WAVING_PLANTS.comment           = 地面随风摇动的植物。\n\n若需添加一个方块到植物摇晃清单，打开 shaders/block.properties 文件然后添加它的 ID 到所属的类别中 (10016, 10017 或 10018)
+option.WAVING_PLANTS.comment           = 地面随风摇动的植物。\n\n若需添加一个方块到植物摇晃清单，打开 shaders/block.properties 文件然后添加它的 ID 到所属的类别中 (10002, 10003 或 10004)
 option.WAVING_LEAVES                   = 树叶摇晃
-option.WAVING_LEAVES.comment           = 树叶随风摇摆。\n\n若需添加一个方块到树叶摇晃清单，打开 shaders/block.properties 文件然后添加它的 ID 到所属的类别中 (10019)
+option.WAVING_LEAVES.comment           = 树叶随风摇摆。\n\n若需添加一个方块到树叶摇晃清单，打开 shaders/block.properties 文件然后添加它的 ID 到所属的类别中 (10005)
 option.WAVING_CLEAR_STRENGTH           = 摇晃强度 - 晴天
 option.WAVING_CLEAR_STRENGTH.comment   = 控制晴天时植物摇晃的强度。更高的数值使植物摇晃更明显。
 option.WAVING_RAIN_STRENGTH            = 摇晃强度 - 雨天

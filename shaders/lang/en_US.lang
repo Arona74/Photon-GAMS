@@ -128,9 +128,9 @@ option.INFO.comment                    = Original shader by §bSixthSurge§r, Fo
 # World settings
 
 option.WAVING_PLANTS                   = Waving Plants
-option.WAVING_PLANTS.comment           = Ground plants wave in the wind.\n\nTo add a block to the list of waving plants, open shaders/block.properties and add it to the relevant category (10016, 10017 or 10018)
+option.WAVING_PLANTS.comment           = Ground plants wave in the wind.\n\nTo add a block to the list of waving plants, open shaders/block.properties and add it to the relevant category (10002, 10003 or 10004)
 option.WAVING_LEAVES                   = Waving Leaves
-option.WAVING_LEAVES.comment           = Leaf blocks wave in the wind.\n\nTo add a block to the list of waving leaf blocks, open shaders/block.properties and add it to the relevant category (10019)
+option.WAVING_LEAVES.comment           = Leaf blocks wave in the wind.\n\nTo add a block to the list of waving leaf blocks, open shaders/block.properties and add it to the relevant category (10005)
 option.WAVING_CLEAR_STRENGTH           = Waving Clear Strength
 option.WAVING_CLEAR_STRENGTH.comment   = Controls the strength of the waving plants in the clear weather. Higher values make the plants more pronounced.
 option.WAVING_RAIN_STRENGTH            = Waving Rain Strength
