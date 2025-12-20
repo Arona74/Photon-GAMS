@@ -142,11 +142,11 @@ uniform vec4 entityColor;
 
 #include "/include/fog/simple_fog.glsl"
 #include "/include/lighting/diffuse_lighting.glsl"
-#include "/include/lighting/shadows.glsl"
+#include "/include/lighting/shadows/sampling.glsl"
 #include "/include/lighting/specular_lighting.glsl"
-#include "/include/misc/distant_horizons.glsl"
-#include "/include/misc/material.glsl"
-#include "/include/misc/water_normal.glsl"
+#include "/include/misc/lod_mod_support.glsl"
+#include "/include/surface/material.glsl"
+#include "/include/surface/water_normal.glsl"
 #include "/include/utility/color.glsl"
 #include "/include/utility/encoding.glsl"
 #include "/include/utility/fast_math.glsl"
@@ -157,19 +157,27 @@ uniform vec4 entityColor;
 #endif
 
 void main() {
-    // Clip close-by DH terrain
-    if (length(scene_pos) < 0.8 * far) {
-        discard;
-        return;
-    }
+	// Clip to TAAU viewport
 
 	vec2 coord = gl_FragCoord.xy * view_pixel_size * rcp(taau_render_scale);
-
-	// Clip to TAAU viewport
 
 #if defined TAA && defined TAAU
 	if (clamp01(coord) != coord) discard;
 #endif
+
+    // Overdraw fade
+
+    float dh_fade_start_distance = max0(far - DH_OVERDRAW_DISTANCE - DH_OVERDRAW_FADE_LENGTH);
+    float dh_fade_end_distance = max0(far - DH_OVERDRAW_DISTANCE);
+    float view_distance = length(scene_pos);
+
+    float dither = interleaved_gradient_noise(gl_FragCoord.xy, frameCounter);
+    float fade = smoothstep(dh_fade_start_distance, dh_fade_end_distance, view_distance);
+
+    if (dither > fade) {
+        discard;
+        return;
+    }
 
 	// Encode gbuffer data
 	
@@ -187,7 +195,7 @@ void main() {
 
 	float back_depth_mc = texelFetch(depthtex0, ivec2(gl_FragCoord.xy), 0).x;
 	float back_depth_dh = texelFetch(dhDepthTex1, ivec2(gl_FragCoord.xy), 0).x;
-	bool back_is_dh_terrain = is_distant_horizons_terrain(back_depth_mc, back_depth_dh);
+	bool back_is_dh_terrain = is_lod_terrain(back_depth_mc, back_depth_dh);
 
 	// Prevent water behind terrain from rendering on top of it
 	float dh_depth_linear = screen_to_view_space_depth(dhProjectionInverse, gl_FragCoord.z);
@@ -207,12 +215,12 @@ void main() {
 
 	// Get material and normal
 
-	Material material; vec4 base_color;
+	Material material; 
+	fragment_color = tint;
 
-	base_color = tint;
 	vec2 adjusted_light_levels = light_levels;
 	material = material_from(
-		base_color.rgb,
+		fragment_color.rgb,
 		0u,
 		world_pos,
 		normal,
@@ -261,10 +269,6 @@ void main() {
 		NoH,
 		LoV
 	);
-
-	// Blending
-
-	fragment_color = vec4(fragment_color.rgb / max(base_color.a, eps), base_color.a);
 
 	// Apply fog
 

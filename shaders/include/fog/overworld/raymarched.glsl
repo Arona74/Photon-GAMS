@@ -3,22 +3,13 @@
 
 #include "/include/fog/overworld/constants.glsl"
 #include "/include/lighting/cloud_shadows.glsl"
-#include "/include/lighting/distortion.glsl"
+#include "/include/lighting/shadows/distortion.glsl"
+#include "/include/misc/lod_mod_support.glsl"
 #include "/include/sky/atmosphere.glsl"
 #include "/include/utility/encoding.glsl"
 #include "/include/utility/phase_functions.glsl"
 #include "/include/utility/random.glsl"
 #include "/include/utility/space_conversion.glsl"
-
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-#include "/include/lighting/lpv/blocklight.glsl"
-#endif
-
-#ifdef PROGRAM_DEFERRED0
-#define NOISE_3D colortex6
-#else
-#define NOISE_3D colortex0
-#endif
 
 vec2 air_fog_density(vec3 world_pos) {
 	const vec2 mul = -rcp(air_fog_falloff_half_life);
@@ -33,7 +24,7 @@ vec2 air_fog_density(vec3 world_pos) {
 	
 	// Controls how fast the clouds move (higher = faster)
 	// x = horizontal movement, z = depth movement
-	const vec3 wind = 0.0001 * AIR_FOG_CLOUDY_NOISE_CLOUD_SPEED * vec3(AIR_FOG_CLOUDY_NOISE_CLOUD_X, 0.0, AIR_FOG_CLOUDY_NOISE_CLOUD_Z);
+	/*const vec3 wind = 0.0001 * AIR_FOG_CLOUDY_NOISE_CLOUD_SPEED * vec3(AIR_FOG_CLOUDY_NOISE_CLOUD_X, 0.0, AIR_FOG_CLOUDY_NOISE_CLOUD_Z);
 
 	// Controls the spacing between clouds
 	// Lower values = more spread out clouds, Higher values = tighter packed clouds
@@ -54,14 +45,14 @@ vec2 air_fog_density(vec3 world_pos) {
 	float noise = texture(noisetex, cloud_spacing * world_pos.xz + wind.xz * frameTimeCounter).w;
 
 	// Apply all modifiers to density
-	density.y *= vertical_scale * density_multiplier * sqr(0.5 - noise);
+	density.y *= vertical_scale * density_multiplier * sqr(0.5 - noise);*/
 	
 	//LEGACY AIR FOG CLOUDY NOISE
-	/*const vec3 wind = 0.0003 * vec3(1.0, 0.0, 0.7);
+	const vec3 wind = 0.0003 * vec3(1.0, 0.0, 0.7);
 
 	float noise = texture(noisetex, 0.001 * world_pos.xz + wind.xz * frameTimeCounter).w;
 
-	density.y *= 4.0 * sqr(noise);*/
+	density.y *= 4.0 * sqr(noise);
 	
 #endif
 
@@ -102,8 +93,8 @@ mat2x3 raymarch_air_fog(vec3 world_start_pos, vec3 world_end_pos, bool sky, floa
 		distance_to_volume_end = world_dir.y < 0.0 ? distance_to_upper_plane : -1.0;
 	}
 
-#ifdef DISTANT_HORIZONS
-    float fog_end = float(dhRenderDistance);
+#ifdef LOD_MOD_ACTIVE
+    float fog_end = float(lod_render_distance);
 #else
     float fog_end = far;
 #endif
@@ -161,72 +152,6 @@ mat2x3 raymarch_air_fog(vec3 world_start_pos, vec3 world_end_pos, bool sky, floa
 		#define shadow 1.0
 #endif
 
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-		vec3 lpv_color = get_lpv_linear(world_pos - cameraPosition) + 0.0;
-		//lpv_color = lpv_color * exp2(lpv_color * 0.4) + 1.0;
-		//lpv_color = sqr(lpv_color) * rcp(0.2 * lpv_color + 1.0) + 1.0;
-		//lpv_color = exp2(min(lpv_color, 20000.0));
-
-		//lpv_color = pow(vec3(1.2), 4.0 * lpv_color);
-		//const vec4 lpv_fog_params = vec4(-1.341e-2, 6.223e-1, 3.663e-2, -1.623e-1);
-
-		//lpv_color = pow(lpv_fog_params.x * lpv_color, vec3(3.0)) + sqr(lpv_fog_params.y * lpv_color) + lpv_fog_params.z * lpv_color + 1.0;
-	#ifdef AIR_FOG_CLOUDY_NOISE
-		const mat3 wind = mat3(
-		vec3(1.0, 0.0, 0.7) * 0.10,
-		vec3(0.4, 0.0, -0.6) * 0.10,
-		vec3(-0.8, 0.0, 0.1) * 0.10
-		);
-
-		float noise  = texture(NOISE_3D, 0.05 * world_pos + wind[0] * frameTimeCounter).x * 0.75;
-		noise += texture(NOISE_3D, 0.075 * world_pos + wind[1] * frameTimeCounter).x * 0.75;
-		noise -= texture(NOISE_3D, 0.075 * world_pos + wind[0] * frameTimeCounter + 1234.453).x * 0.75;
-		noise += texture(NOISE_3D, 0.15 * world_pos + wind[2] * frameTimeCounter).x * 1.0;
-		noise *= rcp(1.75);
-
-		//vec3 lpv_light_dir = normalize(get_lpv_direction_fog(world_pos - cameraPosition/*, hash2(fract(world_pos))*/));
-		mat3 lpv_gradient = get_lpv_gradient_rgb(world_pos - cameraPosition + vec3(0.0, 0.6, 0.0), 1.1);
-
-		// Fix opposite hues being treated as light sources
-		/*vec3 hsl = rgb_to_hsl(lpv_color);
-        vec3 primary_hues = vec3(
-            rgb_to_hsl(vec3(1.0, 0.0, 0.0)).x,
-            rgb_to_hsl(vec3(0.0, 1.0, 0.0)).x,
-            rgb_to_hsl(vec3(0.0, 0.0, 1.0)).x
-        );*/
-		/*vec3 hsl_weighted = vec3(
-            isolate_hue_norm(hsl, primary_hues.r, rcp(5.0)),
-            isolate_hue_norm(hsl, primary_hues.g, rcp(5.0)),
-            isolate_hue_norm(hsl, primary_hues.b, rcp(5.0))
-        );*/
-		/*vec3 hsl_weighted = vec3(
-            isolate_hue_norm(rgb_to_hsl(lpv_gradient[0]), hsl.x, rcp(5.0)),
-            isolate_hue_norm(rgb_to_hsl(lpv_gradient[1]), hsl.x, rcp(5.0)),
-            isolate_hue_norm(rgb_to_hsl(lpv_gradient[2]), hsl.x, rcp(5.0))
-        );
-        hsl_weighted = mix(vec3(1.0), hsl_weighted, hsl.y);
-        hsl_weighted *= clamp01(hsl.z * 2.0);*/
-
-		/*vec3 hue_gradient = vec3(
-            isolate_hue_norm(rgb_to_hsl(lpv_gradient[0]), hsl.x, 1.0),
-            isolate_hue_norm(rgb_to_hsl(lpv_gradient[1]), rgb_to_hsl(lpv_gradient[1]).x, 1.0),
-            isolate_hue_norm(rgb_to_hsl(lpv_gradient[2]), rgb_to_hsl(lpv_gradient[2]).x, 1.0)
-
-        );*/
-		//lpv_gradient = transpose(lpv_gradient);
-
-		vec3 lpv_light_dir = lpv_color * lpv_gradient;
-		lpv_light_dir = length(lpv_light_dir) >= eps ? normalize(lpv_light_dir) : vec3(0.0);
-
-		//lpv_color *= 25.0 /* pow((1.0 - noise), 3.0)*/ * pow(max0(dot(lpv_light_dir, vec3(0.0, -1.0, 0.0))), 4.0);
-		//lpv_color = pow(max0(dot((lpv_light_dir), vec3(0.0, -1.0, 0.0))), 3.0) * lpv_color * 5.0 /* sqr(noise)*/;
-		lpv_color = max0(lpv_color * sqr(noise) * 5.0);
-		//if (any(isnan(lpv_color))) lpv_color = vec3(0.0);
-	#endif
-#else
-		#define lpv_color 0.0
-#endif
-
 		vec2 density = air_fog_density(world_pos) * step_length;
 
 		vec3 step_optical_depth = fog_params.rayleigh_scattering_coeff * density.x
@@ -240,34 +165,14 @@ mat2x3 raymarch_air_fog(vec3 world_start_pos, vec3 world_end_pos, bool sky, floa
 		light_sun[1] += visible_scattering * density.y * shadow;
 		light_sky[0] += visible_scattering * density.x;
 		light_sky[1] += visible_scattering * density.y;
-		light_lpv[0] += visible_scattering * density.x * lpv_color;
-		light_lpv[1] += visible_scattering * density.y * lpv_color;
-
+		
 		transmittance *= step_transmittance;
-
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-		/*vec3 lpv_light_dir = normalize(get_lpv_direction_clouds(world_pos - cameraPosition, hash2(fract(world_pos))));
-		float lpv_LoV = dot(world_dir, lpv_light_dir);
-		float lpv_mie_phase = 0.7 * henyey_greenstein_phase(lpv_LoV, 0.5) + 0.3 * henyey_greenstein_phase(lpv_LoV, -0.2);
-
-		float lpv_scatter_amount = 1.0;
-
-		for (int i = 0; i < air_fog_multiple_scattering_iterations; ++i) {
-			scattering += lpv_scatter_amount * (light_sun * vec2(isotropic_phase, mie_phase)) * light_color;
-			scattering += lpv_scatter_amount * (light_lpv * vec2(isotropic_phase, mie_phase));
-
-			scatter_amount *= 0.5;
-			mie_phase = mix(mie_phase, isotropic_phase, 0.3);
-		}*/
-#endif
 	}
 
 	light_sun[0] *= fog_params.rayleigh_scattering_coeff;
 	light_sun[1] *= fog_params.mie_scattering_coeff;
 	light_sky[0] *= fog_params.rayleigh_scattering_coeff;
 	light_sky[1] *= fog_params.mie_scattering_coeff;
-	light_lpv[0] *= fog_params.rayleigh_scattering_coeff /* 0.99 + 0.01*/;
-	light_lpv[1] *= fog_params.mie_scattering_coeff /* 0.99 + 0.01*/;
 
 	if (!sky) {
 		// Skylight falloff
@@ -293,20 +198,18 @@ mat2x3 raymarch_air_fog(vec3 world_start_pos, vec3 world_end_pos, bool sky, floa
 #endif
 
 	scattering += 2.0 * light_sky * vec2(isotropic_phase) * ambient_color;
-	//scattering += light_lpv;
 
 	for (int i = 0; i < air_fog_multiple_scattering_iterations; ++i) {
 		float mie_phase = 0.7 * henyey_greenstein_phase(LoV, 0.5 * anisotropy) + 0.3 * henyey_greenstein_phase(LoV, -0.2 * anisotropy);
 
 		scattering += scatter_amount * (light_sun * vec2(isotropic_phase, mie_phase)) * light_color * (1.0 - 0.9 * rainStrength);
-		scattering += scatter_amount * (light_lpv * vec2(isotropic_phase, mie_phase));
 
 		scatter_amount *= 0.5;
 		anisotropy *= 0.7;
 	}
 	//*/
 
-	scattering *= 1.0 - blindness;
+	scattering *= clamp01(1.0 - blindness - darknessFactor);
 
 	// Artifically brighten fog in the early morning and evening (looks nice)
 	float evening_glow = 0.75 * linear_step(0.05, 1.0, exp(-300.0 * sqr(sun_dir.y + 0.02)));

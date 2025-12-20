@@ -254,8 +254,19 @@ vec3 gather_light(sampler3D light_sampler, ivec3 pos) {
 }
 
 void update_lpv(writeonly image3D light_img, sampler3D light_sampler) {
+    vec3 current_center =
+        get_voxel_volume_center(gbufferModelViewInverse[2].xyz);
+    vec3 previous_center = get_voxel_volume_center(vec3(
+        gbufferPreviousModelView[0].z,
+        gbufferPreviousModelView[1].z,
+        gbufferPreviousModelView[2].z
+    ));
+
 	ivec3 pos = ivec3(gl_GlobalInvocationID);
-	ivec3 previous_pos = ivec3(vec3(pos) - floor(previousCameraPosition) + floor(cameraPosition));
+    ivec3 previous_pos = ivec3(
+        vec3(pos) - floor(previousCameraPosition) + floor(cameraPosition) -
+        current_center + previous_center
+    );
 
 	uint block_id      = texelFetch(voxel_sampler, pos, 0).x;
 	bool transparent   = block_id == 0u || block_id >= 1024u || block_id == 50u || block_id == 44u || block_id == 45u || block_id == 46u || block_id == 49u || block_id == 36u;

@@ -7,12 +7,36 @@ const ivec3 voxel_volume_size = ivec3(VOXEL_VOLUME_SIZE);
 const float voxelDistance = 32.0;
 #endif
 
+vec3 get_voxel_volume_center(vec3 look_direction) {
+#if VOXEL_VOLUME_CENTER == VOXEL_VOLUME_CENTER_AHEAD
+    // Center the voxel volume in front of the player
+    // Returns the integer offsets towards the center from the scene space
+    // origin
+
+    // Fraction of the voxel volume size that is behind the player
+    const float voxelization_fraction_behind_player = 0.15; // blocks
+
+    return floor(
+        look_direction * voxel_volume_size *
+        (0.5 - voxelization_fraction_behind_player) *
+        rcp(max_of(abs(look_direction)))
+    );
+#else
+    // Voxel volume is centered on the player (origin in scene space)
+    return vec3(0.0);
+#endif
+}
+
 vec3 scene_to_voxel_space(vec3 scene_pos) {
-	return scene_pos + fract(cameraPosition) + (0.5 * vec3(voxel_volume_size));
+    vec3 to_center = get_voxel_volume_center(gbufferModelViewInverse[2].xyz);
+    return scene_pos + fract(cameraPosition) + (0.5 * vec3(voxel_volume_size)) +
+        to_center;
 }
 
 vec3 voxel_to_scene_space(vec3 voxel_pos) {
-	return voxel_pos - fract(cameraPosition) - (0.5 * vec3(voxel_volume_size));
+    vec3 to_center = get_voxel_volume_center(gbufferModelViewInverse[2].xyz);
+    return voxel_pos - fract(cameraPosition) - (0.5 * vec3(voxel_volume_size)) -
+        to_center;
 }
 
 bool is_inside_voxel_volume(vec3 voxel_pos) {
@@ -33,6 +57,8 @@ bool is_voxelized(uint block_id, bool vertex_at_grid_corner) {
 	bool is_transparent_block =
 		block_id == 1u  || // Water
 	    block_id == 18u || // Transparent metal objects
+        block_id == 28u || // Transparent copper objects
+        block_id == 30u || // Transparent wood objects
 	    block_id == 181u;  // Miscellaneous transparent
 
 	bool is_light_emitting_block = (32u <= block_id && block_id < 96u) || (184u <= block_id && block_id < 240u) || (264u <= block_id && block_id < 332u) || block_id == 182u;
@@ -64,18 +90,19 @@ void update_voxel_map(uint block_id) {
 	vec3 block_pos = transform(gl_ModelViewMatrix, gl_Vertex.xyz);
 	     block_pos = transform(shadowModelViewInverse, block_pos);
 		 block_pos = fract(block_pos + cameraPosition);
-	bool vertex_at_grid_corner = is_corner(block_pos, rcp(16.0) - 1e-3) /*&& gl_Color.a > 0.90*/;
+    bool vertex_at_grid_corner = is_corner(block_pos, rcp(16.0) - 1e-3);
+
+    bool is_voxelized = is_voxelized(block_id, vertex_at_grid_corner);
+
+    // Prevent blocks that aren't part of another category in shaders.properties
+    // from being treated as air
+    block_id = max(block_id, 1u);
 
 	// Warped and crimson stem emission
 	uint is_warped_stem  = uint(19 <= block_id && block_id < 23);
 	uint is_crimson_stem = uint(23 <= block_id && block_id < 27);
 	block_id = block_id * (1u - is_warped_stem) + 46 * is_warped_stem;
 	block_id = block_id * (1u - is_crimson_stem) + 58 * is_crimson_stem;
-
-	bool is_voxelized = is_voxelized(block_id, vertex_at_grid_corner);
-
-	// Prevent blocks that aren't part of another category in shaders.properties from being treated as air
-	block_id = max(block_id, 1u);
 
 	// SSS blocks
 	if (block_id == 5u  || // Leaves

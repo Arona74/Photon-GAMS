@@ -16,7 +16,8 @@ screen.materials                       = §e☼§r Materials & Reflections
 screen.water                           = §b🌊§r Water
 screen.post                            = §e▓§r Post-Processing
 screen.misc                            = §e⌛§r Misc
-screen.box                             = Box
+screen.weather                         = §6☀§rWeather 
+screen.box                             = Selection Box
 screen.compatibility                   = Compatibility
 screen.world_curvature                 = World Curvature Settings
 screen.enchantment_glint_color         = §d🎆§r Enchantment Glint Color
@@ -30,6 +31,8 @@ screen.shadows                         = Shadows
 screen.ao                              = Ambient Occlusion
 screen.color_grading                   = 🌈 Color Grading
 screen.exposure                        = §b📸§r Exposure
+screen.lpv_vl                          = Colored Lights Fog Scattering
+screen.ssvl                            = §7🌫§r Screen-Space Volumetric Lighting
 screen.tonemap_settings                = §a🎞§r Tonemap Settings
 
 screen.dof_settings                    = DoF Settings
@@ -38,6 +41,8 @@ screen.lens_flare_settings             = Lens Flare Settings
 screen.lens_flare_color                = Flare Color
 
 screen.rain_lens_settings              = 💧 Rain Lens Settings
+
+screen.crepuscular_rays                = Crepuscular Rays
 
 screen.tonemap_general_settings        = General Tonemap Settings
 screen.aces_settings                   = Academy Tonemap Settings
@@ -171,6 +176,16 @@ value.CURVATURE_MODE.CURVATURE_MODE_SQUARED_DISTANCE = Squared Distance
 value.CURVATURE_MODE.CURVATURE_MODE_BASIC_SPHERICAL  = Basic Spherical
 value.CURVATURE_MODE.CURVATURE_MODE_LOG_SPHERICAL    = Log Spherical
 
+# Weather
+option.RANDOM_WEATHER_VARIATION            = Random Variation
+option.BIOME_WEATHER_VARIATION             = Biome-based Variation
+option.WEATHER_TEMPERATURE_BIAS            = Temperature Bias
+option.WEATHER_HUMIDITY_BIAS               = Humidity Bias
+option.WEATHER_WIND_BIAS                   = Windiness Bias
+option.WEATHER_TEMPERATURE_VARIATION_SPEED = Temperature Variation Speed
+option.WEATHER_HUMIDITY_VARIATION_SPEED    = Humidity Variation Speed
+option.WEATHER_WIND_VARIATION_SPEED        = Windiness Variation Speed
+
 # Lighting settings
 
 option.COLORED_LIGHTS                  = 🌈§a💡§r Colored Lights
@@ -200,6 +215,8 @@ option.SHADING_STRENGTH.comment        = Adjusts the contrast of direct light sh
 
 option.SHADOW                          = Shadow Mapping
 option.SHADOW_PCF                      = Shadow Filtering
+option.SHADOW_SSRT                     = SSRT Distant Shadows
+option.SHADOW_SSRT_STEPS               = SSRT Shadow Steps
 option.SHADOW_COLOR                    = Colored Shadows
 option.SHADOW_COLOR.comment            = Translucent blocks cast tinted shadows
 option.SHADOW_VPS                      = Variable Penumbra Shadows
@@ -219,6 +236,9 @@ option.PIXELATED_SHADOWS.comment       = Shadows snap to block texels, creating 
 option.PIXELATED_SHADOWS_RESOLUTION    = Pixelated Shadows Resolution
 option.SHADOW_DEPTH_SCALE              = Shadow Depth Scale
 option.SHADOW_DISTORTION               = Shadow Distortion
+option.SSS_STEPS                       = SSS Steps 
+option.SSS_STEPS.comment               = Increase to reduce noise on foliage and other materials with SSS, at the cost of performance.
+
 
 option.SHADER_AO                       = Shader AO
 option.SHADER_AO.comment               = AO method used. Off - no shader AO. SSAO - lower quality but requires fewer samples/less filtering. GTAO - better quality but requires more samples/filtering
@@ -228,15 +248,15 @@ value.SHADER_AO.SHADER_AO_GTAO         = GTAO
 option.VANILLA_AO                      = Vanilla AO
 option.VANILLA_AO.comment              = Minecraft's built-in ambient occlusion
 option.SSAO_RADIUS                     = SSAO Radius
-comment.SSAO_RADIUS                    = Adjusts the radius of SSAO - distance which objects can occlude each otherdistance which objects can occlude each other
+option.SSAO_RADIUS.comment             = Adjusts the radius of SSAO - distance which objects can occlude each otherdistance which objects can occlude each other
 option.SSAO_STEPS                      = SSAO Steps
-comment.SSAO_STEPS                     = Controls how noisy the SSAO appears
+option.SSAO_STEPS.comment              = Controls how noisy the SSAO appears
 option.GTAO_RADIUS                     = GTAO Radius
-comment.GTAO_RADIUS                    = Adjusts the radius of SSAO - distance which objects can occlude each otherdistance which objects can occlude each other
+option.GTAO_RADIUS.comment             = Adjusts the radius of GTAO - distance which objects can occlude each otherdistance which objects can occlude each other
 option.GTAO_SLICES                     = GTAO Slices
-comment.GTAO_SLICES                    = Controls how noisy the GTAO appears
+option.GTAO_SLICES.comment             = Controls how noisy the GTAO appears
 option.GTAO_HORIZON_STEPS              = GTAO Horizon Steps
-comment.GTAO_HORIZON_STEPS             = Controls the accuracy of GTAO
+option.GTAO_HORIZON_STEPS.comment      = Controls the accuracy of GTAO
 
 option.SUN_NR                          = Red
 option.SUN_NG                          = Green
@@ -288,6 +308,15 @@ screen.colored_lights_sources          = Colored Light Sources
 option.VOXEL_VOLUME_SIZE               = Voxel Volume Size
 option.VOXEL_VOLUME_SIZE.comment       = High performance impact, also affected by shadow distance
 suffix.VOXEL_VOLUME_SIZE               = m
+option.VOXEL_VOLUME_CENTER             = Voxel Volume Center
+option.VOXEL_VOLUME_CENTER.comment     = Ahead: voxel volume is centered in front of the player, meaning that more of it is visible
+
+value.VOXEL_VOLUME_CENTER.VOXEL_VOLUME_CENTER_AHEAD  = Ahead
+value.VOXEL_VOLUME_CENTER.VOXEL_VOLUME_CENTER_PLAYER = Player
+
+suffix.shadowMapResolution             = ²
+suffix.sunPathRotation                 = °
+
 option.COLORED_LIGHT_I                 = Colored Light Intensity
 option.COLOREDLIGHT_SATURATION         = Colored Light Saturation
 option.GLOWING_FLOWERS                 = §e🌷§r Glowing Flowers
@@ -459,6 +488,14 @@ option.END_SOLAR_FLARE_COLOR_R               = §c🌟§r End Solar Flare Color 
 option.END_SOLAR_FLARE_COLOR_G               = §a🌟§r End Solar Flare Color Green
 option.END_SOLAR_FLARE_COLOR_B               = §1🌟§r End Solar Flare Color Blue
 
+option.CREPUSCULAR_RAYS                = Enabled
+option.CREPUSCULAR_RAYS_INTENSITY      = Intensity
+option.CREPUSCULAR_RAYS_STEPS_HORIZON  = Step Count - Horizon
+option.CREPUSCULAR_RAYS_STEPS_ZENITH   = Step Count - Zenith
+option.LIGHTNING_FLASH                 = Lightning Flash
+option.RAINBOWS                        = Rainbows
+option.END_SUN_EFFECT                  = End Sun Effect
+
 # Clouds
 option.CLOUDS_CUMULUS                        = Cumulus Clouds
 option.CLOUDS_CUMULUS.comment                = Low-altitude volumetric clouds made to resemble cumulus clouds
@@ -519,6 +556,9 @@ option.CLOUDS_THUNDERHEAD_WIND_ANGLE              = Wind Angle
 suffix.CLOUDS_THUNDERHEAD_WIND_ANGLE              = °
 option.CLOUDS_THUNDERHEAD_MIN                     = Min Thunderhead Coverage
 option.CLOUDS_THUNDERHEAD_MAX                     = Max Thunderhead Coverage
+
+option.CLOUDS_CUMULUS_PRECOMPUTE_LOCAL_COVERAGE         = Precompute Local Coverage
+option.CLOUDS_CUMULUS_PRECOMPUTE_LOCAL_COVERAGE.comment = Aggressive optimization for cumulus clouds. Reduces the maximum distance clouds can be drawn and can cause some artifacts with cloud shapes morphing when the camera moves. Disable for taking screenshots above the clouds
 
 option.CLOUDS_ALTOCUMULUS                       = Altocumulus Clouds
 option.CLOUDS_ALTOCUMULUS.comment               = Mid-altitude volumetric clouds made to resemble altocumulus clouds
@@ -603,10 +643,7 @@ option.BLOCKY_CLOUDS_SHARPNESS         = Sharpness
 option.BLOCKY_CLOUDS_SHARPNESS.comment = Cloud edge sharpness
 
 option.CLOUDS_TEMPORAL_UPSCALING       = Temporal Upscaling
-option.CLOUDS_DAILY_WEATHER            = Daily Weather Variation
-option.CLOUDS_DAILY_WEATHER.comment    = Clouds are affected by the daily weather system
 option.CLOUDS_AERIAL_PERSPECTIVE_BOOST = Aerial Perspective Boost
-option.CLOUDS_ACCUMULATION_LIMIT       = Accumulation Limit
 option.CLOUDS_SCALE                    = Scale
 option.CLOUDS_SCALE.comment            = Applied as a scale factor to all clouds, to bring the clouds from a realistic size and altitude to an altitude that is accessible during gameplay. If this value is 1.0, clouds are positioned realistically, with the first layer 800 blocks up by default. If this value is higher, then clouds will appear smaller and form closer to the ground. This also affects the size of cloud shadows
 suffix.CLOUDS_SCALE                    = ×
@@ -814,6 +851,7 @@ option.NETHER_FOG_INTENSITY            = §7🌫§r Nether Fog Intensity
 option.CAVE_FOG_INTENSITY              = §7🌫§r Cave Fog Intensity
 option.END_FOG_INTENSITY               = §7🌫§r End Fog Intensity
 option.VL                              = §7🌫§r Volumetric Lighting
+option.LPV_VL.comment                  = Light sources illuminate the fog. Requires Colored Lights! 
 option.VL.comment                      = Adds light shafts and variable fog density
 option.VL_RENDER_SCALE                 = §7🌫§r VL Render Scale
 option.AIR_FOG_CLOUDY_NOISE            = §7🌫§r Cloudy Fog
@@ -849,6 +887,27 @@ option.END_FOG_STEP_GROWTH   = §7🌫§r End Fog Step Growth
 option.END_FOG_DENSITY_SCALE = §7🌫§r End Fog Density
 option.FOG_MULTIPLE_SCATTERING_ITERATIONS = §7🌫§r Multiple Scattering Iterations
 
+# LPV VL
+option.LPV_VL                          = Enabled
+option.LPV_VL_STEPS                    = Steps 
+option.LPV_VL_INTENSITY_OVERWORLD      = Overworld Intensity
+option.LPV_VL_INTENSITY_UNDERGROUND    = Underground Intensity
+option.LPV_VL_INTENSITY_NETHER         = Nether Intensity
+option.LPV_VL_INTENSITY_END            = End Intensity
+
+# SCREENSPACE VL
+option.SCREENSPACE_VL                  = Enabled
+option.SSVL_INTENSITY                  = Intensity
+option.SSVL_SAMPLES                    = Samples
+option.SSVL_DENSITY                    = Density
+option.SSVL_DECAY                      = Decay
+option.SSVL_FADE_RADIUS                = Fade Radius
+option.SSVL_FADE_FACTOR                = Fade Factor
+option.SSVL_NOISE_SCATTER              = Noise Scatter Intensity
+option.SSVL_NOISE_INTENSITY            = Noise Intensity
+option.SSVL_NOISE_INTENSITY.comment    = Creats "starburst" shaped light, the higher the value, the higher the visibility
+
+# Rayleigh Fog
 option.AIR_FOG_RAYLEIGH_FALLOFF_START     = §7🌫§r Rayleigh Falloff Start
 option.AIR_FOG_RAYLEIGH_FALLOFF_START.comment = Altitude above sea level at which the rayleigh fog begins to decrease
 option.AIR_FOG_RAYLEIGH_FALLOFF_HALF_LIFE = §7🌫§r Rayleigh Falloff Half-Life
@@ -893,6 +952,7 @@ option.AIR_FOG_RAYLEIGH_R_SWAMP        = §4Red
 option.AIR_FOG_RAYLEIGH_G_SWAMP        = §2Green
 option.AIR_FOG_RAYLEIGH_B_SWAMP        = §1Blue
 
+# Mie Fog
 option.AIR_FOG_MIE_DENSITY_MORNING     = §7🌫§r Morning Density
 option.AIR_FOG_MIE_DENSITY_NOON        = §7🌫§r Noon Density
 option.AIR_FOG_MIE_DENSITY_EVENING     = §7🌫§r Evening Density
@@ -900,6 +960,11 @@ option.AIR_FOG_MIE_DENSITY_MIDNIGHT    = §7🌫§r Midnight Density
 option.AIR_FOG_MIE_DENSITY_RAIN        = §7🌫§r Rain Density
 option.AIR_FOG_MIE_DENSITY_SNOW        = §7🌫§r Snow Density
 option.AIR_FOG_MIE_DENSITY_BLUE_HOUR   = §7🌫§r Dawn/Dusk Density
+option.AIR_FOG_MIE_FALLOFF_START          = Altitude Fade Start
+option.AIR_FOG_MIE_FALLOFF_START.comment  = Altitude above sea level at which the mie fog begins to decrease
+option.AIR_FOG_MIE_FALLOFF_HALF_LIFE      = Altitude Fade Half Life
+option.AIR_FOG_MIE_FALLOFF_HALF_LIFE.comment = Altitude above the Mie Falloff Start where the mie fog density is halved
+
 
 # Materials settings
 
@@ -1046,14 +1111,18 @@ option.LF_COLOR_B                      = Lens Flare Color Blue
 value.LENS_FLARE_MODE.1                = Sun Only
 value.LENS_FLARE_MODE.2                = Sun and Moon
 option.LENS_FLARE_INTENSITY            = Lens Flare Intensity
+option.LF_MOONPHASE                    = Moon Phase Influence
 option.LF_CLOUD_VISIBILITY             = Cloud Collision Intensity
 option.LF_CLOUD_VISIBILITY.comment     = Adjusts flare visibility when the sun/moon obscured by clouds
+option.LF_NOISE_INTENSITY              = Rainbow Flare Noise Intensity
 option.LF_BIG_RAINBOW                  = Big Rainbow Flare
 option.LF_RAINBOW                      = Medium Rainbow Flare
-option.LF_CENTER_STRIP                 = Center Anamorphic Lens Flare
+option.LF_CLOSERING                    = Rainbow Halo Flare
+option.LF_CLOSERING.comment            = Rainbow halo at the center of the sun/moon
+option.LF_CENTER_STRIP                 = Center Anamorphic Flare
 option.LF_CENTER_STRIP.comment         = Strip-shaped lens flare at the center of the sun/moon
-option.LF_XCROSS_STRIP                 = Center X cross Lens Flare
-option.LF_EDGE_STRIP                   = Edge Blue Anamorphic Lens Flare
+option.LF_XCROSS_STRIP                 = Center X cross Flare
+option.LF_EDGE_STRIP                   = Edge Blue Anamorphic Flare
 option.LF_EDGE_STRIP.comment           = 2 Blue strip-shaped lens flares at the edge of the screen
 option.LF_GLOWDOTS                     = Glow Dots
 option.LF_GLOWDOTS.comment             = Pointy Fuzzy Glow Dots
@@ -1165,10 +1234,11 @@ option.GRADE_ORANGE_SAT_BOOST          = Orange Saturation Boost
 option.GRADE_TEAL_SAT_BOOST            = Teal Saturation Boost
 option.GRADE_GREEN_SAT_BOOST           = Green Saturation Boost
 option.GRADE_GREEN_HUE_SHIFT           = Green Hue Shift
+suffix.GRADE_WHITE_BALANCE             = K
 suffix.GRADE_GREEN_HUE_SHIFT           = °
 
 option.PURKINJE_SHIFT                  = Purkinje Shift
-option.PURKINJE_SHIFT.option           = Simulates the effect of low lighting on human vision; desaturating all colors and darkening red hues
+option.PURKINJE_SHIFT.comment           = Simulates the effect of low lighting on human vision; desaturating all colors and darkening red hues
 option.PURKINJE_SHIFT_INTENSITY        = Purkinje Shift Intensity
 
 # Tonemap settings
@@ -1399,6 +1469,9 @@ option.CUSTOM_SKY                      = Custom Sky
 option.CUSTOM_SKY.comment              = Enable custom skies from resource packs
 option.CUSTOM_SKY_BRIGHTNESS           = Custom Sky Brightness
 option.CUSTOM_SKY_BRIGHTNESS.comment   = Adjust custom sky brightness
+option.DH_OVERDRAW_DISTANCE            = Overdraw Distance
+option.DH_OVERDRAW_FADE_LENGTH         = Overdraw Fade Length
+option.NOISE_ON_DH_TERRAIN             = Noise on DH Terrain
 option.DAYLIGHT_CYCLE                  = Daylight Cycle Enabled
 option.DAYLIGHT_CYCLE.comment          = Disable when the gamerule doDaylightCycle is false to prevent cloud trailing when changing the time
 option.ENCHANTMENT_GLINT_BRIGHTNESS    = Enchantment Glint Brightness
@@ -1406,7 +1479,9 @@ option.ENCHANTMENT_GLINT_R             = Enchantment Glint Red
 option.ENCHANTMENT_GLINT_G             = Enchantment Glint Green
 option.ENCHANTMENT_GLINT_B             = Enchantment Glint Blue
 option.USE_SEPARATE_ENTITY_DRAWS       = Use "Separate Entity Draws"
-option.USE_SEPARATE_ENTITY_DRAWS.comment = "separateEntityDraws" is an Iris feature enabling shaderpacks which use deferred-forward hybrid shading, like Photon, to correctly render translucent entities and other objects. However, it can be the cause of some issues. Expect rendering issues such as translucent entities becoming opaque if you disable this!
+comment.USE_SEPARATE_ENTITY_DRAWS      = "separateEntityDraws" is an Iris feature enabling shaderpacks which use deferred-forward hybrid shading, like Photon, to correctly render translucent entities and other objects. However, it can be the cause of some issues. Expect rendering issues such as translucent entities becoming opaque if you disable this!
+option.DITHERED_TRANSLUCENCY_FALLBACK  = Dithered Translucency Fallback 
+comment.DITHERED_TRANSLUCENCY_FALLBACK = Uses dithered translucency to improve the look of objects that should be translucent but can't when separateEntityDraws is enabled. 
 
 value.DEBUG_VIEW.DEBUG_VIEW_NONE       = OFF
 value.DEBUG_VIEW.DEBUG_VIEW_SAMPLER    = Sampler

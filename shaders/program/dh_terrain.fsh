@@ -30,6 +30,10 @@ in vec3 color;
 
 flat in uint material_mask;
 
+uniform vec2 view_pixel_size;
+uniform int frameCounter;
+
+#include "/include/utility/dithering.glsl"
 #include "/include/utility/encoding.glsl"
 
 // ------------
@@ -48,8 +52,23 @@ mat3 get_tbn_matrix(vec3 normal) {
 }
 
 void main() {
-    // Clip close-by DH terrain
-    if (length(scene_pos) < 0.8 * far) {
+	// Clip to TAAU viewport
+
+#if defined TAA && defined TAAU
+	vec2 coord = gl_FragCoord.xy * view_pixel_size * rcp(taau_render_scale);
+	if (clamp01(coord) != coord) discard;
+#endif
+
+    // Overdraw fade
+
+    float dh_fade_start_distance = max0(far - DH_OVERDRAW_DISTANCE - DH_OVERDRAW_FADE_LENGTH);
+    float dh_fade_end_distance = max0(far - DH_OVERDRAW_DISTANCE);
+    float view_distance = length(scene_pos);
+
+    float dither = interleaved_gradient_noise(gl_FragCoord.xy, frameCounter);
+    float fade = smoothstep(dh_fade_start_distance, dh_fade_end_distance, view_distance);
+
+    if (dither > fade) {
         discard;
         return;
     }
@@ -70,4 +89,3 @@ void main() {
 	gbuffer_data_0.z  = pack_unorm_2x8(encode_unit_vector(normal));
 	gbuffer_data_0.w  = pack_unorm_2x8(light_levels);
 }
-

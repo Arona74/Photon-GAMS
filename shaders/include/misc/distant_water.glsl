@@ -3,7 +3,7 @@
 
 #include "/include/lighting/specular_lighting.glsl"
 #include "/include/misc/purkinje_shift.glsl"
-#include "/include/misc/water_normal.glsl"
+#include "/include/surface/water_normal.glsl"
 
 vec4 draw_distant_water(
 	vec3 position_screen,
@@ -18,7 +18,7 @@ vec4 draw_distant_water(
 ) {
 	vec4 water_color = vec4(0.0);
 	
-	// Use hardcoded TBN matrix pointing upwards that is the same for DH water and regular water
+	// Use hardcoded TBN matrix pointing upwards that is the same for LoD water and regular water
 	const mat3 tbn = mat3(
 	vec3(1.0, 0.0, 0.0),
 	vec3(0.0, 0.0, 1.0),
@@ -29,13 +29,28 @@ vec4 draw_distant_water(
 
 	float fog_visibility = common_fog(view_distance, false).a;
 	
+    // Cloud shadows
+
+#if defined WORLD_OVERWORLD && defined CLOUD_SHADOWS
+    float cloud_shadows =
+        get_cloud_shadows(colortex8, position_world - cameraPosition);
+#else
+    const float cloud_shadows = 1.0;
+#endif
+	
 	// Water absorption approx (must match gbuffers_water)
 
-	vec3 biome_water_color = srgb_eotf_inv(1.45 * tint.rgb) * rec709_to_working_color;
+#if defined DISTANT_HORIZONS
+    tint.rgb *= 1.45;
+#elif defined VOXY
+	tint.rgb *= 0.68;
+#endif
+
+	vec3 biome_water_color = srgb_eotf_inv(tint.rgb) * rec709_to_working_color;
 	vec3 absorption_coeff = biome_water_coeff(biome_water_color);
 
 	mat2x3 water_fog = water_fog_simple(
-		light_color,
+		light_color * cloud_shadows,
 		ambient_color,
 		absorption_coeff,
 		light_levels,
@@ -81,7 +96,7 @@ vec4 draw_distant_water(
 	float NoH = (NoL + NoV) * halfway_norm;
 	float LoH = LoV * halfway_norm + halfway_norm;
 
-	water_color.rgb += get_specular_highlight(water_material, NoL, NoV, NoH, LoV, LoH) * light_color * fog_visibility;
+	water_color.rgb += get_specular_highlight(water_material, NoL, NoV, NoH, LoV, LoH) * light_color * cloud_shadows * fog_visibility;
 #endif
 
 	// Specular reflections

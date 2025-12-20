@@ -53,7 +53,7 @@ uniform float rainStrength;
 uniform vec2 taa_offset;
 uniform vec3 light_dir;
 
-#include "/include/misc/water_normal.glsl"
+#include "/include/surface/water_normal.glsl"
 #include "/include/utility/color.glsl"
 
 #if defined (PHYSICS_MOD_OCEAN) && defined (PHYSICS_OCEAN)
@@ -134,7 +134,7 @@ void main() {
 		vec3 biome_water_color = srgb_eotf_inv(tint) * rec709_to_working_color;
 		vec3 absorption_coeff = biome_water_coeff(biome_water_color);
 
-		shadowcolor0_out = clamp01(0.25 * exp(-absorption_coeff * distance_through_water) * get_water_caustics());
+		shadowcolor0_out = clamp01(0.25 * exp(-absorption_coeff * distance_through_water) * get_water_caustics()), rcp(255.0) /* 0 is reserved */, 1.0;
 
 		#if defined (PHYSICS_MOD_OCEAN) && defined (PHYSICS_OCEAN)
 		if(physics_iterationsNormal >= 1.0) {

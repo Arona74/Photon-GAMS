@@ -4,7 +4,13 @@
   Photon Shader by SixthSurge
 
   program/c1_blend_layers
-  Apply volumetric fog
+  Combine:
+   - Solid layer
+   - Translucent layer
+   - Fog
+   - Clouds in front of translucents
+   - LoD water
+   - Rainbow
 
 --------------------------------------------------------------------------------
 */
@@ -38,8 +44,6 @@ flat in OverworldFogParameters fog_params;
 uniform sampler2D noisetex;
 
 uniform sampler2D colortex0;  // scene color
-uniform sampler2D colortex1;  // gbuffer 0
-uniform sampler2D colortex2;  // gbuffer 1
 uniform sampler2D colortex3;  // refraction data
 uniform sampler2D colortex4;  // sky map
 uniform sampler2D colortex5;  // scene history
@@ -55,6 +59,14 @@ uniform sampler2D shadowcolor0;
 uniform sampler2D shadowtex0;
 #endif
 uniform sampler2D shadowtex1;
+#endif
+
+#ifdef DISTANT_HORIZONS
+uniform sampler2D colortex1; // distant water gbuffer
+#endif
+
+#ifdef VOXY
+uniform sampler2D colortex16; // distant water gbuffer 0
 #endif
 
 uniform sampler2D depthtex0;
@@ -111,19 +123,16 @@ uniform float time_noon;
 uniform float time_sunset;
 uniform float time_midnight;
 
-/*
-const bool colortex11MipmapEnabled = true;
-*/
-
 // ------------
 //   Includes
 // ------------
-#define SSRT_DH
+
+#define SSRT_LOD
 #define TEMPORAL_REPROJECTION
 
 #include "/include/fog/simple_fog.glsl"
-#include "/include/misc/distant_horizons.glsl"
 #include "/include/misc/lightning_flash.glsl"
+#include "/include/misc/lod_mod_support.glsl"
 #include "/include/misc/material_masks.glsl"
 #include "/include/utility/color.glsl"
 #include "/include/utility/encoding.glsl"
@@ -132,9 +141,17 @@ const bool colortex11MipmapEnabled = true;
 
 #ifdef WORLD_OVERWORLD
 #include "/include/fog/overworld/analytic.glsl"
+#include "/include/sky/clouds/sampling.glsl"
+
+#ifdef LOD_MOD_ACTIVE
+uniform sampler2D colortex8;
+uniform mat4 shadowModelViewInverse;
+
+#include "/include/lighting/cloud_shadows.glsl"
+#endif
 #endif
 
-#ifdef DISTANT_HORIZONS
+#ifdef LOD_MOD_ACTIVE
 #include "/include/misc/distant_water.glsl"
 #endif
 
@@ -144,8 +161,14 @@ vec3 blend_layers_with_fog(
 	vec3 front_position_world,
 	vec3 back_position_world,
 	bool is_translucent,
-	bool is_sky
+	bool is_sky,
+    bool front_is_hand,
+    bool back_is_hand
 ) {
+	    if (back_is_hand) {
+        return background_color * (1.0 - translucent_color.a) + translucent_color.rgb;
+    }
+
 	// Apply analytic fog behind translucents
 
 #if defined WORLD_OVERWORLD
@@ -154,7 +177,8 @@ vec3 blend_layers_with_fog(
 			front_position_world,
 			back_position_world,
 			is_sky,
-			eye_skylight
+			eye_skylight,
+			1.0
 		);
 
 		background_color = background_color * analytic_fog[1] + analytic_fog[0];
@@ -182,26 +206,6 @@ vec4 smooth_filter(sampler2D sampler, vec2 coord) {
 	return texture(sampler, coord);
 }
 
-vec4 read_clouds_and_aurora(vec2 uv, out float apparent_distance) {
-#if defined WORLD_OVERWORLD
-	// Soften clouds for new pixels
-	float pixel_age = texelFetch(colortex12, ivec2(uv * view_res * taau_render_scale), 0).y;
-	float ld = 2.0 * dampen(max0(1.0 - 0.1 * pixel_age));
-
-	apparent_distance = min_of(textureGather(colortex12, uv * taau_render_scale, 0));
-	vec4 result = textureLod(colortex11, uv * taau_render_scale, ld);
-
-	if (LIGHTNING_FLASH_UNIFORM > 0.01) {
-		float ambient_scattering = texture(colortex12, uv * taau_render_scale).z;
-		result.xyz += LIGHTNING_FLASH_UNIFORM * lightning_flash_intensity * ambient_scattering;
-	}
-
-	return result;
-#else
-	return vec4(0.0, 0.0, 0.0, 1.0);
-#endif
-}
-
 void main() {
 	ivec2 texel = ivec2(gl_FragCoord.xy);
 
@@ -213,41 +217,46 @@ void main() {
 	vec4 refraction_data   = texelFetch(colortex3, texel, 0);
 	vec4 translucent_color = texelFetch(colortex13, texel, 0);
 
-#ifdef VL
+#if defined VL || defined LPV_VL
 	vec3 fog_transmittance = smooth_filter(colortex6, uv).rgb;
 	vec3 fog_scattering    = smooth_filter(colortex7, uv).rgb;
 #endif
 
 	// Distant Horizons support
 
-#ifdef DISTANT_HORIZONS
-    float front_depth_dh   = texelFetch(dhDepthTex, texel, 0).x;
-    float back_depth_dh    = texelFetch(dhDepthTex1, texel, 0).x;
+#ifdef LOD_MOD_ACTIVE
+    float front_depth_lod   = texelFetch(lod_depth_tex, texel, 0).x;
+    float back_depth_lod    = texelFetch(lod_depth_tex_solid, texel, 0).x;
 
-    bool front_is_dh_terrain = is_distant_horizons_terrain(front_depth, front_depth_dh);
-    bool back_is_dh_terrain = is_distant_horizons_terrain(back_depth, back_depth_dh);
+    bool front_is_lod_terrain = is_lod_terrain(front_depth, front_depth_lod);
+    bool back_is_lod_terrain = is_lod_terrain(back_depth, back_depth_lod);
 
-	bool is_dh_translucent = front_depth_dh != back_depth_dh;
+	bool is_translucent_lod = front_depth_lod != back_depth_lod;
 #else
-	#define front_depth_dh      front_depth
-	#define back_depth_dh       back_depth
-	#define front_is_dh_terrain false
-	#define back_is_dh_terrain  false
-	#define is_dh_translucent   false
+	#define front_depth_lod      front_depth
+	#define back_depth_lod       back_depth
+	#define front_is_lod_terrain false
+	#define back_is_lod_terrain  false
+	#define is_translucent_lod   false
 #endif
 
 	bool is_translucent = front_depth != back_depth;
-	bool is_sky = back_depth == 1.0 && back_depth_dh == 1.0;
+	bool is_sky = back_depth == 1.0 && back_depth_lod == 1.0;
 
 	// Space conversions
 
-	vec3 front_position_screen = vec3(uv, front_is_dh_terrain ? front_depth_dh : front_depth);
-	vec3 front_position_view   = screen_to_view_space(front_position_screen, true, front_is_dh_terrain);
+    bool front_is_hand;
+    bool back_is_hand;
+    fix_hand_depth(front_depth, front_is_hand);
+    fix_hand_depth(back_depth, back_is_hand);
+
+	vec3 front_position_screen = vec3(uv, front_is_lod_terrain ? front_depth_lod : front_depth);
+	vec3 front_position_view   = screen_to_view_space(front_position_screen, true, front_is_lod_terrain);
 	vec3 front_position_scene  = view_to_scene_space(front_position_view);
 	vec3 front_position_world  = front_position_scene + cameraPosition;
 
-	vec3 back_position_screen  = vec3(uv, back_is_dh_terrain ? back_depth_dh : back_depth);
-	vec3 back_position_view    = screen_to_view_space(back_position_screen, true, back_is_dh_terrain);
+	vec3 back_position_screen  = vec3(uv, back_is_lod_terrain ? back_depth_lod : back_depth);
+	vec3 back_position_view    = screen_to_view_space(back_position_screen, true, back_is_lod_terrain);
 	vec3 back_position_world   = view_to_scene_space(back_position_view) + cameraPosition;
 
 	vec3 direction_world; float view_distance;
@@ -274,43 +283,40 @@ void main() {
 #endif
 
 	fragment_color = texture(colortex0, refracted_uv * taau_render_scale).rgb;
+    vec3 original_color = fragment_color;
 
-	// Blend clouds behind translucents
+	// Draw LoD water
 
-	float clouds_apparent_distance;
-	vec4 clouds_and_aurora = read_clouds_and_aurora(refracted_uv, clouds_apparent_distance);
-
-	if (is_sky || sqr(clouds_apparent_distance) < length_squared(back_position_view)) {
-		fragment_color = fragment_color * clouds_and_aurora.w + clouds_and_aurora.xyz;
-	}
-
-	// Draw DH water
-
-#ifdef DISTANT_HORIZONS
-	if (front_depth_dh != back_depth_dh) {
-		// if there is a layer of DH water behind the translucent layer, these 
+#ifdef LOD_MOD_ACTIVE
+	if (front_depth_lod != back_depth_lod) {
+		// if there is a layer of LoD water behind the translucent layer, these 
 		// will store the position of that layer
-		vec3 dh_position_screen = front_position_screen;
-		vec3 dh_position_view   = front_position_view;
-		vec3 dh_position_world  = front_position_world;
+		vec3 lod_position_screen = front_position_screen;
+		vec3 lod_position_view   = front_position_view;
+		vec3 lod_position_world  = front_position_world;
 
-		// detect whether translucent DH terrain may be behind the translucent layer
+		// detect whether translucent LoD terrain may be behind the translucent layer
 		float z_mc = screen_to_view_space_depth(gbufferProjectionInverse, front_depth);
-		float z_dh = screen_to_view_space_depth(dhProjectionInverse, front_depth_dh);
+		float z_lod = screen_to_view_space_depth(lod_projection_matrix_inverse, front_depth_lod);
 
 		const float error_margin = 1.0;
-		bool dh_behind_translucent = z_dh > z_mc + error_margin && back_depth == 1.0;
+		bool lod_behind_translucent = z_lod > z_mc + error_margin && back_depth == 1.0;
 
-		if (front_is_dh_terrain || dh_behind_translucent) {
-			if (dh_behind_translucent) {
-				dh_position_screen = vec3(uv, front_depth_dh);
-				dh_position_view = screen_to_view_space(dhProjectionInverse, dh_position_screen, true);
-				dh_position_world = view_to_scene_space(dh_position_view) + cameraPosition;
+		if (front_is_lod_terrain || lod_behind_translucent) {
+			if (lod_behind_translucent) {
+				lod_position_screen = vec3(uv, front_depth_lod);
+				lod_position_view = screen_to_view_space(lod_projection_matrix_inverse, lod_position_screen, true);
+				lod_position_world = view_to_scene_space(lod_position_view) + cameraPosition;
 			}
 
 			// Unpack gbuffer data
 
-			vec4 gbuffer_data = texelFetch(colortex1, texel, 0);
+#ifdef VOXY
+            vec4 gbuffer_data = texelFetch(colortex16, texel, 0);
+            bool is_water = min_of(gbuffer_data) > eps;
+#else
+            vec4 gbuffer_data = texelFetch(colortex1, texel, 0);
+#endif
 
 			mat4x2 data = mat4x2(
 				unpack_unorm_2x8(gbuffer_data.x),
@@ -320,28 +326,38 @@ void main() {
 			);
 
 			vec3 tint          = vec3(data[0], data[1].x);
-			uint material_mask = uint(255.0 * data[1].y);
-			vec3 flat_normal   = decode_unit_vector(data[2]);
-			vec2 light_levels  = data[3];
+            vec3 flat_normal = decode_unit_vector(data[2]);
+            vec2 light_levels = data[3];
 
-			if (material_mask == MATERIAL_WATER) { // Water
+#ifdef DISTANT_HORIZONS
+            uint material_mask = uint(255.0 * data[1].y);
+            bool is_water = material_mask == MATERIAL_WATER;
+#else
+            float water_alpha = data[1].y;
+#endif
+
+			if (is_water) { // Water
 				vec4 water_color = draw_distant_water(
-				dh_position_screen,
-				dh_position_view,
-				dh_position_world,
+				lod_position_screen,
+				lod_position_view,
+				lod_position_world,
 				direction_world,
 				flat_normal,
 				tint,
 				light_levels,
-				length_knowing_direction(cameraPosition - dh_position_world, direction_world),
-				length_knowing_direction(dh_position_world - back_position_world, direction_world)
+				length_knowing_direction(cameraPosition - lod_position_world, direction_world),
+				length_knowing_direction(lod_position_world - back_position_world, direction_world)
 				);
 
+#ifdef VOXY
+                // Account for darkening by alpha of water surface
+                // water_color *= 8.0;
+#endif
 				fragment_color = fragment_color * (1.0 - water_color.a) + water_color.rgb;
 			}
 
-			back_position_world = dh_behind_translucent
-			? dh_position_world
+			back_position_world = lod_behind_translucent
+			? lod_position_world
 			: back_position_world;
 		}
 	}
@@ -355,20 +371,38 @@ void main() {
 		front_position_world,
 		back_position_world,
 		is_translucent,
-		is_sky
+		is_sky,
+        front_is_hand,
+        back_is_hand
 	);
+
+    // Border fog
+
+#ifdef BORDER_FOG
+    fragment_color =
+        mix(original_color,
+            fragment_color,
+            border_fog(front_position_scene, direction_world));
+#endif
 
 	// Blend clouds in front of translucents
 	
-	if (is_translucent || is_dh_translucent) {
-		if (clouds_apparent_distance < view_distance) {
-			fragment_color = fragment_color * clouds_and_aurora.w + clouds_and_aurora.xyz;
-		}
-	}
+#if defined WORLD_OVERWORLD
+    float clouds_apparent_distance;
+    vec4 clouds_and_aurora =
+        read_clouds_and_aurora(refracted_uv, clouds_apparent_distance);
+
+    if (is_translucent || is_translucent_lod) {
+        if (clouds_apparent_distance < view_distance) {
+            fragment_color =
+                fragment_color * clouds_and_aurora.w + clouds_and_aurora.xyz;
+        }
+    }
+#endif
 
 	// Blend fog
 
-#if (defined WORLD_OVERWORLD || defined WORLD_END) && defined VL
+#if (defined WORLD_OVERWORLD || defined WORLD_END) && defined VL || defined LPV_VL
 	// Volumetric fog
 
 	fragment_color = fragment_color * fog_transmittance + fog_scattering;
@@ -376,12 +410,14 @@ void main() {
 	#ifdef BLOOMY_FOG
 	bloomy_fog = clamp01(dot(fog_transmittance, vec3(luminance_weights_rec2020)));
 	bloomy_fog = isEyeInWater == 1.0 ? sqrt(bloomy_fog) : bloomy_fog;
-	#endif
-#else
+#endif
+#endif
+
+#if !defined VL
 	// Analytic fog
 
 	if (isEyeInWater == 1) {
-		// water fog
+		// Underwater fog
 		float LoV = dot(direction_world, light_dir);
 
 		mat2x3 analytic_fog = water_fog_simple(
@@ -401,14 +437,15 @@ void main() {
 		bloomy_fog = sqrt(clamp01(dot(analytic_fog[1], vec3(0.33))));
 	#endif
 	} else {
-		// air fog
-
 	#if defined WORLD_OVERWORLD
+	    // Overworld fog
+
 		mat2x3 analytic_fog = air_fog_analytic(
 			cameraPosition,
 			front_position_world,
 			is_sky,
-			eye_skylight
+			eye_skylight,
+			1.0
 		);
 
 		fragment_color *= analytic_fog[1];

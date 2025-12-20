@@ -17,7 +17,7 @@ uniform float combined_near;
 uniform float combined_far;
 
 uniform sampler2D colortex15;
-#define combined_depth_buffer colortex15
+#define combined_depth_tex colortex15
 
 uniform vec4 combined_projection_matrix_0;
 uniform vec4 combined_projection_matrix_1;
@@ -41,7 +41,7 @@ bool is_distant_horizons_terrain(float depth, float depth_dh) {
 #define combined_far                       far
 #define combined_projection_matrix         gbufferProjection
 #define combined_projection_matrix_inverse gbufferProjectionInverse
-#define combined_depth_buffer              depthtex1
+#define combined_depth_tex              depthtex1
 #endif
 
 #endif // INCLUDE_MISC_DISTANT_HORIZONS

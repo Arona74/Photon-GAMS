@@ -2,6 +2,7 @@
 #define INCLUDE_FOG_SIMPLE_FOG
 
 #include "/include/lighting/colors/blocklight_color.glsl"
+#include "/include/misc/lod_mod_support.glsl"
 #include "/include/sky/projection.glsl"
 #include "/include/utility/bicubic.glsl"
 #include "/include/utility/color.glsl"
@@ -26,22 +27,21 @@ const float nether_fog_density = 0.01 * NETHER_FOG_INTENSITY;
 const float blindness_fog_start   = 2.0;
 const float blindness_fog_density = 1.0;
 
-const float nether_bloomy_fog_density = 0.25 * nether_fog_density;
+const float darkness_fog_start = 8.0;
+const float darkness_fog_density = 2.0;
 
-#ifdef DISTANT_HORIZONS
-uniform int dhRenderDistance;
-#endif
+const float nether_bloomy_fog_density = 0.25 * nether_fog_density;
 
 float spherical_fog(float view_dist, float fog_start_distance, float fog_density) {
 	return exp2(-fog_density * max0(view_dist - fog_start_distance));
 }
 
 float border_fog(vec3 scene_pos, vec3 world_dir) {
-#ifndef DISTANT_HORIZONS
+#ifndef LOD_MOD_ACTIVE
 	float fog = cubic_length(scene_pos.xz) / far;
 	      fog = exp2(-8.0 * pow8(fog));
 #else
-    float fog = length(scene_pos.xz) / float(dhRenderDistance);
+    float fog = length(scene_pos.xz) / float(lod_render_distance);
           fog = exp2(-2.4 * sqr(fog));
 #endif
 
@@ -66,13 +66,24 @@ vec4 common_fog(float view_dist, const bool sky) {
 	fog.a   *= snow_fog;
 
 	// Blindness fog
-	float blindness_fog = mix(
-		1.0,
-		spherical_fog(view_dist, blindness_fog_start, blindness * blindness_fog_density),
-		blindness
-	);
-	fog.rgb *= blindness_fog;
-	fog.a   *= blindness_fog;
+    fog *=
+        mix(1.0,
+            spherical_fog(
+                view_dist,
+                blindness_fog_start,
+                blindness * blindness_fog_density
+            ),
+            blindness);
+
+	    // Darkness fog
+    fog *=
+        mix(1.0,
+            spherical_fog(
+                view_dist,
+                darkness_fog_start,
+                darknessFactor * darkness_fog_density
+            ),
+            darknessFactor);
 
 #if defined WORLD_OVERWORLD && defined CAVE_FOG
 	// Cave fog

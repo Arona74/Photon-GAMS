@@ -3,7 +3,11 @@
 
 #include "/include/sky/atmosphere.glsl"
 
+#ifdef CLOUDS_GAMS_CUMULUS
 const float clouds_cumulus_radius          = planet_radius + CLOUDS_CUMULUS_ALTITUDE * 2.45;
+#else
+const float clouds_cumulus_radius          = planet_radius + CLOUDS_CUMULUS_ALTITUDE;
+#endif
 const float clouds_cumulus_thickness       = CLOUDS_CUMULUS_ALTITUDE * CLOUDS_CUMULUS_THICKNESS;
 const float clouds_cumulus_top_radius      = clouds_cumulus_radius + clouds_cumulus_thickness;
 

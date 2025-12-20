@@ -18,8 +18,6 @@ out vec3 position_view;
 out vec3 position_scene;
 out vec4 tint;
 
-flat out vec3 light_color;
-flat out vec3 ambient_color;
 flat out uint material_mask;
 flat out mat3 tbn;
 
@@ -102,7 +100,7 @@ uniform float time_midnight;
 
 uniform float desert_sandstorm;
 
-#if defined PROGRAM_GBUFFERS_ENTITIES_TRANSLUCENT
+#if defined PROGRAM_GBUFFERS_ENTITIES_TRANSLUCENT || defined PROGRAM_GBUFFERS_LIGHTNING
 uniform int entityId;
 #endif
 
@@ -118,28 +116,21 @@ uniform int currentRenderedItemId;
 #include "/include/misc/oceans.glsl"
 #endif
 
+#include "/include/misc/material_masks.glsl"
 #include "/include/utility/space_conversion.glsl"
 #include "/include/vertex/displacement.glsl"
 #include "/include/vertex/utility.glsl"
 
 #if defined WORLD_OVERWORLD
-#include "/include/misc/weather.glsl"
+#include "/include/weather/fog.glsl"
 #endif
 
 void main() {
-	uv            = mat2(gl_TextureMatrix[0]) * gl_MultiTexCoord0.xy + gl_TextureMatrix[0][3].xy;
+	uv            = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	light_levels  = clamp01(gl_MultiTexCoord1.xy * rcp(240.0));
 	tint          = gl_Color;
 	material_mask = get_material_mask();
 	tbn           = get_tbn_matrix();
-
-	int lighting_color_x = SKY_MAP_LIGHT_X;
-	light_color   = texelFetch(colortex4, ivec2(lighting_color_x, 0), 0).rgb;
-#if defined WORLD_OVERWORLD && defined SH_SKYLIGHT
-	ambient_color = texelFetch(colortex9, ivec2(9, 0), 0).rgb;
-#else	
-	ambient_color = texelFetch(colortex4, ivec2(lighting_color_x, 1), 0).rgb;
-#endif
 
 	bool is_top_vertex = uv.y < mc_midTexCoord.y;
 
@@ -179,6 +170,24 @@ void main() {
 		atlas_tile_scale = abs(uv_minus_mid) * 2.0;
 		atlas_tile_coord = sign(uv_minus_mid) * 0.5 + 0.5;
 	}
+#endif
+
+#if defined PROGRAM_GBUFFERS_LIGHTNING && defined WORLD_END
+    // For some reason the Ender Dragon death beams also use gbuffers_lightning
+
+    // Ender Dragon death beam check from Euphoria Patches by SpacEagle17, used
+    // with permission https://www.euphoriapatches.com/
+    bool is_dragon_death_beam =
+        entityId == 0 && (tint.a < 0.2 || tint.a == 1.0);
+
+    if (is_dragon_death_beam) {
+        material_mask = MATERIAL_DRAGON_BEAM;
+
+        if (tint.r < 0.2) {
+            // Dark bit at the end
+            tint.a = 0.0;
+        }
+    }
 #endif
 
 #if defined PROGRAM_GBUFFERS_TEXTURED

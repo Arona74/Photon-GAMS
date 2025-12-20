@@ -27,6 +27,8 @@ flat out OverworldFogParameters fog_params;
 flat out vec3 sky_sh[9];
 flat out vec3 skylight_up;
 #endif
+
+flat out float rainbow_amount;
 #endif
 
 // ------------
@@ -87,9 +89,10 @@ uniform float time_midnight;
 
 #if defined WORLD_OVERWORLD
 #include "/include/lighting/colors/light_color.glsl"
-#include "/include/misc/weather.glsl"
 #include "/include/sky/atmosphere.glsl"
 #include "/include/sky/projection.glsl"
+#include "/include/weather/fog.glsl"
+#include "/include/weather/rainbow.glsl"
 #endif
 
 #include "/include/utility/random.glsl"
@@ -104,9 +107,11 @@ void main() {
 	ambient_color = texelFetch(colortex4, ivec2(lighting_color_x, 1), 0).rgb;
 
 #if defined WORLD_OVERWORLD
+    Weather weather = get_weather();
+
 	sun_color = get_sun_exposure() * get_sun_tint();
 	moon_color = get_moon_exposure() * get_moon_tint();
-	fog_params = get_fog_parameters(get_weather());
+	fog_params = get_fog_parameters(weather);
 
 	#ifdef SH_SKYLIGHT
 	// Sample sky SH
@@ -121,6 +126,8 @@ void main() {
 	sky_sh[8]   = texelFetch(colortex9, ivec2(8, 0), 0).rgb;
 	skylight_up = texelFetch(colortex9, ivec2(9, 0), 0).rgb;
 	#endif
+
+    rainbow_amount = get_rainbow_amount(weather);
 #endif
 
 	vec2 vertex_pos = gl_Vertex.xy * taau_render_scale;

@@ -75,7 +75,7 @@ uniform int currentRenderedItemId;
 //   Includes
 // ------------
 
-#include "/include/lighting/distortion.glsl"
+#include "/include/lighting/shadows/distortion.glsl"
 #include "/include/vertex/displacement.glsl"
 
 #ifdef COLORED_LIGHTS

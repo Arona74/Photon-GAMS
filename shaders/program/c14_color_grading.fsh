@@ -11,31 +11,15 @@
 
 #include "/include/global.glsl"
 
-
-//----------------------------------------------------------------------------//
-#ifdef vsh
-
-out vec2 uv;
-
-void main() {
-	uv = gl_MultiTexCoord0.xy;
-
-	gl_Position = vec4(gl_Vertex.xy * 2.0 - 1.0, 0.0, 1.0);
-}
-
-#endif
-//----------------------------------------------------------------------------//
-
-
-
-//----------------------------------------------------------------------------//
-#ifdef fsh
-
 layout (location = 0) out vec3 scene_color;
 
 /* RENDERTARGETS: 0 */
 
 in vec2 uv;
+
+#ifdef LENS_FLARE
+flat in vec3 upVec, sunVec;
+#endif
 
 // ------------
 //   Uniforms
@@ -56,11 +40,38 @@ uniform float eye_skylight;
 
 uniform vec2 view_pixel_size;
 
+#ifdef LENS_FLARE
+uniform sampler2D depthtex0;
+uniform sampler2D colortex11;
+uniform sampler2D noisetex;
+uniform mat4 gbufferProjection;
+uniform float rainStrength;
+uniform vec3 sunPosition;
+uniform int isEyeInWater;
+#endif
+
+#if defined LENS_FLARE && defined LF_MOONPHASE
+uniform float lens_flare_moon_phase_brightness;
+#endif
+
+#if defined LENS_FLARE && defined LOD_MOD_ACTIVE
+uniform mat4 gbufferProjectionInverse;
+uniform float near;
+#endif
+
 #include "/include/tonemapping/aces/aces.glsl"
 #include "/include/tonemapping/agx.glsl"
 #include "/include/tonemapping/bottosson.glsl"
 #include "/include/tonemapping/zcam_justjohn.glsl"
 //#include "/include/tonemapping/hatchling_oklab.glsl"
+
+#if defined LENS_FLARE && defined LOD_MOD_ACTIVE
+#include "/include/misc/lod_mod_support.glsl"
+#endif
+
+#ifdef LENS_FLARE
+#include "/include/misc/lens_flare.glsl"
+#endif
 
 #if (tonemap == tonemap_opendrt) || (defined(TONEMAP_COMPARISON) && (tonemap_left == tonemap_opendrt || tonemap_right == tonemap_opendrt))
 #undef tonemap_opendrt
@@ -121,7 +132,7 @@ vec3 get_bloom(out vec3 fog_bloom) {
 
 		vec2 tile_coord = uv * tile_scale + tile_offset;
 
-		vec3 tile = bicubic_filter(colortex0, tile_coord).rgb;
+        vec3 tile = texture(colortex0, tile_coord).rgb;
 
 		tile_sum += tile * weight;
 		weight_sum += weight;
@@ -674,5 +685,9 @@ void main() {
 	if (abs(uv_scaled.y - y[1].g) < line) scene_color += y[1] * working_to_display_color;
 	if (abs(uv_scaled.y - y[2].b) < line) scene_color += y[2] * working_to_display_color;
 
+#endif
+
+#if defined LENS_FLARE && !defined WORLD_NETHER && !defined WORLD_MOON
+	lens_flare(scene_color);
 #endif
 }

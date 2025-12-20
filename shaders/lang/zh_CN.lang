@@ -16,6 +16,9 @@ screen.materials                       = §e☼§r 材质 & 反射
 screen.water                           = §b🌊§r 水
 screen.post                            = §e▓§r 后处理
 screen.misc                            = §e⌛§r 杂项
+
+screen.weather                         = 天气变化
+
 screen.box                             = 选择框
 screen.compatibility                   = 兼容性
 screen.world_curvature                 = 世界曲率
@@ -23,10 +26,15 @@ screen.world_curvature                 = 世界曲率
 screen.colored_lights                  = 彩色光源
 screen.rp_settings                     = 资源包设置
 screen.reflections                     = 反射
+screen.refraction                      = 折射
 screen.light_sources                   = 光源
 screen.shadows                         = 阴影
+screen.ao                              = 环境光遮蔽
 screen.color_grading                   = 颜色分级
 screen.exposure                        = 曝光
+screen.lpv_vl                          = 彩色光源雾气散射
+screen.ssvl                            = 屏幕空间体积光
+screen.box                             = 选择框
 screen.tonemap_settings                = 色调映射设置
 
 screen.dof_settings                    = 景深设置
@@ -69,12 +77,15 @@ screen.aurora_c10                      = 颜色 10
 screen.aurora_c11                      = 颜色 11
 
 screen.clouds                          = 云层
+screen.crepuscular_rays                = 云隙光
+screen.stars                           = 星星
 screen.clouds_cumulus                  = 积云设置
 screen.clouds_altocumulus              = 高积云设置
 screen.clouds_cumulus_congestus        = 浓积云设置
 screen.clouds_cumulonimbus             = 积雨云设置
 screen.clouds_cirrus                   = 卷云/卷积云设置
 screen.clouds_minecrafty               = 方块云设置
+screen.clouds_noctilucent              = 夜光云设置
 screen.nebula                          = 星云
 screen.nebula_color                    = 星云颜色
 screen.nebula_color.comment            = 调整星云各部位颜色:      \n星云颜色1-3：为每层星云设置颜色.
@@ -122,6 +133,8 @@ screen.weather_d11                     = 第11天
 screen.end_light_color                 = 末地光照颜色
 screen.end_ambient_color               = 末地环境光颜色
 screen.nether_color                    = 下界基础颜色
+
+screen.distance_view                   = 距离视图
 
 option.INFO                            = Photon GAMS
 value.INFO.0                           = §eby OUdefie17
@@ -174,6 +187,16 @@ value.CURVATURE_MODE.CURVATURE_MODE_SQUARED_DISTANCE = 平方距离
 value.CURVATURE_MODE.CURVATURE_MODE_BASIC_SPHERICAL  = 基本球形
 value.CURVATURE_MODE.CURVATURE_MODE_LOG_SPHERICAL    = 对数球形
 
+# Weather
+option.RANDOM_WEATHER_VARIATION            = 随机变化
+option.BIOME_WEATHER_VARIATION             = 基于群系的变体
+option.WEATHER_TEMPERATURE_BIAS            = 温度值偏差
+option.WEATHER_HUMIDITY_BIAS               = 湿度值偏差
+option.WEATHER_WIND_BIAS                   = 风度值偏差
+option.WEATHER_TEMPERATURE_VARIATION_SPEED = 温度偏差变换速度
+option.WEATHER_HUMIDITY_VARIATION_SPEED    = 湿度偏差变化速度
+option.WEATHER_WIND_VARIATION_SPEED        = 风度偏差变化速度
+
 # Lighting settings
 
 option.COLORED_LIGHTS                  = 彩色光源
@@ -222,6 +245,26 @@ option.BLOCK_ENTITY_SHADOWS            = 方块实体阴影
 option.PIXELATED_SHADOWS               = 像素阴影
 option.PIXELATED_SHADOWS.comment       = 阴影捕捉方块纹理像素以创建像素化的阴影外观
 option.PIXELATED_SHADOWS_RESOLUTION    = 像素阴影分辨率
+option.SSS_STEPS                       = 次表面散射步数
+option.SSS_STEPS.comment               = 增加以减少草丛和其他具有次表面散射(SSS)材质的噪点, 但会牺牲性能.
+
+option.SHADER_AO                       = 光影环境光遮蔽
+option.SHADER_AO.comment               = 选择环境光遮蔽的算法类型. 关 - 不计算光影的环境光遮蔽算法. SSAO - 需要的采样数不多/闪烁更少但质量较低. GTAO - 更好的视觉质量但需要更多的采样也更多闪烁.
+value.SHADER_AO.SHADER_AO_NONE         = 关
+value.SHADER_AO.SHADER_AO_SSAO         = SSAO
+value.SHADER_AO.SHADER_AO_GTAO         = GTAO
+option.VANILLA_AO                      = 原版环境光遮蔽
+option.VANILLA_AO.comment              = 我的世界内置的环境光遮蔽.
+option.SSAO_RADIUS                     = SSAO 半径
+option.SSAO_RADIUS.comment             = 调节 SSAO 的半径 - 物体之间可以互相遮蔽的距离.
+option.SSAO_STEPS                      = SSAO 步数
+option.SSAO_STEPS.comment              = 控制 SSAO 噪点明显程度.
+option.GTAO_RADIUS                     = GTAO 半径
+option.GTAO_RADIUS.comment             = 调节 GTAO 的半径 - 物体之间可以互相遮蔽的距离.
+option.GTAO_SLICES                     = GTAO 切面数
+option.GTAO_SLICES.comment             = 控制 GTAO 噪点明显程度.
+option.GTAO_HORIZON_STEPS              = GTAO 水平线采样数
+option.GTAO_HORIZON_STEPS.comment      = 控制 GTAO 的精确度.
 option.SHADOW_DEPTH_SCALE              = 阴影深度比例
 option.SHADOW_DISTORTION               = 阴影扭曲
 
@@ -274,6 +317,11 @@ option.SANDSTORM_LIGHT_I               = 沙尘暴天气光照强度
 option.VOXEL_VOLUME_SIZE               = 体素化大小
 option.VOXEL_VOLUME_SIZE.comment       = 高性能影响，同时也受阴影距离影响
 suffix.VOXEL_VOLUME_SIZE               = m
+option.VOXEL_VOLUME_CENTER             = 体素化中心位置
+option.VOXEL_VOLUME_CENTER.comment     = 前置: 使体素化中心位置设定在玩家的前方, 意味着更多位于前方的事物可被体素化追踪到数据. 以玩家为中心: 体素化中心位置即是玩家所在位置.
+
+value.VOXEL_VOLUME_CENTER.VOXEL_VOLUME_CENTER_AHEAD  = 前置
+value.VOXEL_VOLUME_CENTER.VOXEL_VOLUME_CENTER_PLAYER = 以玩家为中心
 option.COLORED_LIGHT_I                 = 彩色光强度
 option.COLOREDLIGHT_SATURATION         = 彩色光饱和度
 option.GLOWING_FLOWERS                 = §e🌷§r 发光花朵
@@ -402,6 +450,14 @@ option.END_SOLAR_FLARE_COLOR_R               = 红色
 option.END_SOLAR_FLARE_COLOR_G               = 绿色
 option.END_SOLAR_FLARE_COLOR_B               = 蓝色
 
+option.CREPUSCULAR_RAYS                = 云隙光
+option.CREPUSCULAR_RAYS_INTENSITY      = 云隙光强度
+option.CREPUSCULAR_RAYS_STEPS_HORIZON  = 基础采样数 - 地平线
+option.CREPUSCULAR_RAYS_STEPS_ZENITH   = 基础采样数 - 天顶
+option.LIGHTNING_FLASH                 = 闪电闪光
+option.RAINBOWS                        = 彩虹
+option.END_SUN_EFFECT                  = 末地日轮
+
 # Clouds
 option.CLOUDS_CUMULUS                        = 积云
 option.CLOUDS_CUMULUS.comment                = 低层体积云，类似于积云
@@ -421,6 +477,8 @@ option.CLOUDS_CUMULUS_WIND_SPEED             = 风速
 suffix.CLOUDS_CUMULUS_WIND_SPEED             = m/s
 option.CLOUDS_CUMULUS_WIND_ANGLE             = 风向角
 suffix.CLOUDS_CUMULUS_WIND_ANGLE             = °
+option.CLOUDS_CUMULUS_PRECOMPUTE_LOCAL_COVERAGE = 预计算局部覆盖率
+option.CLOUDS_CUMULUS_PRECOMPUTE_LOCAL_COVERAGE.comment = 对积云进行激进优化. 减少云可以绘制的最大距离, 并且当镜头移动时云层形状会发生变化, 因而产生更多伪影. 如果想在云层之上拍截图的需求, 请禁用本选项.
 
 option.CLOUDS_ALTOCUMULUS                       = 高积云
 option.CLOUDS_ALTOCUMULUS.comment               = 中层体积云，类似于高积云
@@ -489,6 +547,8 @@ suffix.CLOUDS_CUMULONIMBUS_DISTANCE              = m
 option.CLOUDS_CUMULONIMBUS_END_DISTANCE          = 结束距离
 suffix.CLOUDS_CUMULONIMBUS_END_DISTANCE          = m
 
+option.CLOUDS_NOCTILUCENT              = 夜光云
+
 option.BLOCKY_CLOUDS                   = 方块云层
 option.BLOCKY_CLOUDS.comment           = 原版风格体积云层. 启用本选项会禁用其他所有类型的云层
 option.BLOCKY_CLOUDS_LAYER_2           = 第二云层
@@ -505,10 +565,7 @@ option.BLOCKY_CLOUDS_SHARPNESS         = 锐利程度
 option.BLOCKY_CLOUDS_SHARPNESS.comment = 调节云层边缘锐利程度
 
 option.CLOUDS_TEMPORAL_UPSCALING       = 云层时间性升采样
-option.CLOUDS_DAILY_WEATHER            = 日常天气变化
-option.CLOUDS_DAILY_WEATHER.comment    = 云层变化受日常天气系统影响
 option.CLOUDS_AERIAL_PERSPECTIVE_BOOST = 空中云层透视增益
-option.CLOUDS_ACCUMULATION_LIMIT       = 积累限制
 option.CLOUDS_SCALE                    = 云层缩放
 option.CLOUDS_SCALE.comment            = 对所有云层进行缩放, 以调整云层大小和高度, 使其在游戏中更易于接触. 如果这个值是1.0, 云层将按照现实高度分布, 默认第一层在800个方块的高度. 如果这个值更高, 云层将显得更小, 更贴近地面. 这也会影响云影的大小
 suffix.CLOUDS_SCALE                    = ×
@@ -540,6 +597,8 @@ option.CLOUDS_CIRROCUMULUS_DETAIL_STRENGTH = 卷积云细节强度
 option.CLOUDS_CIRROCUMULUS_CURL_STRENGTH   = 卷积云卷曲强度
 
 option.CLOUDS_ROUGHNESS                    = 云层粗糙度
+option.CLOUDS_NOCTILUCENT_INTENSITY    = 夜光云强度
+option.CLOUDS_NOCTILUCENT_RARITY       = 稀有度
 
 option.AURORA_TYPE                     = 极光样式
 option.AURORA_COLOR                    = 极光颜色
@@ -711,10 +770,12 @@ option.BLOOMY_FOG                      = 泛光雾
 option.BLOOMY_FOG.comment              = 雾气的强烈泛光. 使得明亮事物发出的光像是在雾气中散射, 并且照亮后方区域. 几乎没有性能消耗
 option.BLOOMY_FOG_INTENSITY            = 泛光雾强度
 option.BLOOMY_FOG_INTENSITY.comment    = 调节泛光雾的强度
+option.OVERWORLD_FOG_INTENSITY         = 主世界雾气强度
 option.NETHER_FOG_INTENSITY            = 下界雾气强度
 option.CAVE_FOG_INTENSITY              = 洞穴雾气强度
 option.END_FOG_INTENSITY               = 末地雾气强度
 option.VL                              = 体积光
+option.LPV_VL.comment                  = 光源可点亮雾气. 需启用彩色光源! 
 option.VL.comment                      = 添加光轴和可变雾气密度
 option.VL_RENDER_SCALE                 = 体积光渲染规模
 option.AIR_FOG_CLOUDY_NOISE            = 云雾
@@ -737,6 +798,26 @@ option.END_FOG_VOLUME_BOTTOM = 末地雾气体积底部
 option.END_FOG_STEP_GROWTH   = 末地雾气步进增长
 option.END_FOG_DENSITY_SCALE = 末地雾气密度
 option.FOG_MULTIPLE_SCATTERING_ITERATIONS = 多重散射迭代
+
+# LPV VL
+option.LPV_VL                          = 启用
+option.LPV_VL_STEPS                    = 采样数
+option.LPV_VL_INTENSITY_OVERWORLD      = 强度 - 主世界
+option.LPV_VL_INTENSITY_UNDERGROUND    = 强度 - 地下
+option.LPV_VL_INTENSITY_NETHER         = 强度 - 下界
+option.LPV_VL_INTENSITY_END            = 强度 - 末地
+
+# SCREENSPACE VL
+option.SCREENSPACE_VL                  = 启用
+option.SSVL_INTENSITY                  = 强度
+option.SSVL_SAMPLES                    = 采样数
+option.SSVL_DENSITY                    = 密度
+option.SSVL_DECAY                      = 衰减
+option.SSVL_FADE_RADIUS                = 最大半径
+option.SSVL_FADE_FACTOR                = 半径过渡强度
+option.SSVL_NOISE_SCATTER              = 噪声分散程度
+option.SSVL_NOISE_INTENSITY            = 噪声强度
+option.SSVL_NOISE_INTENSITY.comment    = 调整噪声强度，制造星芒形体积光，值越高越明显
 
 option.AIR_FOG_RAYLEIGH_FALLOFF_START     = 瑞利 - 雾气消散起始位置
 option.AIR_FOG_RAYLEIGH_FALLOFF_START.comment = 瑞利雾气开始消散的海拔高度
@@ -832,6 +913,12 @@ option.POM_SLOPE_NORMALS               = 视差斜坡法线
 option.POM_DISTANCE                    = 视差距离
 option.POM_SHADOW_STYLE                = 视差自阴影风格
 option.POM_SHADOW_STYLE.comment        = 原版会在视差采样层之间产生阴影形成严重的视觉伪影，改进版通过从视差顶面投射阴影阻止了伪影的产生，但会在视差采样值低的情况下产生锯齿状阴影
+option.REFRACTION                      = 折射
+value.REFRACTION.REFRACTION_OFF        = 关
+value.REFRACTION.REFRACTION_ALL        = 全开
+value.REFRACTION.REFRACTION_WATER_ONLY = 仅水体
+option.REFRACTION_INTENSITY            = 折射强度
+option.REFRACTION_INTENSITY.comment    = 调节水体的折射强度.
 
 suffix.POM_DEPTH                       = m
 suffix.POM_DISTANCE                    = m
@@ -891,7 +978,7 @@ option.WATER_REFRACTION_INTENSITY.comment = 调节水体的折射强度
 value.WATER_TEXTURE.WATER_TEXTURE_OFF                   = 关闭
 value.WATER_TEXTURE.WATER_TEXTURE_HIGHLIGHT             = 高亮
 value.WATER_TEXTURE.WATER_TEXTURE_VANILLA               = 原版
-value.WATER_TEXTURE.WATER_TEXTURE_HIGHLIGHT_UNDERGROUND = 高亮 (仅地下)
+value.WATER_TEXTURE.WATER_TEXTURE_HIGHLIGHT_UNDERGROUND = 高亮 (仅位于地下时)
 
 option.WATER_WAVES                     = 水波
 option.WATER_WAVE_ITERATIONS           = 迭代次数
@@ -934,10 +1021,14 @@ option.LF_COLOR_B                      = 镜头光晕 - 蓝色
 value.LENS_FLARE_MODE.1                = 仅太阳
 value.LENS_FLARE_MODE.2                = 日月
 option.LENS_FLARE_INTENSITY            = 镜头光晕强度
+option.LF_MOONPHASE                    = 月相影响光晕强度
 option.LF_CLOUD_VISIBILITY             = 云层遮挡下的光晕强度
 option.LF_CLOUD_VISIBILITY.comment     = 调节太阳/月亮被云层遮挡时光晕的强度
+option.LF_NOISE_INTENSITY              = 彩虹光晕噪声强度
 option.LF_BIG_RAINBOW                  = 大型彩虹光晕
 option.LF_RAINBOW                      = 中型彩虹光晕
+option.LF_CLOSERING                    = 环状彩虹光晕
+option.LF_CLOSERING.comment            = 太阳/月亮中心的彩虹环
 option.LF_CENTER_STRIP                 = 中心变形镜头光晕
 option.LF_CENTER_STRIP.comment         = 太阳/月亮中心的长条形光晕
 option.LF_XCROSS_STRIP                 = 中心X形交叉光晕
@@ -1290,6 +1381,10 @@ option.CUSTOM_SKY_BRIGHTNESS           = 自定义天空亮度
 option.CUSTOM_SKY_BRIGHTNESS.comment   = 自定义天空的亮度
 option.DAYLIGHT_CYCLE                  = 启用昼夜循环
 option.DAYLIGHT_CYCLE.comment          = 当游戏规则 doDaylightCycle 为 false 时禁用，以防止更改时间时出现云层拖尾
+option.NOISE_ON_DH_TERRAIN             = DH 地形噪声
+option.ENCHANTMENT_GLINT_BRIGHTNESS    = 附魔闪光亮度
+option.USE_SEPARATE_ENTITY_DRAWS       = "分离绘制实体"
+option.USE_SEPARATE_ENTITY_DRAWS.comment = "分离绘制实体" 是 Iris 的一个功能: 对使用延迟-前向混合渲染的光影启用, 比如说 Photon, 用来使半透明实体和其他对象正确渲染. 但这个功能也会导致一些问题的出现. 禁用此功能可能会导致渲染问题, 例如半透明实体会变得不透明!
 
 value.DEBUG_VIEW.DEBUG_VIEW_NONE       = 关
 value.DEBUG_VIEW.DEBUG_VIEW_SAMPLER    = 采样器
@@ -1348,6 +1443,16 @@ value.tonemap_right.tonemap_zcam_drt       = ZCAM DRT
 value.tonemap_right.tonemap_fidelityfx_lpm = FidelityFX LPM
 value.tonemap_right.tonemap_hatchling      = Hatchling Oklab
 
+# Distance View 
+
+option.DISTANCE_VIEW                   = 启用
+option.DISTANCE_VIEW_METHOD            = 视图模式
+option.DISTANCE_VIEW_MAX_DISTANCE      = 最大距离
+suffix.DISTANCE_VIEW_MAX_DISTANCE      = m
+
+value.DISTANCE_VIEW_METHOD.DISTANCE_VIEW_DISTANCE = 距离
+value.DISTANCE_VIEW_METHOD.DISTANCE_VIEW_DEPTH    = 深度
+
 # Box
 
 option.BOX_MODE                 = 选择框模式
@@ -1361,6 +1466,25 @@ option.BOX_COLOR_B              = 蓝色比重
 option.BOX_EMISSION             = 框线发光
 option.BOX_EMISSION.comment     = 框线发光强度. 需要启用泛光.
 option.BOX_LINE_WIDTH           = 框线宽度
+
+#additional comment
+
+#world
+#lighting
+option.BLOCK_ENTITY_SHADOWS.comment=决定方块实体是否能投射阴影. 在生存世界中有大量箱子时请禁用本选项来提升性能.
+
+#sky
+#fog
+#materials
+#water
+#post
+#misc
+option.BOX_LINE_WIDTH.comment=选择框的框线宽度.
+
+option.BOX_COLOR_R.comment=红色.
+option.BOX_COLOR_G.comment=绿色.
+option.BOX_COLOR_B.comment=蓝色.
+
 
 # Compatibility
 option.PHYSICS_MOD_OCEAN           = 物理模组海洋

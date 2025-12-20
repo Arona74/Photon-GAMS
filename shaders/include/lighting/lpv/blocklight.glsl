@@ -2,7 +2,7 @@
 #define INCLUDE_LIGHTING_LPV_BLOCKLIGHT
 
 #include "voxelization.glsl"
-#include "/include/misc/material.glsl"
+#include "/include/surface/material.glsl"
 
 #ifdef DIRECTIONAL_LIGHTMAPS
 //#include "/include/lighting/specular_lighting.glsl"
@@ -277,6 +277,15 @@ vec3 get_lpv_blocklight(vec3 scene_pos, vec3 normal, vec3 flat_normal, vec3 mc_b
 		float vanilla_lightmap_contribution = exp2(-4.0 * dot(lpv_blocklight, luminance_weights_rec2020));
 		lpv_blocklight += mc_blocklight * vanilla_lightmap_contribution;
 #endif
+
+        // Darkness effect
+        float darkness_factor =
+            mix(1.0,
+                dampen(abs(cos(2.0 * frameTimeCounter))) * 0.67 + 0.2,
+                darknessFactor) *
+                0.75 +
+            0.25;
+        lpv_blocklight *= darkness_factor;
 
 		float distance_fade = lpv_distance_fade(scene_pos);
 

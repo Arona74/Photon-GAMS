@@ -1,14 +1,12 @@
 #ifndef INCLUDE_FOG_WATER_FOG_VL
 #define INCLUDE_FOG_WATER_FOG_VL
 
-#include "/include/lighting/distortion.glsl"
+#include "/include/lighting/shadows/distortion.glsl"
 #include "/include/utility/color.glsl"
 #include "/include/utility/fast_math.glsl"
 #include "/include/utility/phase_functions.glsl"
 
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-#include "/include/lighting/lpv/blocklight.glsl"
-#endif
+const float max_ray_length = 50.0;
 
 mat2x3 raymarch_water_fog(
 	vec3 world_start_pos,
@@ -73,12 +71,9 @@ mat2x3 raymarch_water_fog(
 	float LoV = dot(world_dir, light_dir);
 
 	vec3 step_transmittance = exp(-extinction_coeff * step_length);
-	vec3 lpv_step_transmittance = exp(-extinction_coeff_below * step_length);
 
 	vec3 scattering = vec3(0.0);
-	vec3 lpv_scattering = vec3(0.0);
 	vec3 transmittance = vec3(1.0);
-	vec3 lpv_transmittance = vec3(1.0);
 
 	for (int i = 0; i < step_count; ++i, world_pos += world_step, shadow_pos += shadow_step, caustics_pos += caustics_step) {
 		vec3 shadow_screen_pos = distort_shadow_space(shadow_pos) * 0.5 + 0.5;
@@ -106,20 +101,12 @@ mat2x3 raymarch_water_fog(
 		#define shadow 1.0
 	#endif
 		#define distance_traveled 0.0
-		float distance_traveled_sky = 15.0 - 15.0 * eye_skylight + max0(eyeAltitude - world_pos.y);
-#endif
-
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-		const float lpv_scattering_mult = 2.0 * (1.0 - exp2(-float(multiple_scattering_iterations)));
-		vec3 lpv_color = get_lpv_basic(world_pos - cameraPosition) / lpv_scattering_mult;
-		lpv_color = max0(lpv_fog_curve(lpv_color) - 1.0);
-#else
-		#define lpv_color 0.0
+        float distance_traveled_sky =
+            15.0 - 15.0 * eye_skylight + max0(eyeAltitude - world_pos.y);
 #endif
 
 		vec3 light_transmittance = exp(-extinction_coeff * distance_traveled) * shadow;
 		vec3 sky_transmittance   = exp(-extinction_coeff * distance_traveled_sky);
-		vec3 lpv_light_transmittance = exp(-extinction_coeff_below * rcp(lpv_color) * 4.0);
 
 		// Caustics pattern to create underwater light shafts
 		float caustics  = 0.67 * texture(noisetex, (caustics_pos + caustics_dir_0 * t) * 0.02).y;
@@ -137,9 +124,6 @@ mat2x3 raymarch_water_fog(
 			// Skylight
 			scattering += ambient_color * isotropic_phase * sky_transmittance * transmittance * scattering_amount;
 
-			// Colored Lights
-			lpv_scattering += lpv_color * lpv_light_transmittance * lpv_transmittance * scattering_amount;
-
 			anisotropy *= 0.5;
 			scattering_amount *= 0.5;
 			light_transmittance = sqrt(light_transmittance);
@@ -147,15 +131,12 @@ mat2x3 raymarch_water_fog(
 		}
 
 		transmittance *= step_transmittance;
-		lpv_transmittance *= lpv_step_transmittance;
 	}
 
 	scattering *= (1.0 - step_transmittance) * scattering_coeff / extinction_coeff;
-	scattering += lpv_scattering * (1.0 - lpv_step_transmittance) * scattering_coeff_below / extinction_coeff_below;
 	transmittance = pow(transmittance, vec3(0.75));
 
 	return mat2x3(scattering, transmittance);
 }
-
 
 #endif // INCLUDE_FOG_WATER_FOG_VL

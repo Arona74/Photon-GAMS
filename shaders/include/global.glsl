@@ -1,4 +1,9 @@
-// Enable half-precision floating point types
+// Extensions
+
+/*
+#ifdef MC_GL_KHR_shader_subgroup
+    #extension GL_KHR_shader_subgroup_vote : enable
+#endif
 
 #ifdef USE_HALF_PRECISION_FP
 #if defined MC_GL_AMD_gpu_shader_half_float
@@ -9,6 +14,7 @@
 #define HAS_F16
 #endif
 #endif
+*/
 
 #ifdef HAS_F16
 #define f16       float16_t
@@ -29,6 +35,17 @@
 #define f16mat4x2 mat4x2
 #define f16mat4x3 mat4x3
 #define f16mat4x4 mat4x4
+#endif
+
+// LoD mod detection
+
+#if defined DISTANT_HORIZONS || defined VOXY
+#define LOD_MOD_ACTIVE
+#endif
+
+#if defined VOXY && defined DISTANT_HORIZONS
+// Cancel Voxy DH emulation
+#undef DISTANT_HORIZONS
 #endif
 
 // Settings
@@ -112,6 +129,9 @@ vec3  sdiv(vec3 a, vec3 b)   { return vec3(sdiv(a.x, b.x), sdiv(a.y, b.y), sdiv(
 
 float linear_step(float edge0, float edge1, float x) {
 	return clamp01((x - edge0) / (edge1 - edge0));
+}
+float linear_step_unclamped(float edge0, float edge1, float x) {
+	return (x - edge0) / (edge1 - edge0);
 }
 
 vec2 linear_step(vec2 edge0, vec2 edge1, vec2 x) {
@@ -238,3 +258,18 @@ vec3 project_ortho(mat4 m, vec3 pos) {
 #define cartesian_to_log_polar(a) vec2(log(length(a)), atan(a.y, a.x))
 
 #define log_polar_to_cartesian(logp) (exp(logp.x) * vec2(cos(logp.y), sin(logp.y)))
+
+// Hand 
+
+void fix_hand_depth(inout float depth, out bool is_hand) {
+	is_hand = depth < hand_depth; // NB: Not the same as mc_hand_depth
+	if (is_hand) {
+		depth  = depth * 2.0 - 1.0;
+		depth *= rcp(MC_HAND_DEPTH);
+		depth  = depth * 0.5 + 0.5;
+	}
+}
+void fix_hand_depth(inout float depth) {
+	bool unused;
+	fix_hand_depth(depth, unused);
+}

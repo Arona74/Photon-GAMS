@@ -92,7 +92,7 @@ uniform vec4 entityColor;
 #endif
 
 #if defined PROGRAM_GBUFFERS_TERRAIN && defined POM
-#include "/include/misc/parallax.glsl"
+#include "/include/surface/parallax.glsl"
 #endif
 
 #ifdef DIRECTIONAL_LIGHTMAPS
@@ -262,6 +262,21 @@ void main() {
 	if (base_color.a < 0.1 && material_mask != MATERIAL_BOAT) { discard; return; } // Save transparent quad in boats, which masks out water
 #elif !defined PROGRAM_GBUFFERS_TERRAIN_SOLID
 	if (base_color.a < 0.1) { discard; return; }
+#endif
+
+#if (defined PROGRAM_GBUFFERS_BLOCK || defined PROGRAM_GBUFFERS_ENTITIES || \
+     defined PROGRAM_GBUFFERS_HAND) && \
+    !(defined USE_SEPARATE_ENTITY_DRAWS && defined IS_IRIS)
+#ifdef DITHERED_TRANSLUCENCY_FALLBACK
+    // Dithered transparency for translucent objects rendered as solid
+    float dither_pattern =
+        r1(frameCounter,
+           texelFetch(noisetex, ivec2(gl_FragCoord.xy) & 511, 0).z);
+    if (base_color.a < dither_pattern) {
+        discard;
+        return;
+    }
+#endif
 #endif
 
 #ifdef WHITE_WORLD

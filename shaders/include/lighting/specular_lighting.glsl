@@ -2,10 +2,10 @@
 #define INCLUDE_LIGHTING_SPECULAR_LIGHTING
 
 #include "/include/lighting/bsdf.glsl"
-#include "/include/misc/distant_horizons.glsl"
-#include "/include/misc/material.glsl"
+#include "/include/misc/lod_mod_support.glsl"
 #include "/include/misc/raytracer.glsl"
 #include "/include/sky/projection.glsl"
+#include "/include/surface/material.glsl"
 #include "/include/utility/bicubic.glsl"
 #include "/include/utility/dithering.glsl"
 #include "/include/utility/random.glsl"
@@ -166,9 +166,12 @@ vec3 sample_ggx_vndf(vec3 viewer_dir, vec2 alpha, vec2 hash) {
 //*/
 }
 
-vec3 get_sky_reflection(vec3 ray_dir, float skylight) {
+vec3 get_sky_reflection(vec3 ray_dir, float skylight, vec3 hit_pos) {
 #if defined WORLD_OVERWORLD
-	return bicubic_filter(colortex4, project_sky(ray_dir)).rgb * pow12(linear_step(0.0, 0.75, skylight));
+    bool hit_sky = clamp01(hit_pos.xy) == hit_pos.xy && hit_pos.z >= 1.0;
+    float skylight_falloff =
+        hit_sky ? 1.0 : pow12(linear_step(0.0, 0.75, skylight));
+    return bicubic_filter(colortex4, project_sky(ray_dir)).rgb * skylight_falloff;
 #else
 	return texture(colortex4, project_sky(ray_dir)).rgb;
 #endif
@@ -204,7 +207,7 @@ vec3 trace_specular_ray(
 #endif
 
 #ifdef SKY_REFLECTIONS
-	vec3 sky_reflection = get_sky_reflection(ray_dir, skylight);
+	vec3 sky_reflection = get_sky_reflection(ray_dir, skylight, hit_pos);
 #else
 	const vec3 sky_reflection = vec3(0.0);
 #endif
@@ -225,12 +228,23 @@ vec3 trace_specular_ray(
 		vec3 fog_scattering_previous = texture(colortex7, hit_uv_prev.xy).rgb;
 		
 #if defined WORLD_OVERWORLD
+#ifdef VL
+        // Intended to make reflected fog better match VL
+        // Assumption is that if there is a hit and the hit object is vaguely in
+        // the direction of the sun then the fog would be shadowed by the hit
+        // object
+        float fog_shadow = hit ? 1.0 - sqr(max0(dot(light_dir, ray_dir))) : 1.0;
+#else
+        const float fog_shadow = 1.0;
+#endif
+
 		// Apply analytic fog in reflection
 		mat2x3 analytic_fog = air_fog_analytic(
 			world_pos,
 			hit_pos_scene + cameraPosition,
 			false,
-			eye_skylight
+			eye_skylight,
+			fog_shadow
 		);
 
 		reflection = max0(reflection - fog_scattering_previous);
@@ -261,7 +275,7 @@ vec3 get_specular_reflections(
 	float alpha_squared = material.roughness * material.roughness;
 	float dither = r1(frameCounter, texelFetch(noisetex, ivec2(gl_FragCoord.xy) & 511, 0).b);
 
-#ifdef DISTANT_HORIZONS
+#ifdef LOD_MOD_ACTIVE
 	// Convert screen depth to combined depth
 	screen_pos = view_to_screen_space(SSRT_PROJECTION_MATRIX, view_pos, true);
 #endif

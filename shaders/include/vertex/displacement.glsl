@@ -1,16 +1,23 @@
 #if !defined INCLUDE_VERTEX_DISPLACEMENT
 #define INCLUDE_VERTEX_DISPLACEMENT
 
-#if !defined PROGRAM_GBUFFERS_TERRAIN && !defined PROGRAM_SHADOW
+#if !defined PROGRAM_GBUFFERS_TERRAIN && \
+    !(defined PROGRAM_SHADOW_FALLBACK || defined PROGRAM_SHADOW_SOLID || \
+      defined PROGRAM_SHADOW_CUTOUT)
 	#undef WAVING_PLANTS
 	#undef WAVING_LEAVES
 #endif
 
-#if !defined PROGRAM_GBUFFERS_WATER && !defined PROGRAM_SHADOW
+#if !defined PROGRAM_GBUFFERS_WATER && \
+    !(defined PROGRAM_SHADOW_FALLBACK || defined PROGRAM_SHADOW_WATER)
 	#undef WATER_DISPLACEMENT
 #endif
 
 #include "/include/misc/material_masks.glsl"
+
+#if defined WAVING_PLANTS || defined WAVING_LEAVES
+#include "/include/weather/core.glsl"
+#endif
 
 #ifdef IS_IRIS
 uniform vec3 eyePosition;
@@ -18,7 +25,7 @@ uniform vec3 eyePosition;
 #define eyePosition cameraPosition
 #endif
 
-#if defined WATER_DISPLACEMENT
+#ifdef WATER_DISPLACEMENT
 float gerstner_wave(vec2 coord, vec2 wave_dir, float t, float noise, float wavelength) {
 	// Gerstner wave function from Belmu in #snippets, modified
 	const float g = 9.8;
@@ -41,6 +48,15 @@ float get_water_displacement(vec3 world_pos, float skylight) {
 	float wave = gerstner_wave(world_pos.xy * wave_frequency, wave_dir, frameTimeCounter * wave_speed, 0.0, wavelength);
 		  wave = (wave * 0.05 - 0.025) * (skylight * 0.9 + 0.1);
 
+#ifdef LOD_MOD_ACTIVE
+    // Attenuate displacement towards the edge of the render distance, to
+    // prevent seam between vanilla and LoD terrain
+    float fade = cubic_length(world_pos.xz - cameraPosition.xz) / far;
+
+    wave *= exp2(-8.0 * cube(fade));
+    ;
+#endif
+
 	return wave;
 }
 #endif
@@ -48,7 +64,13 @@ float get_water_displacement(vec3 world_pos, float skylight) {
 #if defined WAVING_PLANTS || defined WAVING_LEAVES
 vec3 get_wind_displacement(vec3 world_pos, float wind_speed, float wind_strength, bool is_tall_plant_top_vertex) {
 	const float wind_angle = 30.0 * degree;
-	const vec2  wind_dir   = vec2(cos(wind_angle), sin(wind_angle));
+    const vec2 wind_dir = vec2(cos(wind_angle), sin(wind_angle));
+
+#if defined WORLD_OVERWORLD
+    // Adjust wind strength based on weather windiness
+    float windiness = weather_wind();
+    wind_strength *= 0.5 + windiness;
+#endif
 
 	float t = wind_speed * frameTimeCounter;
 
@@ -90,6 +112,7 @@ vec3 animate_vertex(vec3 world_pos, bool is_top_vertex, float skylight, uint mat
 
 #ifdef WAVING_PLANTS
 	case MATERIAL_SMALL_PLANTS:
+	case MATERIAL_OPEN_EYEBLOSSOM:
 		return world_pos + (get_wind_displacement(world_pos, wind_speed, wind_strength, false) + player_displacement * PLAYER_DISPLACEMENT_PLANTS_STRENGTH) * float(is_top_vertex);
 
 	case MATERIAL_TALL_PLANTS_LOWER:

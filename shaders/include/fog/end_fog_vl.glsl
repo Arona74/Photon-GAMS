@@ -1,17 +1,13 @@
 #ifndef INCLUDE_FOG_END_FOG_VL
 #define INCLUDE_FOG_END_FOG_VL
 
-#include "/include/lighting/distortion.glsl"
+#include "/include/lighting/shadows/distortion.glsl"
 #include "/include/utility/color.glsl"
 #include "/include/utility/fast_math.glsl"
 #include "/include/utility/phase_functions.glsl"
 
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-#include "/include/lighting/lpv/blocklight.glsl"
-#endif
-
 float end_fog_density(vec3 world_pos) {
-	const float falloff_start     = 1.0;
+	const float falloff_start     = 64.0;
 	const float falloff_half_life = END_FOG_INTENSITY;
 
 	const float mul = -rcp(falloff_half_life);
@@ -37,15 +33,22 @@ float end_fog_noise(vec3 world_pos) {
 }
 
 vec3 end_fog_emission(vec3 world_pos) {
-#ifdef WORLD_NETHER
-	return vec3(0.0);
-#else
-	const vec3 main_col = from_srgb(vec3(END_AMBIENT_R, END_AMBIENT_G, END_AMBIENT_B)) * END_AMBIENT_I;
-	const vec3 alt_col  = 0.5 * vec3(0.25, 1.0, 0.5);
+    const vec3 main_col =
+        from_srgb(vec3(END_AMBIENT_R, END_AMBIENT_G, END_AMBIENT_B)) *
+        END_AMBIENT_I;
+    const vec3 alt_col = 0.5 * vec3(0.25, 1.0, 0.5);
+    const vec3 wind0 = vec3(1.0, 0.1, 0.5) * 0.01;
+    const vec3 wind1 = vec3(-0.7, -0.1, -0.1) * 0.05;
 
+    float base_noise =
+        texture(colortex0, 0.02 * world_pos + wind0 * frameTimeCounter).x;
+    float detail_nose =
+        texture(colortex0, 0.04 * world_pos + wind1 * frameTimeCounter).x *
+            0.8 -
+        0.4;
 	float color_noise = texture(colortex0, 0.02 * world_pos + 0.2).x;
 
-	float density   = end_fog_noise(world_pos);
+    float density = max0(linear_step(0.6, 0.9, base_noise) + detail_nose);
 	float color_mix = linear_step(0.5, 0.7, color_noise);
 
 	float view_dist   = distance(world_pos, cameraPosition);
@@ -145,17 +148,6 @@ mat2x3 raymarch_end_fog(
 		#define shadow 1.0
 #endif
 
-#if defined COLORED_LIGHTS && defined COLORED_LIGHTS_FOG
-		const float lpv_scattering_mult = 2.0 * (1.0 - exp2(-float(multiple_scattering_iterations)));;
-		vec3 lpv_color = get_lpv_basic(world_pos - cameraPosition) / lpv_scattering_mult;
-		lpv_color = max0(lpv_fog_curve(lpv_color) - 1.0);
-	#ifdef END_GLOW
-		lpv_color *= end_fog_noise(world_pos) * 1.2;
-	#endif
-#else
-		#define lpv_color 0.0
-#endif
-
 		float density = end_fog_density(world_pos) * step_length;
 
 		vec3 step_optical_depth = extinction_coeff * density;
@@ -174,9 +166,6 @@ mat2x3 raymarch_end_fog(
 
 			// Ambient light
 			scattering += density * ambient_color * isotropic_phase * visible_scattering * scattering_amount;
-
-			// Colored Lights
-			scattering += density * lpv_color * visible_scattering * scattering_amount;
 
 			anisotropy *= 0.5;
 			scattering_amount *= 0.5;

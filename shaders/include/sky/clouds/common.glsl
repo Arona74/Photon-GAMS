@@ -13,7 +13,7 @@
 //#define TERRAIN_SHADOWS_ON_CLOUDS
 
 #ifdef TERRAIN_SHADOWS_ON_CLOUDS
-#include "/include/lighting/shadows.glsl"
+#include "/include/lighting/shadows/sampling.glsl"
 #endif
 
 #if defined COLORED_LIGHTS && defined COLORED_LIGHTS_CLOUDS

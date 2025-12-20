@@ -17,7 +17,7 @@ layout (location = 1) out vec3 clouds_data;
 
 /* RENDERTARGETS: 11,12 */
 
-#ifdef DISTANT_HORIZONS
+#ifdef LOD_MOD_ACTIVE
 layout (location = 2) out float combined_depth;
 
 /* RENDERTARGETS: 11,12,15 */
@@ -73,7 +73,7 @@ uniform bool world_age_changed;
 
 #define TEMPORAL_REPROJECTION
 
-#include "/include/misc/distant_horizons.glsl"
+#include "/include/misc/lod_mod_support.glsl"
 #include "/include/utility/bicubic.glsl"
 #include "/include/utility/checkerboard.glsl"
 #include "/include/utility/dithering.glsl"
@@ -165,27 +165,33 @@ void main() {
 	vec2 current_data = texelFetch(colortex10, src_texel, 0).xy;
 	float depth       = texelFetch(depthtex1, dst_texel, 0).x;
 
+    bool is_hand;
+    fix_hand_depth(depth, is_hand);
+
 	// --------------------------------
-	//   combined depth buffer for DH
+	//   combined depth buffer for LoD terrain
 	// --------------------------------
 
-#ifdef DISTANT_HORIZONS
-	// Check for DH terrain
-	float depth_dh = texelFetch(dhDepthTex, dst_texel, 0).x;
-	bool is_dh_terrain = is_distant_horizons_terrain(depth, depth_dh);
+#ifdef LOD_MOD_ACTIVE
+	// Check for LoD terrain
+    float depth_lod = texelFetch(lod_depth_tex, dst_texel, 0).x;
+    bool is_lod = is_lod_terrain(depth, depth_lod);
 
 	float depth_linear    = screen_to_view_space_depth(gbufferProjectionInverse, depth);
-	float depth_linear_dh = screen_to_view_space_depth(dhProjectionInverse, depth_dh);
+	float depth_linear_lod = screen_to_view_space_depth(lod_projection_matrix_inverse, depth_lod);
 
-	combined_depth = is_dh_terrain
-		? view_to_screen_space_depth(combined_projection_matrix, depth_linear_dh)
+	combined_depth = is_lod
+		? view_to_screen_space_depth(combined_projection_matrix, depth_linear_lod)
 		: view_to_screen_space_depth(combined_projection_matrix, depth_linear);
 
-	if (depth >= 1.0 && !is_dh_terrain) {
+	if (depth >= 1.0 && !is_lod) {
 		combined_depth = 1.0;
+    } else if (is_hand) {
+        // 0 signals hand
+        combined_depth = 0.0;
 	}
 #else
-	const bool is_dh_terrain = false;
+	const bool is_lod = false;
 #endif
 
 	// --------------------
@@ -217,7 +223,7 @@ void main() {
 		float view_distance_squared = length_squared(
 			screen_to_view_space(vec3(uv, depth), true)
 		);
-		if (view_distance_squared < sqr(closest_distance)) {
+		if (view_distance_squared < sqr(closest_distance) && !is_hand) {
 			clouds_history = current;
 			clouds_data.x = 1e6; // apparent distance
 			clouds_data.y = 0.0; // pixel age

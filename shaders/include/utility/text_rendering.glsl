@@ -264,6 +264,7 @@ void print_vec2(vec2 value) {
 	print((_comma, _space));
 	print_float(value.y);
 }
+
 void print_vec3(vec3 value) {
 	print_float(value.x);
 	print((_comma, _space));
@@ -271,6 +272,7 @@ void print_vec3(vec3 value) {
 	print((_comma, _space));
 	print_float(value.z);
 }
+
 void print_vec4(vec4 value) {
 	print_float(value.x);
 	print((_comma, _space));
@@ -286,6 +288,7 @@ void print_ivec2(ivec2 value) {
 	print((_comma, _space));
 	print_int(value.y);
 }
+
 void print_ivec3(ivec3 value) {
 	print_int(value.x);
 	print((_comma, _space));
@@ -293,6 +296,7 @@ void print_ivec3(ivec3 value) {
 	print((_comma, _space));
 	print_int(value.z);
 }
+
 void print_ivec4(ivec4 value) {
 	print_int(value.x);
 	print((_comma, _space));
@@ -308,6 +312,7 @@ void print_uvec2(uvec2 value) {
 	print((_comma, _space));
 	print_unsigned_int(value.y);
 }
+
 void print_uvec3(uvec3 value) {
 	print_unsigned_int(value.x);
 	print((_comma, _space));
@@ -315,6 +320,7 @@ void print_uvec3(uvec3 value) {
 	print((_comma, _space));
 	print_unsigned_int(value.z);
 }
+
 void print_uvec4(uvec4 value) {
 	print_unsigned_int(value.x);
 	print((_comma, _space));
@@ -330,6 +336,7 @@ void print_bvec2(bvec2 value) {
 	print((_comma, _space));
 	print_bool(value.y);
 }
+
 void print_bvec3(bvec3 value) {
 	print_bool(value.x);
 	print((_comma, _space));
@@ -337,6 +344,7 @@ void print_bvec3(bvec3 value) {
 	print((_comma, _space));
 	print_bool(value.z);
 }
+
 void print_bvec4(bvec4 value) {
 	print_bool(value.x);
 	print((_comma, _space));
@@ -352,6 +360,7 @@ void print_mat2(mat2 m) {
 	print_line();
 	print_vec2(m[1]);
 }
+
 void print_mat3(mat3 m) {
 	print_vec3(m[0]);
 	print_line();
@@ -359,6 +368,7 @@ void print_mat3(mat3 m) {
 	print_line();
 	print_vec3(m[2]);
 }
+
 void print_mat4(mat4 m) {
 	print_vec4(m[0]);
 	print_line();

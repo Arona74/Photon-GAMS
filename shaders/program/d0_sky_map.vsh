@@ -24,6 +24,8 @@ flat out vec3 sky_color;
 flat out float aurora_amount;
 flat out mat2x3 aurora_colors;
 
+flat out float rainbow_amount;
+
 #include "/include/sky/clouds/parameters.glsl"
 flat out CloudsParameters clouds_params;
 
@@ -91,7 +93,9 @@ uniform float desert_sandstorm;
 #include "/include/sky/aurora_colors.glsl"
 #include "/include/lighting/colors/light_color.glsl"
 #include "/include/lighting/colors/weather_color.glsl"
-#include "/include/misc/weather.glsl"
+#include "/include/weather/clouds.glsl"
+#include "/include/weather/fog.glsl"
+#include "/include/weather/rainbow.glsl"
 #endif
 
 #ifdef WORLD_NETHER
@@ -131,15 +135,18 @@ void main() {
 	aurora_colors = get_aurora_colors();
 
 	Weather weather = get_weather();
+	rainbow_amount = get_rainbow_amount(weather);
 	clouds_params = get_clouds_parameters(weather);
 	fog_params = get_fog_parameters(weather);
 
 	// Aurora clouds influence
-	sky_color += aurora_amount * AURORA_CLOUD_LIGHTING * mix(
-		aurora_colors[0],
-		aurora_colors[1],
+	vec3 aurora_lighting = mix(
+		aurora_colors[0], 
+		aurora_colors[1], 
 		0.25
-	 ) * mix(AURORA_BRIGHTNESS, AURORA_BRIGHTNESS_SNOW, biome_may_snow);
+	) * aurora_amount;
+	sky_color += AURORA_CLOUD_LIGHTING * aurora_lighting;
+	ambient_color += AURORA_CLOUD_LIGHTING * aurora_lighting;
 #endif
 
 	gl_Position = vec4(gl_Vertex.xy * 2.0 - 1.0, 0.0, 1.0);

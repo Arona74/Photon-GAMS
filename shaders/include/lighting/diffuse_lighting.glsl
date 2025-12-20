@@ -1,12 +1,15 @@
 #if !defined INCLUDE_LIGHTING_DIFFUSE_LIGHTING
 #define INCLUDE_LIGHTING_DIFFUSE_LIGHTING
 
-#include "/include/lighting/colors/blocklight_color.glsl"
 #include "/include/lighting/bsdf.glsl"
+#include "/include/lighting/colors/blocklight_color.glsl"
 #include "/include/misc/end_lighting_fix.glsl"
-#include "/include/misc/material.glsl"
-#include "/include/utility/phase_functions.glsl"
+#include "/include/surface/material.glsl"
 #include "/include/utility/fast_math.glsl"
+#include "/include/utility/phase_functions.glsl"
+#ifdef MC_GL_RENDERER_INTEL
+	#include "/include/utility/spherical_harmonics_fallback.glsl"
+#else
 #include "/include/utility/spherical_harmonics.glsl"
 
 #ifdef DIRECTIONAL_LIGHTMAPS
@@ -122,6 +125,9 @@ vec3 get_diffuse_lighting(
 
 	// Arbitrary directional shading to make faces easier to distinguish
 	float directional_lighting = (0.9 + 0.1 * normal.x) * (0.8 + 0.2 * abs(flat_normal.y)) + 2.0 * ambient_sss * material.sss_amount;
+    // Negative SSS depth => SSS blocked by occluder (SSRT SSS)
+    bool sss_blocked = sss_depth < 0.0 || light_levels.y < 0.1;
+    sss_depth = max0(sss_depth);
 
 #if defined WORLD_OVERWORLD || defined WORLD_END || defined WORLD_SPACE
 
@@ -133,7 +139,7 @@ vec3 get_diffuse_lighting(
 	#ifdef WORLD_SPACE
 	bounced *= clamp01(smoothstep(0.0, 0.1, light_dir.y));
 	#endif
-	vec3 sss = sss_approx(material.albedo, material.sss_amount, material.sheen_amount, mix(sss_depth, 0.0, shadow_distance_fade), LoV, shadows.x);
+	vec3 sss = sss_approx(material.albedo, material.sss_amount, material.sheen_amount, mix(sss_depth, 0.0, shadow_distance_fade), LoV, shadows.x) * float(!sss_blocked);
 
 	// Adjust SSS outside of shadow distance
 	sss *= mix(1.0, (ao + pi * ambient_sss) * (clamp01(NoL) * 0.8 + 0.2), clamp01(shadow_distance_fade));
@@ -156,7 +162,7 @@ vec3 get_diffuse_lighting(
 	vec3 sss = 0.08 * sss_scale * pi + 0.5 * material.sheen_amount * rcp(material.albedo + eps) * henyey_greenstein_phase(-LoV, 0.5) * linear_step(-0.8, -0.2, -LoV);
 
 	vec3 diffuse  = vec3(lift(max0(NoL), 0.5 * rcp(SHADING_STRENGTH)) * 0.6 + 0.4) * (shadows * 0.8 + 0.2);
-	     diffuse  = mix(diffuse, sss, lift(material.sss_amount, 5.0));
+	     diffuse  = diffuse + max0(sss * lift(material.sss_amount, 5.0));
 	     diffuse *= 1.0 * (0.9 + 0.1 * normal.x) * (0.8 + 0.2 * abs(flat_normal.y));
 	     diffuse *= ao * pow4(light_levels.y) * (dampen(light_dir.y) * 0.5 + 0.5);
 
@@ -174,7 +180,17 @@ vec3 get_diffuse_lighting(
 	// Skylight
 
 #if defined WORLD_OVERWORLD && defined PROGRAM_DEFERRED4 && defined SH_SKYLIGHT
+	#ifdef MC_GL_RENDERER_INTEL
+	sh3 sky_sh_compat;
+	for (uint band = 0u; band < 3u; ++band) {
+		sky_sh_compat.f1[band] = sky_sh[band];
+		sky_sh_compat.f2[band] = sky_sh[band + 3u];
+		sky_sh_compat.f3[band] = sky_sh[band + 6u];
+	}
+	vec3 skylight = sh_evaluate_irradiance(sky_sh_compat, bent_normal, ao);
+	#else
 	vec3 skylight = sh_evaluate_irradiance(sky_sh, bent_normal, ao);
+	#endif
 	skylight = mix(skylight_up, skylight, sqr(light_levels.y));
 #else
 	vec3 skylight = ambient_color * ao;
@@ -184,7 +200,6 @@ vec3 get_diffuse_lighting(
 	// Skylight SSS
 	skylight = mix(skylight, 0.5 * skylight_up * ao, material.sss_amount);
 	skylight += ambient_sss * skylight_up * material.sss_amount * 2.0;
-
 
 #if defined WORLD_NETHER
 	// Brighten + desaturate nether ambient

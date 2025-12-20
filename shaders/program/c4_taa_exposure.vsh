@@ -11,7 +11,6 @@
 
 #include "/include/global.glsl"
 
-
 out vec2 uv;
 
 flat out float exposure;

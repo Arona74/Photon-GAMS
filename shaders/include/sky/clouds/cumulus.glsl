@@ -4,12 +4,26 @@
 // 1st layer: volumetric cumulus/stratocumulus/stratus clouds
 
 #include "common.glsl"
+#include "coverage_map.glsl"
 
 // altitude_fraction := 0 at the bottom of the cloud layer and 1 at the top
 float clouds_cumulus_altitude_shaping(float density, float altitude_fraction) {
+	// Stratus shapes
+	if (clouds_params.l0_cumulus_stratus_blend > eps) {
+		density = mix(
+			density, 
+			clamp01(
+				density * dampen(clamp01(2.0 * altitude_fraction) 
+					* linear_step(0.0, 0.1, altitude_fraction) 
+					* linear_step(0.0, 0.6, 1.0 - altitude_fraction))
+			),
+			clouds_params.l0_cumulus_stratus_blend
+		);
+	}
+
 	// Carve egg shape
-	density -= smoothstep(0.2, 1.0, altitude_fraction)
-	* (0.6 - 0.3 * clouds_params.l0_cumulus_stratus_blend);
+	density -= smoothstep(0.2, 1.0, altitude_fraction) 
+		* (0.6 - 0.3 * clouds_params.l0_cumulus_stratus_blend);
 
 	// Reduce density at the bottom of the cloud
 	density *= smoothstep(0.0, 0.2, altitude_fraction);
@@ -18,57 +32,46 @@ float clouds_cumulus_altitude_shaping(float density, float altitude_fraction) {
 }
 
 float clouds_cumulus_density(vec3 pos) {
-	const float wind_angle = CLOUDS_CUMULUS_WIND_ANGLE * degree;
-	const vec2 wind_velocity = CLOUDS_CUMULUS_WIND_SPEED * vec2(cos(wind_angle), sin(wind_angle));
-
 	float r = length(pos);
-	if (r < clouds_cumulus_radius || r > clouds_cumulus_top_radius) return 0.0;
+
+#if defined CLOUDS_USE_LOCAL_COVERAGE_MAP
+	// Get local coverage from precomputed coverage map - saves 1 sample and some maths
+	vec2 coverage_map_uv = project_clouds_cumulus_coverage_map(pos);
+
+	if (
+		r < clouds_cumulus_radius || r > clouds_cumulus_top_radius 
+			|| clamp01(coverage_map_uv) != coverage_map_uv
+	) {
+		return 0.0;
+	}
+
+	float density = texture(colortex8, coverage_map_uv).z;
+#else 
+	if (r < clouds_cumulus_radius || r > clouds_cumulus_top_radius) {
+		return 0.0;
+	}
+
+	float density = clouds_cumulus_local_coverage(pos.xz);
+#endif
+
+	// Altitude shaping 
 
 	float altitude_fraction = (r - clouds_cumulus_radius) * clouds_params.l0_altitude_scale;
 
-	pos.xz += cameraPosition.xz * CLOUDS_SCALE + wind_velocity * world_age;
-
-	// 2D noise for base shape and coverage
-	vec2 p1 = (0.000002 / CLOUDS_CUMULUS_SIZE) * pos.xz;
-	vec2 p2 = (0.000027 / CLOUDS_CUMULUS_SIZE) * pos.xz;
-	vec2 noise = vec2(
-		texture(noisetex, p1).x, // cloud coverage
-		texture(noisetex, p2).w  // cloud shape
-	);
-
-	float density_cu = 0.0, density_st = 0.0;
-
-	if (clouds_params.l0_cumulus_stratus_blend < 1.0 - eps) {
-		density_cu = mix(clouds_params.l0_coverage.x, clouds_params.l0_coverage.y, noise.x);
-		density_cu = linear_step(1.0 - density_cu, 1.0, noise.y);
-	}
-
-	if (clouds_params.l0_cumulus_stratus_blend > eps) {
-		density_st = cubic_smooth(
-			linear_step(
-				0.9 - clouds_params.l0_coverage.x,
-				1.0,
-				2.0 * noise.x * clouds_params.l0_coverage.y
-			)
-		);
-		density_st = 0.5 * density_st + 1.0 * density_st * linear_step(0.3, 0.6, noise.y);
-		density_st = density_st / (density_st + 1.0);
-		density_st = clamp01(
-			density_st * dampen(clamp01(2.0 * altitude_fraction)
-				* linear_step(0.0, 0.1, altitude_fraction)
-				* linear_step(0.0, 0.6, 1.0 - altitude_fraction))
-		);
-	}
-
-	float density = clouds_cumulus_altitude_shaping(
-		mix(density_cu, density_st, clouds_params.l0_cumulus_stratus_blend),
+	density = clouds_cumulus_altitude_shaping(
+		density,
 		altitude_fraction
 	);
 
 	if (density < eps) return 0.0;
 
-#ifndef PROGRAM_PREPARE
+#if !defined PROGRAM_PREPARE
+	const float wind_angle = CLOUDS_CUMULUS_WIND_ANGLE * degree;
+	const vec2 wind_velocity = CLOUDS_CUMULUS_WIND_SPEED * vec2(cos(wind_angle), sin(wind_angle));
+
 	vec3 wind = vec3(wind_velocity * world_age, 0.0).xzy;
+
+	pos.xz += cameraPosition.xz * CLOUDS_SCALE + wind.xz;
 
 	// 3D worley noise for detail
 	float worley_0 = texture(SAMPLER_WORLEY_BUBBLY, (pos + 0.2 * wind) * 0.0009).x;
@@ -76,7 +79,7 @@ float clouds_cumulus_density(vec3 pos) {
 #else
 	const float worley_0 = 0.5;
 	const float worley_1 = 0.5;
-#endif // PROGRAM_PREPARE
+#endif
 
 	float detail_fade = 0.20 * smoothstep(0.85, 1.0, 1.0 - altitude_fraction)
 	                  - 0.35 * smoothstep(0.05, 0.5, altitude_fraction) + 0.6;
@@ -86,11 +89,11 @@ float clouds_cumulus_density(vec3 pos) {
 
 	// Adjust density so that the clouds are wispy at the bottom and hard at the top
 	density = max0(density);
-	density = 1.0 - pow(
-		1.0 - density,
+	density = lift(
+		density,
 		mix(
-			clouds_params.l0_edge_sharpening.x,
-			clouds_params.l0_edge_sharpening.y,
+			clouds_params.l0_edge_sharpening.x, 
+			clouds_params.l0_edge_sharpening.y, 
 			altitude_fraction
 		)
 	);
@@ -139,6 +142,7 @@ vec2 clouds_cumulus_scattering(
 	float scattering_integral_times_density = (1.0 - step_transmittance) / clouds_params.l0_extinction_coeff;
 
 	float powder_effect = clouds_powder_effect(density + density * clouds_params.l0_cumulus_stratus_blend, cos_theta);
+	float scattering_falloff = 0.55 * mix(lift(clamp01(clouds_params.l0_scattering_coeff / 0.1), 0.33), 1.0, cos_theta * 0.5 + 0.5);
 
 	float phase = clouds_phase_single(cos_theta);
 	vec3 phase_g = pow(vec3(0.6, 0.9, 0.3), vec3(1.0 + light_optical_depth));
@@ -149,7 +153,7 @@ vec2 clouds_cumulus_scattering(
 		scattering.x += scatter_amount * exp(-extinct_amount *    sky_optical_depth) * isotropic_phase * clouds_params.l0_shadow * 0.5; // fake bounced lighting from the layer above
 		scattering.y += scatter_amount * exp(-extinct_amount *    sky_optical_depth) * isotropic_phase;
 
-		scatter_amount *= 0.55 * mix(lift(clamp01(clouds_params.l0_scattering_coeff / 0.1), 0.33), 1.0, cos_theta * 0.5 + 0.5) * powder_effect;
+		scatter_amount *= scattering_falloff * powder_effect;
 		extinct_amount *= 0.4;
 		phase_g *= 0.8;
 
@@ -286,13 +290,20 @@ CloudsResult draw_cumulus_clouds(
 	const float planet_albedo         = 0.4;
 	const vec3  sky_dir               = vec3(0.0, 1.0, 0.0);
 
-	uint primary_steps = uint(mix(primary_steps_horizon, primary_steps_zenith, abs(ray_dir.y)));
+	// Early exit if coverage is 0
+	if (clouds_params.l0_coverage.y < eps) { return clouds_not_hit; }
+
+	uint primary_steps = uint(mix(
+		primary_steps_horizon, 
+		primary_steps_zenith, 
+		abs(ray_dir.y)
+	));
 
 	float r = length(air_viewer_pos);
 
 	vec2 dists = intersect_spherical_shell(air_viewer_pos, ray_dir, clouds_cumulus_radius, clouds_cumulus_top_radius);
 	bool planet_intersected = intersect_sphere(air_viewer_pos, ray_dir, min(r - 10.0, planet_radius)).y >= 0.0;
-	bool terrain_intersected = distance_to_terrain >= 0.0 && r < clouds_cumulus_radius && distance_to_terrain * CLOUDS_SCALE < dists.y;
+	bool terrain_intersected = distance_to_terrain >= 0.0 && r < clouds_cumulus_radius && distance_to_terrain < dists.y;
 
 	if (dists.y < 0.0                                   // volume not intersected
 	 || planet_intersected && r < clouds_cumulus_radius // planet blocking clouds
@@ -340,9 +351,12 @@ CloudsResult draw_cumulus_clouds(
 
 		// fade away in the distance to hide the cutoff
 		float distance_to_sample = distance(ray_origin, ray_pos);
-		float distance_fade = smoothstep(0.95, 1.0, distance_to_sample * rcp(max_ray_length));
+		density *= smoothstep(1.0, 0.95, distance_to_sample * rcp(max_ray_length));
 
-		density *= 1.0 - distance_fade;
+#if defined CLOUDS_USE_LOCAL_COVERAGE_MAP
+		// Fade away at the edges of the local coverage map
+		density *= smoothstep(1.0, 0.9, length(ray_pos.xz) * rcp(0.5 * clouds_cumulus_coverage_map_scale));
+#endif
 
 		float step_optical_depth = density * clouds_params.l0_extinction_coeff * step_length;
 		float step_transmittance = exp(-step_optical_depth);
